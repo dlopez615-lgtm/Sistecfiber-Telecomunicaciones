@@ -1,10 +1,12 @@
 
-/* ======================================================
-   CONFIGURACIÓN DE SUPABASE
-====================================================== */
+ // ======================================================
+ // CONFIGURACIÓN DE SUPABASE
+ // ======================================================
 
 const SUPABASE_URL = "https://pmbcvhkyfoppvyrnuztn.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_yrZYYb4J2qqZmKTq05T35Q_2DBWRDMY";
+
+const SUPABASE_ANON_KEY =
+    "sb_publishable_yrZYYb4J2qqZmKTq05T35Q_2DBWRDMY";
 
 const supabaseClient = window.supabase.createClient(
     SUPABASE_URL,
@@ -12,9 +14,9 @@ const supabaseClient = window.supabase.createClient(
 );
 
 
-/* ======================================================
-   VARIABLES
-====================================================== */
+// ======================================================
+// VARIABLES
+// ======================================================
 
 let clientes = [];
 let clienteEditando = null;
@@ -22,9 +24,9 @@ let clienteEliminar = null;
 let cargandoClientes = false;
 
 
-/* ======================================================
-   ELEMENTOS DE ACCESO
-====================================================== */
+// ======================================================
+// ELEMENTOS DE ACCESO
+// ======================================================
 
 const pantallaAcceso = document.getElementById("pantallaAcceso");
 const aplicacion = document.getElementById("aplicacion");
@@ -39,9 +41,9 @@ const nombreUsuario = document.getElementById("nombreUsuario");
 const avatarUsuario = document.getElementById("avatarUsuario");
 
 
-/* ======================================================
-   MODAL CLIENTE
-====================================================== */
+// ======================================================
+// MODAL CLIENTE
+// ======================================================
 
 const modalCliente = document.getElementById("modalCliente");
 const formCliente = document.getElementById("formCliente");
@@ -51,9 +53,9 @@ const cancelarCliente = document.getElementById("cancelarCliente");
 const btnNuevoCliente = document.getElementById("btnNuevoCliente");
 
 
-/* ======================================================
-   CAMPOS DEL CLIENTE
-====================================================== */
+// ======================================================
+// CAMPOS DEL CLIENTE
+// ======================================================
 
 const nombre = document.getElementById("nombre");
 const cedula = document.getElementById("cedula");
@@ -69,42 +71,56 @@ const fecha = document.getElementById("fecha");
 const estado = document.getElementById("estado");
 
 
-/* ======================================================
-   ARCHIVOS
-====================================================== */
+// ======================================================
+// ARCHIVOS
+// ======================================================
 
 const cedulaArchivo = document.getElementById("cedulaArchivo");
 const contrato = document.getElementById("contrato");
 const reciboPublico = document.getElementById("reciboPublico");
+
+
+// ======================================================
+// ESPACIOS DE ARCHIVOS
+// ======================================================
 
 const detalleCedula = document.getElementById("detalleCedula");
 const detalleContrato = document.getElementById("detalleContrato");
 const detalleRecibo = document.getElementById("detalleRecibo");
 
 
-/* ======================================================
-   CLIENTES Y DATOS
-====================================================== */
+// ======================================================
+// CLIENTES
+// ======================================================
 
 const listaClientes = document.getElementById("listaClientes");
 const buscarCliente = document.getElementById("buscarCliente");
+
+
+// ======================================================
+// DATOS
+// ======================================================
 
 const listaDatos = document.getElementById("listaDatos");
 const buscarDatos = document.getElementById("buscarDatos");
 
 
-/* ======================================================
-   MODALES
-====================================================== */
+// ======================================================
+// MODAL ELIMINAR
+// ======================================================
 
 const modalEliminar = document.getElementById("modalEliminar");
 const nombreEliminar = document.getElementById("nombreEliminar");
 const cancelarEliminar = document.getElementById("cancelarEliminar");
 const confirmarEliminar = document.getElementById("confirmarEliminar");
 
+
+// ======================================================
+// MODAL VER CLIENTE
+// ======================================================
+
 const modalVerCliente = document.getElementById("modalVerCliente");
 const cerrarVerCliente = document.getElementById("cerrarVerCliente");
-
 const verNombre = document.getElementById("verNombre");
 const verTelefono = document.getElementById("verTelefono");
 const verCedula = document.getElementById("verCedula");
@@ -117,15 +133,14 @@ const verPlan = document.getElementById("verPlan");
 const verPrecio = document.getElementById("verPrecio");
 const verEstado = document.getElementById("verEstado");
 const verFecha = document.getElementById("verFecha");
-
 const verCedulaArchivo = document.getElementById("verCedulaArchivo");
 const verContrato = document.getElementById("verContrato");
 const verReciboPublico = document.getElementById("verReciboPublico");
 
 
-/* ======================================================
-   ESTADÍSTICAS
-====================================================== */
+// ======================================================
+// ESTADÍSTICAS
+// ======================================================
 
 const totalClientes = document.getElementById("totalClientes");
 const clientesActivos = document.getElementById("clientesActivos");
@@ -133,9 +148,9 @@ const ingresosMes = document.getElementById("ingresosMes");
 const pagosPendientes = document.getElementById("pagosPendientes");
 
 
-/* ======================================================
-   NAVEGACIÓN
-====================================================== */
+// ======================================================
+// NAVEGACIÓN
+// ======================================================
 
 const botonesMenu = document.querySelectorAll(".menu-item");
 
@@ -149,18 +164,32 @@ const seccionesMenu = {
 };
 
 
-/* ======================================================
-   INICIAR SIEMPRE EN INICIO AL CARGAR LA PÁGINA
-====================================================== */
+// ======================================================
+// RECUPERAR LA ÚLTIMA SECCIÓN VISITADA
+// ======================================================
 
 function obtenerSeccionGuardada() {
+    try {
+        const guardada = localStorage.getItem("sistecfiber_seccion");
+
+        if (
+            guardada &&
+            Object.prototype.hasOwnProperty.call(seccionesMenu, guardada) &&
+            seccionesMenu[guardada]
+        ) {
+            return guardada;
+        }
+    } catch (error) {
+        console.warn("No se pudo recuperar la sección guardada.", error);
+    }
+
     return "inicio";
 }
 
 
-/* ======================================================
-   MOSTRAR SECCIÓN
-====================================================== */
+// ======================================================
+// MOSTRAR SECCIÓN Y GUARDARLA
+// ======================================================
 
 function mostrarSeccion(nombreSeccion) {
     if (
@@ -170,6 +199,14 @@ function mostrarSeccion(nombreSeccion) {
         nombreSeccion = "inicio";
     }
 
+    // Guardar la sección antes de cambiar la pantalla
+    try {
+        localStorage.setItem("sistecfiber_seccion", nombreSeccion);
+    } catch (error) {
+        console.warn("No se pudo guardar la sección.", error);
+    }
+
+    // Ocultar todas las secciones
     Object.values(seccionesMenu).forEach(function (seccion) {
         if (!seccion) return;
 
@@ -177,6 +214,7 @@ function mostrarSeccion(nombreSeccion) {
         seccion.classList.remove("mostrar");
     });
 
+    // Quitar la selección de los botones
     botonesMenu.forEach(function (boton) {
         boton.classList.remove("activo", "seleccionado");
     });
@@ -185,14 +223,20 @@ function mostrarSeccion(nombreSeccion) {
 
     if (!seccionActual) return;
 
+    // Mostrar la sección seleccionada
     seccionActual.style.display = "block";
 
+    // Mantener las clases que necesitan las secciones adicionales
     if (
-        ["pagos", "datos", "equipos", "soporte"].includes(nombreSeccion)
+        nombreSeccion === "pagos" ||
+        nombreSeccion === "datos" ||
+        nombreSeccion === "equipos" ||
+        nombreSeccion === "soporte"
     ) {
         seccionActual.classList.add("mostrar");
     }
 
+    // Marcar el botón correspondiente
     const botonActivo = document.querySelector(
         '.menu-item[data-seccion="' + nombreSeccion + '"]'
     );
@@ -201,14 +245,17 @@ function mostrarSeccion(nombreSeccion) {
         botonActivo.classList.add("activo", "seleccionado");
     }
 
+    // Actualizar el contenido de la sección
     if (nombreSeccion === "inicio") {
         actualizarEstadisticas();
     }
 
     if (nombreSeccion === "clientes") {
-        mostrarClientesFiltrados(
-            buscarCliente ? buscarCliente.value : ""
-        );
+        if (buscarCliente && buscarCliente.value.trim()) {
+            mostrarClientesFiltrados(buscarCliente.value);
+        } else {
+            mostrarClientes(clientes);
+        }
     }
 
     if (nombreSeccion === "datos") {
@@ -217,21 +264,24 @@ function mostrarSeccion(nombreSeccion) {
 }
 
 
-/* ======================================================
-   EVENTOS DEL MENÚ
-====================================================== */
+// ======================================================
+// EVENTOS DEL MENÚ
+// ======================================================
 
 botonesMenu.forEach(function (boton) {
     boton.addEventListener("click", function (event) {
         event.preventDefault();
-        mostrarSeccion(this.dataset.seccion);
+
+        const seccion = this.dataset.seccion;
+
+        mostrarSeccion(seccion);
     });
 });
 
 
-/* ======================================================
-   MOSTRAR APLICACIÓN Y LOGIN
-====================================================== */
+// ======================================================
+// MOSTRAR APLICACIÓN
+// ======================================================
 
 function mostrarAplicacion() {
     if (pantallaAcceso) {
@@ -243,6 +293,11 @@ function mostrarAplicacion() {
     }
 }
 
+
+// ======================================================
+// MOSTRAR LOGIN
+// ======================================================
+
 function mostrarLogin() {
     if (pantallaAcceso) {
         pantallaAcceso.style.display = "flex";
@@ -253,6 +308,11 @@ function mostrarLogin() {
     }
 }
 
+
+// ======================================================
+// MENSAJE LOGIN
+// ======================================================
+
 function mostrarMensajeAcceso(mensaje, tipo) {
     if (!mensajeAcceso) return;
 
@@ -261,9 +321,9 @@ function mostrarMensajeAcceso(mensaje, tipo) {
 }
 
 
-/* ======================================================
-   REGISTRO
-====================================================== */
+// ======================================================
+// REGISTRO
+// ======================================================
 
 let modoRegistro = false;
 
@@ -295,7 +355,9 @@ function crearCampoNombreRegistro() {
 function eliminarCampoNombreRegistro() {
     const contenedor = document.getElementById("contenedorNombreRegistro");
 
-    if (contenedor) contenedor.remove();
+    if (contenedor) {
+        contenedor.remove();
+    }
 }
 
 if (btnCambiarAcceso) {
@@ -307,23 +369,19 @@ if (btnCambiarAcceso) {
 
         if (modoRegistro) {
             if (titulo) titulo.textContent = "Crear cuenta";
-            if (texto) {
-                texto.textContent = "Crea tu cuenta para ingresar al panel";
-            }
+            if (texto) texto.textContent = "Crea tu cuenta para ingresar al panel";
 
             if (btnAcceso) btnAcceso.textContent = "Crear cuenta";
-
             btnCambiarAcceso.textContent = "Ya tengo una cuenta";
+
             crearCampoNombreRegistro();
         } else {
             if (titulo) titulo.textContent = "Sistecfiber";
-            if (texto) {
-                texto.textContent = "Inicia sesión para ingresar al panel";
-            }
+            if (texto) texto.textContent = "Inicia sesión para ingresar al panel";
 
             if (btnAcceso) btnAcceso.textContent = "Iniciar sesión";
-
             btnCambiarAcceso.textContent = "Crear una cuenta";
+
             eliminarCampoNombreRegistro();
         }
 
@@ -332,9 +390,9 @@ if (btnCambiarAcceso) {
 }
 
 
-/* ======================================================
-   INICIAR SESIÓN Y CREAR CUENTA
-====================================================== */
+// ======================================================
+// LOGIN
+// ======================================================
 
 if (formLogin) {
     formLogin.addEventListener("submit", async function (event) {
@@ -348,7 +406,9 @@ if (formLogin) {
             return;
         }
 
-        if (btnAcceso) btnAcceso.disabled = true;
+        if (btnAcceso) {
+            btnAcceso.disabled = true;
+        }
 
         try {
             if (modoRegistro) {
@@ -375,25 +435,14 @@ if (formLogin) {
                     }
                 });
 
-                if (resultado.error) throw resultado.error;
-
-                if (resultado.data.session) {
-                    mostrarMensajeAcceso(
-                        "Cuenta creada correctamente.",
-                        "exito"
-                    );
-
-                    mostrarAplicacion();
-                    actualizarUsuario(resultado.data.user);
-
-                    await cargarClientes();
-                    mostrarSeccion("inicio");
-                } else {
-                    mostrarMensajeAcceso(
-                        "Cuenta creada. Revisa la configuración de confirmación de correo de Supabase.",
-                        "exito"
-                    );
+                if (resultado.error) {
+                    throw resultado.error;
                 }
+
+                mostrarMensajeAcceso(
+                    "Cuenta creada correctamente. Si se solicita, confirma tu correo.",
+                    "exito"
+                );
 
                 return;
             }
@@ -405,7 +454,9 @@ if (formLogin) {
                 password: password
             });
 
-            if (resultado.error) throw resultado.error;
+            if (resultado.error) {
+                throw resultado.error;
+            }
 
             mostrarMensajeAcceso("Sesión iniciada correctamente.", "exito");
 
@@ -417,24 +468,35 @@ if (formLogin) {
                 "error"
             );
         } finally {
-            if (btnAcceso) btnAcceso.disabled = false;
+            if (btnAcceso) {
+                btnAcceso.disabled = false;
+            }
         }
     });
 }
 
 
-/* ======================================================
-   CERRAR SESIÓN
-====================================================== */
+// ======================================================
+// CERRAR SESIÓN
+// ======================================================
 
 if (btnCerrarSesion) {
     btnCerrarSesion.addEventListener("click", async function () {
         try {
             const resultado = await supabaseClient.auth.signOut();
 
-            if (resultado.error) throw resultado.error;
+            if (resultado.error) {
+                throw resultado.error;
+            }
 
             clientes = [];
+
+            try {
+                localStorage.removeItem("sistecfiber_seccion");
+            } catch (error) {
+                console.warn(error);
+            }
+
             mostrarLogin();
 
         } catch (error) {
@@ -450,37 +512,36 @@ if (btnCerrarSesion) {
 }
 
 
-/* ======================================================
-   CONTROLAR CAMBIOS DE SESIÓN
-====================================================== */
+// ======================================================
+// CONTROLAR CAMBIOS DE SESIÓN
+// ======================================================
 
 supabaseClient.auth.onAuthStateChange(function (evento, session) {
-    if (evento === "INITIAL_SESSION") return;
+    // La sesión inicial se comprueba en comprobarSesion().
+    // Así evitamos cargar los clientes dos veces al abrir la página.
+    if (evento === "INITIAL_SESSION") {
+        return;
+    }
 
-    // No cambiar de sección por renovaciones del token.
-    if (evento !== "SIGNED_IN" && evento !== "SIGNED_OUT") return;
-
+    // Ejecutar fuera del callback de autenticación
     setTimeout(async function () {
-        if (evento === "SIGNED_OUT" || !session) {
-            clientes = [];
+        if (session) {
+            mostrarAplicacion();
+            actualizarUsuario(session.user);
+
+            await cargarClientes();
+
+            mostrarSeccion(obtenerSeccionGuardada());
+        } else {
             mostrarLogin();
-            return;
         }
-
-        mostrarAplicacion();
-        actualizarUsuario(session.user);
-
-        await cargarClientes();
-
-        // Al iniciar sesión, comenzar en Inicio.
-        mostrarSeccion("inicio");
     }, 0);
 });
 
 
-/* ======================================================
-   USUARIO
-====================================================== */
+// ======================================================
+// USUARIO
+// ======================================================
 
 function actualizarUsuario(usuario) {
     if (!usuario) return;
@@ -497,9 +558,9 @@ function actualizarUsuario(usuario) {
 }
 
 
-/* ======================================================
-   COMPROBAR SESIÓN AL ABRIR LA PÁGINA
-====================================================== */
+// ======================================================
+// COMPROBAR SESIÓN AL ABRIR LA PÁGINA
+// ======================================================
 
 async function comprobarSesion() {
     try {
@@ -517,8 +578,8 @@ async function comprobarSesion() {
 
         await cargarClientes();
 
-        // Cada carga nueva comienza en Inicio.
-        mostrarSeccion("inicio");
+        // Recuperar la última sección visitada
+        mostrarSeccion(obtenerSeccionGuardada());
 
     } catch (error) {
         console.error("Error al comprobar la sesión:", error);
@@ -527,9 +588,9 @@ async function comprobarSesion() {
 }
 
 
-/* ======================================================
-   CARGAR CLIENTES
-====================================================== */
+// ======================================================
+// CARGAR CLIENTES
+// ======================================================
 
 async function cargarClientes() {
     if (cargandoClientes) return;
@@ -546,7 +607,9 @@ async function cargarClientes() {
             .select("*")
             .order("id", { ascending: false });
 
-        if (resultado.error) throw resultado.error;
+        if (resultado.error) {
+            throw resultado.error;
+        }
 
         clientes = resultado.data || [];
 
@@ -579,9 +642,9 @@ async function cargarClientes() {
 }
 
 
-/* ======================================================
-   MOSTRAR CLIENTES
-====================================================== */
+// ======================================================
+// MOSTRAR CLIENTES
+// ======================================================
 
 function mostrarClientes(lista) {
     if (!listaClientes) return;
@@ -662,9 +725,9 @@ function mostrarClientes(lista) {
 }
 
 
-/* ======================================================
-   BUSCADOR DE CLIENTES
-====================================================== */
+// ======================================================
+// BUSCADOR DE CLIENTES
+// ======================================================
 
 function normalizarBusqueda(valor) {
     return String(valor || "")
@@ -726,9 +789,9 @@ if (buscarCliente) {
 }
 
 
-/* ======================================================
-   MOSTRAR DATOS Y BUSCAR DOCUMENTOS
-====================================================== */
+// ======================================================
+// MOSTRAR DATOS Y FILTRAR DOCUMENTOS
+// ======================================================
 
 function mostrarDatos() {
     if (!listaDatos) return;
@@ -752,8 +815,11 @@ function mostrarDatos() {
             cliente.recibo_nombre
         ];
 
-        return normalizarBusqueda(campos.filter(Boolean).join(" "))
-            .includes(textoBusqueda);
+        const textoCliente = normalizarBusqueda(
+            campos.filter(Boolean).join(" ")
+        );
+
+        return textoCliente.includes(textoBusqueda);
     });
 
     listaDatos.innerHTML = "";
@@ -824,15 +890,25 @@ function mostrarDatos() {
     });
 }
 
+
+// ======================================================
+// BUSCADOR DE DATOS
+// ======================================================
+
 if (buscarDatos) {
-    buscarDatos.addEventListener("input", mostrarDatos);
-    buscarDatos.addEventListener("search", mostrarDatos);
+    buscarDatos.addEventListener("input", function () {
+        mostrarDatos();
+    });
+
+    buscarDatos.addEventListener("search", function () {
+        mostrarDatos();
+    });
 }
 
 
-/* ======================================================
-   CREAR DOCUMENTO EN DATOS
-====================================================== */
+// ======================================================
+// CREAR DOCUMENTO EN DATOS
+// ======================================================
 
 function crearDocumentoDatos(ruta, nombreArchivo, icono, nombreDocumento) {
     if (!ruta) {
@@ -872,9 +948,9 @@ function crearDocumentoDatos(ruta, nombreArchivo, icono, nombreDocumento) {
 }
 
 
-/* ======================================================
-   ESCAPAR HTML
-====================================================== */
+// ======================================================
+// ESCAPAR HTML
+// ======================================================
 
 function escaparHTML(texto) {
     return String(texto)
@@ -886,9 +962,9 @@ function escaparHTML(texto) {
 }
 
 
-/* ======================================================
-   ABRIR MODAL NUEVO CLIENTE
-====================================================== */
+// ======================================================
+// ABRIR MODAL NUEVO CLIENTE
+// ======================================================
 
 if (btnNuevoCliente) {
     btnNuevoCliente.addEventListener("click", abrirModalCliente);
@@ -897,8 +973,13 @@ if (btnNuevoCliente) {
 function abrirModalCliente() {
     clienteEditando = null;
 
-    if (tituloModal) tituloModal.textContent = "Nuevo cliente";
-    if (formCliente) formCliente.reset();
+    if (tituloModal) {
+        tituloModal.textContent = "Nuevo cliente";
+    }
+
+    if (formCliente) {
+        formCliente.reset();
+    }
 
     limpiarArchivosSeleccionados();
 
@@ -909,27 +990,29 @@ function abrirModalCliente() {
 }
 
 
-/* ======================================================
-   ABRIR MODAL EDITAR CLIENTE
-====================================================== */
+// ======================================================
+// ABRIR MODAL EDITAR
+// ======================================================
 
 function abrirModalEditar(cliente) {
     clienteEditando = cliente;
 
-    if (tituloModal) tituloModal.textContent = "Editar cliente";
+    if (tituloModal) {
+        tituloModal.textContent = "Editar cliente";
+    }
 
-    if (nombre) nombre.value = cliente.nombre || "";
-    if (cedula) cedula.value = cliente.identificacion || "";
-    if (telefono) telefono.value = cliente.telefono || "";
-    if (correo) correo.value = cliente.correo || "";
-    if (direccion) direccion.value = cliente.direccion || "";
-    if (mac) mac.value = cliente.mac || "";
-    if (cto) cto.value = cliente.cto || "";
-    if (puerto) puerto.value = cliente.puerto || "";
-    if (plan) plan.value = cliente.plan || "";
-    if (precio) precio.value = cliente.precio ?? "";
-    if (fecha) fecha.value = cliente.fecha || "";
-    if (estado) estado.value = cliente.estado || "Activo";
+    nombre.value = cliente.nombre || "";
+    cedula.value = cliente.identificacion || "";
+    telefono.value = cliente.telefono || "";
+    correo.value = cliente.correo || "";
+    direccion.value = cliente.direccion || "";
+    mac.value = cliente.mac || "";
+    cto.value = cliente.cto || "";
+    puerto.value = cliente.puerto || "";
+    plan.value = cliente.plan || "";
+    precio.value = cliente.precio ?? "";
+    fecha.value = cliente.fecha || "";
+    estado.value = cliente.estado || "Activo";
 
     if (cedulaArchivo) cedulaArchivo.value = "";
     if (contrato) contrato.value = "";
@@ -963,9 +1046,9 @@ function abrirModalEditar(cliente) {
 }
 
 
-/* ======================================================
-   MOSTRAR ARCHIVO ACTUAL
-====================================================== */
+// ======================================================
+// MOSTRAR ARCHIVO ACTUAL
+// ======================================================
 
 function mostrarArchivoActual(contenedor, nombreArchivo, texto, rutaArchivo) {
     if (!contenedor) return;
@@ -1008,9 +1091,9 @@ function mostrarArchivoActual(contenedor, nombreArchivo, texto, rutaArchivo) {
 }
 
 
-/* ======================================================
-   CERRAR MODAL CLIENTE
-====================================================== */
+// ======================================================
+// CERRAR MODAL CLIENTE
+// ======================================================
 
 function cerrarModalCliente() {
     if (!modalCliente) return;
@@ -1019,6 +1102,7 @@ function cerrarModalCliente() {
     modalCliente.style.display = "none";
 
     clienteEditando = null;
+
     limpiarArchivosSeleccionados();
 }
 
@@ -1031,9 +1115,9 @@ if (cancelarCliente) {
 }
 
 
-/* ======================================================
-   LIMPIAR ARCHIVOS
-====================================================== */
+// ======================================================
+// LIMPIAR ARCHIVOS
+// ======================================================
 
 function limpiarArchivosSeleccionados() {
     if (detalleCedula) detalleCedula.innerHTML = "";
@@ -1046,12 +1130,13 @@ function limpiarArchivosSeleccionados() {
 }
 
 
-/* ======================================================
-   MOSTRAR ARCHIVO SELECCIONADO
-====================================================== */
+// ======================================================
+// MOSTRAR ARCHIVO SELECCIONADO
+// ======================================================
 
 function mostrarArchivoSeleccionado(input, contenedor, tipoArchivo) {
     if (!input || !contenedor) return;
+
     if (!input.files || input.files.length === 0) return;
 
     const archivo = input.files[0];
@@ -1070,17 +1155,32 @@ function mostrarArchivoSeleccionado(input, contenedor, tipoArchivo) {
     contenedor.style.display = "block";
 }
 
+
+// ======================================================
+// SELECCIONAR CÉDULA
+// ======================================================
+
 if (cedulaArchivo) {
     cedulaArchivo.addEventListener("change", function () {
         mostrarArchivoSeleccionado(cedulaArchivo, detalleCedula, "cédula");
     });
 }
 
+
+// ======================================================
+// SELECCIONAR CONTRATO
+// ======================================================
+
 if (contrato) {
     contrato.addEventListener("change", function () {
         mostrarArchivoSeleccionado(contrato, detalleContrato, "contrato");
     });
 }
+
+
+// ======================================================
+// SELECCIONAR RECIBO
+// ======================================================
 
 if (reciboPublico) {
     reciboPublico.addEventListener("change", function () {
@@ -1089,13 +1189,14 @@ if (reciboPublico) {
 }
 
 
-/* ======================================================
-   VALIDAR ARCHIVOS
-   PDF, IMÁGENES Y DOCUMENTOS WORD
-====================================================== */
+// ======================================================
+// VALIDAR ARCHIVO
+// ======================================================
 
 function validarArchivo(archivo) {
-    if (!archivo) return { valido: true };
+    if (!archivo) {
+        return { valido: true };
+    }
 
     const maximo = 10 * 1024 * 1024;
 
@@ -1111,9 +1212,7 @@ function validarArchivo(archivo) {
         ".jpg",
         ".jpeg",
         ".png",
-        ".webp",
-        ".doc",
-        ".docx"
+        ".webp"
     ];
 
     const nombreArchivo = archivo.name.toLowerCase();
@@ -1125,7 +1224,7 @@ function validarArchivo(archivo) {
     if (!permitido) {
         return {
             valido: false,
-            mensaje: "Solo se permiten PDF, JPG, JPEG, PNG, WEBP, DOC y DOCX."
+            mensaje: "Solo se permiten archivos PDF, JPG, JPEG, PNG o WEBP."
         };
     }
 
@@ -1133,9 +1232,9 @@ function validarArchivo(archivo) {
 }
 
 
-/* ======================================================
-   CREAR NOMBRE DE ARCHIVO
-====================================================== */
+// ======================================================
+// CREAR NOMBRE DE ARCHIVO
+// ======================================================
 
 function crearNombreArchivo(archivo) {
     const nombreLimpio = archivo.name
@@ -1153,26 +1252,31 @@ function crearNombreArchivo(archivo) {
 }
 
 
-/* ======================================================
-   OBTENER USUARIO ACTUAL
-====================================================== */
+// ======================================================
+// OBTENER USUARIO
+// ======================================================
 
 async function obtenerUsuarioActual() {
     const resultado = await supabaseClient.auth.getUser();
 
-    if (resultado.error) return null;
+    if (resultado.error) {
+        return null;
+    }
 
     return resultado.data.user || null;
 }
 
 
-/* ======================================================
-   SUBIR DOCUMENTO A SUPABASE
-====================================================== */
+// ======================================================
+// SUBIR DOCUMENTO
+// ======================================================
 
 async function subirDocumento(archivo, carpeta, userId) {
     if (!archivo) {
-        return { ruta: null, nombre: null };
+        return {
+            ruta: null,
+            nombre: null
+        };
     }
 
     const validacion = validarArchivo(archivo);
@@ -1206,12 +1310,13 @@ async function subirDocumento(archivo, carpeta, userId) {
 }
 
 
-/* ======================================================
-   ELIMINAR ARCHIVO ANTERIOR
-====================================================== */
+// ======================================================
+// ELIMINAR ARCHIVO ANTERIOR
+// ======================================================
 
 async function eliminarArchivoAnterior(rutaAnterior, rutaNueva) {
-    if (!rutaAnterior || rutaAnterior === rutaNueva) return;
+    if (!rutaAnterior) return;
+    if (rutaNueva && rutaAnterior === rutaNueva) return;
 
     const resultado = await supabaseClient
         .storage
@@ -1227,9 +1332,9 @@ async function eliminarArchivoAnterior(rutaAnterior, rutaNueva) {
 }
 
 
-/* ======================================================
-   GUARDAR O ACTUALIZAR CLIENTE
-====================================================== */
+// ======================================================
+// GUARDAR CLIENTE
+// ======================================================
 
 if (formCliente) {
     formCliente.addEventListener("submit", async function (event) {
@@ -1255,7 +1360,13 @@ if (formCliente) {
             const nuevoContrato = contrato?.files?.[0] || null;
             const nuevoRecibo = reciboPublico?.files?.[0] || null;
 
-            [nuevoCedula, nuevoContrato, nuevoRecibo].forEach(function (archivo) {
+            const archivos = [
+                nuevoCedula,
+                nuevoContrato,
+                nuevoRecibo
+            ];
+
+            archivos.forEach(function (archivo) {
                 if (!archivo) return;
 
                 const validacion = validarArchivo(archivo);
@@ -1338,18 +1449,29 @@ if (formCliente) {
                     .update(datosCliente)
                     .eq("id", clienteEditando.id);
 
-                if (resultado.error) throw resultado.error;
+                if (resultado.error) {
+                    throw resultado.error;
+                }
 
                 if (nuevoCedula && cedulaRutaAnterior) {
-                    await eliminarArchivoAnterior(cedulaRutaAnterior, cedulaRuta);
+                    await eliminarArchivoAnterior(
+                        cedulaRutaAnterior,
+                        cedulaRuta
+                    );
                 }
 
                 if (nuevoContrato && contratoRutaAnterior) {
-                    await eliminarArchivoAnterior(contratoRutaAnterior, contratoRuta);
+                    await eliminarArchivoAnterior(
+                        contratoRutaAnterior,
+                        contratoRuta
+                    );
                 }
 
                 if (nuevoRecibo && reciboRutaAnterior) {
-                    await eliminarArchivoAnterior(reciboRutaAnterior, reciboRuta);
+                    await eliminarArchivoAnterior(
+                        reciboRutaAnterior,
+                        reciboRuta
+                    );
                 }
 
                 mostrarNotificacion(
@@ -1357,12 +1479,15 @@ if (formCliente) {
                     "Los datos se actualizaron correctamente.",
                     "exito"
                 );
+
             } else {
                 const resultado = await supabaseClient
                     .from("Clientes")
                     .insert(datosCliente);
 
-                if (resultado.error) throw resultado.error;
+                if (resultado.error) {
+                    throw resultado.error;
+                }
 
                 mostrarNotificacion(
                     "Cliente guardado",
@@ -1372,6 +1497,7 @@ if (formCliente) {
             }
 
             cerrarModalCliente();
+
             await cargarClientes();
 
         } catch (error) {
@@ -1382,6 +1508,7 @@ if (formCliente) {
                 error.message || "No se pudo guardar el cliente.",
                 "error"
             );
+
         } finally {
             if (botonGuardar) {
                 botonGuardar.disabled = false;
@@ -1392,23 +1519,23 @@ if (formCliente) {
 }
 
 
-/* ======================================================
-   VER CLIENTE
-====================================================== */
+// ======================================================
+// VER CLIENTE
+// ======================================================
 
 function abrirModalVerCliente(cliente) {
-    if (verNombre) verNombre.textContent = cliente.nombre || "Cliente";
-    if (verTelefono) verTelefono.textContent = cliente.telefono || "No registrado";
-    if (verCedula) verCedula.textContent = cliente.identificacion || "No registrada";
-    if (verCorreo) verCorreo.textContent = cliente.correo || "No registrado";
-    if (verDireccion) verDireccion.textContent = cliente.direccion || "No registrada";
-    if (verMac) verMac.textContent = cliente.mac || "No registrada";
-    if (verCto) verCto.textContent = cliente.cto || "No registrado";
-    if (verPuerto) verPuerto.textContent = cliente.puerto || "No registrado";
-    if (verPlan) verPlan.textContent = cliente.plan || "No registrado";
-    if (verPrecio) verPrecio.textContent = formatearMoneda(cliente.precio);
-    if (verEstado) verEstado.textContent = cliente.estado || "No registrado";
-    if (verFecha) verFecha.textContent = cliente.fecha || "No registrada";
+    verNombre.textContent = cliente.nombre || "Cliente";
+    verTelefono.textContent = cliente.telefono || "No registrado";
+    verCedula.textContent = cliente.identificacion || "No registrada";
+    verCorreo.textContent = cliente.correo || "No registrado";
+    verDireccion.textContent = cliente.direccion || "No registrada";
+    verMac.textContent = cliente.mac || "No registrada";
+    verCto.textContent = cliente.cto || "No registrado";
+    verPuerto.textContent = cliente.puerto || "No registrado";
+    verPlan.textContent = cliente.plan || "No registrado";
+    verPrecio.textContent = formatearMoneda(cliente.precio);
+    verEstado.textContent = cliente.estado || "No registrado";
+    verFecha.textContent = cliente.fecha || "No registrada";
 
     mostrarDocumento(
         verCedulaArchivo,
@@ -1441,9 +1568,9 @@ function abrirModalVerCliente(cliente) {
 }
 
 
-/* ======================================================
-   MOSTRAR DOCUMENTO
-====================================================== */
+// ======================================================
+// MOSTRAR DOCUMENTO
+// ======================================================
 
 function mostrarDocumento(
     contenedor,
@@ -1483,20 +1610,19 @@ function mostrarDocumento(
         </button>
     `;
 
-    documento.querySelector(".btn-abrir-documento").addEventListener(
-        "click",
-        function () {
-            abrirDocumento(ruta);
-        }
-    );
+    const boton = documento.querySelector(".btn-abrir-documento");
+
+    boton.addEventListener("click", function () {
+        abrirDocumento(ruta);
+    });
 
     contenedor.appendChild(documento);
 }
 
 
-/* ======================================================
-   ABRIR DOCUMENTO
-====================================================== */
+// ======================================================
+// ABRIR DOCUMENTO
+// ======================================================
 
 async function abrirDocumento(ruta) {
     if (!ruta) return;
@@ -1507,7 +1633,9 @@ async function abrirDocumento(ruta) {
             .from("documentos")
             .createSignedUrl(ruta, 3600);
 
-        if (resultado.error) throw resultado.error;
+        if (resultado.error) {
+            throw resultado.error;
+        }
 
         window.open(resultado.data.signedUrl, "_blank");
 
@@ -1523,9 +1651,9 @@ async function abrirDocumento(ruta) {
 }
 
 
-/* ======================================================
-   CERRAR MODAL VER CLIENTE
-====================================================== */
+// ======================================================
+// CERRAR MODAL VER
+// ======================================================
 
 if (cerrarVerCliente) {
     cerrarVerCliente.addEventListener("click", function () {
@@ -1537,9 +1665,9 @@ if (cerrarVerCliente) {
 }
 
 
-/* ======================================================
-   ELIMINAR CLIENTE
-====================================================== */
+// ======================================================
+// ELIMINAR CLIENTE
+// ======================================================
 
 function abrirModalEliminar(cliente) {
     clienteEliminar = cliente;
@@ -1568,9 +1696,9 @@ if (cancelarEliminar) {
 }
 
 
-/* ======================================================
-   ELIMINAR ARCHIVOS DE STORAGE
-====================================================== */
+// ======================================================
+// ELIMINAR ARCHIVO
+// ======================================================
 
 async function eliminarArchivoStorage(ruta) {
     if (!ruta) return;
@@ -1580,13 +1708,15 @@ async function eliminarArchivoStorage(ruta) {
         .from("documentos")
         .remove([ruta]);
 
-    if (resultado.error) console.warn(resultado.error);
+    if (resultado.error) {
+        console.warn(resultado.error);
+    }
 }
 
 
-/* ======================================================
-   CONFIRMAR ELIMINACIÓN
-====================================================== */
+// ======================================================
+// CONFIRMAR ELIMINAR
+// ======================================================
 
 if (confirmarEliminar) {
     confirmarEliminar.addEventListener("click", async function () {
@@ -1602,8 +1732,11 @@ if (confirmarEliminar) {
                 .delete()
                 .eq("id", cliente.id);
 
-            if (resultado.error) throw resultado.error;
+            if (resultado.error) {
+                throw resultado.error;
+            }
 
+            // Eliminar los archivos después de borrar el registro
             await eliminarArchivoStorage(cliente.cedula_ruta);
             await eliminarArchivoStorage(cliente.contrato_ruta);
             await eliminarArchivoStorage(cliente.recibo_ruta);
@@ -1626,6 +1759,7 @@ if (confirmarEliminar) {
                 error.message || "No se pudo eliminar el cliente.",
                 "error"
             );
+
         } finally {
             confirmarEliminar.disabled = false;
         }
@@ -1633,9 +1767,9 @@ if (confirmarEliminar) {
 }
 
 
-/* ======================================================
-   ESTADÍSTICAS
-====================================================== */
+// ======================================================
+// ESTADÍSTICAS
+// ======================================================
 
 function actualizarEstadisticas() {
     const total = clientes.length;
@@ -1652,20 +1786,27 @@ function actualizarEstadisticas() {
             return acumulado + Number(cliente.precio || 0);
         }, 0);
 
-    if (totalClientes) totalClientes.textContent = total;
-    if (clientesActivos) clientesActivos.textContent = activos;
+    if (totalClientes) {
+        totalClientes.textContent = total;
+    }
+
+    if (clientesActivos) {
+        clientesActivos.textContent = activos;
+    }
 
     if (ingresosMes) {
         ingresosMes.textContent = formatearMoneda(ingresos);
     }
 
-    if (pagosPendientes) pagosPendientes.textContent = "$0";
+    if (pagosPendientes) {
+        pagosPendientes.textContent = "$0";
+    }
 }
 
 
-/* ======================================================
-   MONEDA
-====================================================== */
+// ======================================================
+// MONEDA
+// ======================================================
 
 function formatearMoneda(valor) {
     return new Intl.NumberFormat("es-CO", {
@@ -1676,14 +1817,16 @@ function formatearMoneda(valor) {
 }
 
 
-/* ======================================================
-   NOTIFICACIONES
-====================================================== */
+// ======================================================
+// NOTIFICACIÓN
+// ======================================================
 
 function mostrarNotificacion(titulo, mensaje, tipo) {
     const anterior = document.querySelector(".notificacion-sistecfiber");
 
-    if (anterior) anterior.remove();
+    if (anterior) {
+        anterior.remove();
+    }
 
     const notificacion = document.createElement("div");
 
@@ -1717,9 +1860,9 @@ function mostrarNotificacion(titulo, mensaje, tipo) {
 }
 
 
-/* ======================================================
-   CERRAR MODALES AL HACER CLIC AFUERA
-====================================================== */
+// ======================================================
+// CERRAR MODALES AL HACER CLIC AFUERA
+// ======================================================
 
 window.addEventListener("click", function (event) {
     if (modalCliente && event.target === modalCliente) {
@@ -1737,9 +1880,9 @@ window.addEventListener("click", function (event) {
 });
 
 
-/* ======================================================
-   CERRAR MODALES CON ESCAPE
-====================================================== */
+// ======================================================
+// ESCAPE
+// ======================================================
 
 document.addEventListener("keydown", function (event) {
     if (event.key !== "Escape") return;
@@ -1754,8 +1897,10 @@ document.addEventListener("keydown", function (event) {
 });
 
 
-/* ======================================================
-   INICIAR APLICACIÓN
-====================================================== */
+// ======================================================
+// INICIAR APLICACIÓN
+// ======================================================
 
+// No llamar mostrarSeccion("inicio") aquí.
+// Se recuperará la última sección guardada.
 comprobarSesion();
