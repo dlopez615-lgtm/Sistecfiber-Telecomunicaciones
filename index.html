@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 
@@ -101,6 +102,272 @@
             font-weight: 600;
         }
 
+        /* DOCUMENTOS */
+
+        .documentos-ver {
+            margin-top: 25px;
+        }
+
+        .documentos-ver h3 {
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: #1e293b;
+        }
+
+        .documentos-ver .contrato-ver {
+            margin-bottom: 10px;
+        }
+
+        .documento-archivo {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            background: #f8fafc;
+        }
+
+        .documento-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .documento-icono {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .documento-nombre {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .documento-nombre strong {
+            font-size: 13px;
+            color: #334155;
+        }
+
+        .documento-nombre span {
+            font-size: 12px;
+            color: #64748b;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .documento-sin-archivo {
+            padding: 12px 14px;
+            border: 1px dashed #cbd5e1;
+            border-radius: 10px;
+            color: #64748b;
+            font-size: 13px;
+            background: #f8fafc;
+        }
+
+        /* DOCUMENTOS DEL CLIENTE */
+
+        .documentos-cliente {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 15px !important;
+            width: 100% !important;
+        }
+
+        .documento-item {
+            width: 100% !important;
+        }
+
+        .documento-item .subir-archivo {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            width: 100% !important;
+            min-height: 70px !important;
+            padding: 14px !important;
+            gap: 12px !important;
+            box-sizing: border-box !important;
+            cursor: pointer;
+        }
+
+        .documento-item .archivo-icon {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 40px !important;
+            height: 40px !important;
+            flex-shrink: 0 !important;
+            font-size: 22px !important;
+        }
+
+        .documento-texto {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 4px !important;
+            min-width: 0 !important;
+            flex: 1 !important;
+        }
+
+        .documento-texto strong {
+            display: block !important;
+            font-size: 13px !important;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .documento-texto small {
+            display: block !important;
+            font-size: 11px !important;
+            color: #64748b;
+        }
+
+        .documento-item.archivo-seleccionado .subir-archivo {
+            border-color: #bfdbfe !important;
+            background: #eff6ff !important;
+        }
+
+        .documento-item.archivo-seleccionado .documento-texto strong {
+            color: #2563eb;
+        }
+
+        /* DATOS - DOCUMENTOS */
+
+        .datos-clientes {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 20px;
+        }
+
+        .datos-cliente {
+            width: 100%;
+            box-sizing: border-box;
+            background: #ffffff;
+            border: 1px solid #e5eaf0;
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .datos-cliente-cabecera {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            margin-bottom: 10px;
+        }
+
+        .datos-cliente-icono {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: #eef5ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .datos-cliente-nombre {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1f2937;
+            overflow-wrap: anywhere;
+        }
+
+        .datos-documentos {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .datos-documento {
+            width: 100%;
+            box-sizing: border-box;
+            min-height: 58px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 10px 0;
+            border-top: 1px solid #edf0f4;
+        }
+
+        .datos-documento-info {
+            min-width: 0;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .datos-documento-icono {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: #f5f7fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            flex-shrink: 0;
+        }
+
+        .datos-documento-info > div {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .datos-documento-info strong {
+            font-size: 13px;
+            color: #273142;
+            font-weight: 700;
+        }
+
+        .datos-documento-nombre {
+            display: block;
+            max-width: 100%;
+            font-size: 12px;
+            color: #7b8494;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .datos-no-cargado {
+            display: block;
+            font-size: 12px;
+            color: #9aa3b2;
+        }
+
+        .datos-documento .btn-abrir-dato {
+            flex-shrink: 0;
+            min-width: 70px;
+        }
+
+        .datos-documento-vacio {
+            opacity: 0.85;
+        }
+
+        /* BUSCADOR DE DATOS */
+
+        .datos-buscador {
+            width: 100%;
+            margin-top: 18px;
+            margin-bottom: 20px;
+        }
+
+        .datos-buscador input {
+            min-width: 0;
+        }
+
         @media (max-width: 700px) {
 
             .menu-extra-tabla {
@@ -112,6 +379,55 @@
                 padding: 8px;
             }
 
+            .documento-archivo {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .documento-item .subir-archivo {
+                min-height: 65px !important;
+            }
+
+            .datos-cliente {
+                padding: 13px;
+                border-radius: 12px;
+            }
+
+            .datos-cliente-nombre {
+                font-size: 15px;
+            }
+
+            .datos-documento {
+                align-items: center;
+                gap: 8px;
+            }
+
+            .datos-documento-info {
+                gap: 8px;
+            }
+
+            .datos-documento-info strong {
+                font-size: 12px;
+            }
+
+            .datos-documento-nombre {
+                max-width: 170px;
+            }
+
+            .datos-documento .btn-abrir-dato {
+                min-width: 62px;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .datos-buscador {
+                margin-top: 12px;
+                margin-bottom: 15px;
+            }
+
+            .datos-buscador input {
+                font-size: 13px;
+            }
         }
 
     </style>
@@ -120,9 +436,7 @@
 
 <body>
 
-    <!-- =========================
-         PANTALLA DE ACCESO
-    ========================== -->
+    <!-- PANTALLA DE ACCESO -->
 
     <div id="pantallaAcceso" class="pantalla-acceso">
 
@@ -173,10 +487,7 @@
                     Iniciar sesión
                 </button>
 
-                <div
-                    id="mensajeAcceso"
-                    class="mensaje-acceso">
-                </div>
+                <div id="mensajeAcceso" class="mensaje-acceso"></div>
 
             </form>
 
@@ -192,9 +503,7 @@
     </div>
 
 
-    <!-- =========================
-         APLICACIÓN
-    ========================== -->
+    <!-- APLICACIÓN -->
 
     <div class="app" id="aplicacion">
 
@@ -215,7 +524,6 @@
 
             </div>
 
-
             <nav class="menu">
 
                 <button
@@ -228,7 +536,6 @@
 
                 </button>
 
-
                 <button
                     class="menu-item"
                     type="button"
@@ -238,7 +545,6 @@
                     Clientes
 
                 </button>
-
 
                 <button
                     class="menu-item"
@@ -250,17 +556,15 @@
 
                 </button>
 
-
                 <button
                     class="menu-item"
                     type="button"
-                    data-seccion="contratos">
+                    data-seccion="datos">
 
                     <span>📄</span>
-                    Contratos
+                    Datos
 
                 </button>
-
 
                 <button
                     class="menu-item"
@@ -271,7 +575,6 @@
                     Equipos
 
                 </button>
-
 
                 <button
                     class="menu-item"
@@ -284,7 +587,6 @@
                 </button>
 
             </nav>
-
 
             <button
                 id="btnCerrarSesion"
@@ -307,19 +609,12 @@
             <header class="topbar">
 
                 <div>
-
-                    <h1>
-                        Panel de Control
-                    </h1>
-
+                    <h1>Panel de Control</h1>
                 </div>
-
 
                 <div class="usuario">
 
-                    <div
-                        class="avatar"
-                        id="avatarUsuario">
+                    <div class="avatar" id="avatarUsuario">
                         E
                     </div>
 
@@ -340,9 +635,7 @@
             </header>
 
 
-            <!-- =========================
-                 INICIO
-            ========================== -->
+            <!-- INICIO -->
 
             <section
                 id="seccionInicio"
@@ -357,19 +650,11 @@
                         </div>
 
                         <div>
-
-                            <span>
-                                Clientes
-                            </span>
-
-                            <strong id="totalClientes">
-                                0
-                            </strong>
-
+                            <span>Clientes</span>
+                            <strong id="totalClientes">0</strong>
                         </div>
 
                     </div>
-
 
                     <div class="estadistica">
 
@@ -378,19 +663,11 @@
                         </div>
 
                         <div>
-
-                            <span>
-                                Clientes activos
-                            </span>
-
-                            <strong id="clientesActivos">
-                                0
-                            </strong>
-
+                            <span>Clientes activos</span>
+                            <strong id="clientesActivos">0</strong>
                         </div>
 
                     </div>
-
 
                     <div class="estadistica">
 
@@ -399,19 +676,11 @@
                         </div>
 
                         <div>
-
-                            <span>
-                                Ingresos mensuales
-                            </span>
-
-                            <strong id="ingresosMes">
-                                $0
-                            </strong>
-
+                            <span>Ingresos mensuales</span>
+                            <strong id="ingresosMes">$0</strong>
                         </div>
 
                     </div>
-
 
                     <div class="estadistica">
 
@@ -420,15 +689,8 @@
                         </div>
 
                         <div>
-
-                            <span>
-                                Pagos pendientes
-                            </span>
-
-                            <strong id="pagosPendientes">
-                                $0
-                            </strong>
-
+                            <span>Pagos pendientes</span>
+                            <strong id="pagosPendientes">$0</strong>
                         </div>
 
                     </div>
@@ -438,9 +700,7 @@
             </section>
 
 
-            <!-- =========================
-                 CLIENTES
-            ========================== -->
+            <!-- CLIENTES -->
 
             <section
                 id="seccionClientes"
@@ -449,17 +709,9 @@
                 <div class="panel-header">
 
                     <div>
-
-                        <h2>
-                            Clientes
-                        </h2>
-
-                        <p>
-                            Administrar clientes
-                        </p>
-
+                        <h2>Clientes</h2>
+                        <p>Administrar clientes</p>
                     </div>
-
 
                     <button
                         id="btnNuevoCliente"
@@ -472,12 +724,9 @@
 
                 </div>
 
-
                 <div class="buscador">
 
-                    <span>
-                        ⌕
-                    </span>
+                    <span>⌕</span>
 
                     <input
                         type="search"
@@ -487,18 +736,12 @@
 
                 </div>
 
-
-                <div
-                    id="listaClientes"
-                    class="clientes-grid">
-                </div>
+                <div id="listaClientes" class="clientes-grid"></div>
 
             </section>
 
 
-            <!-- =========================
-                 PAGOS
-            ========================== -->
+            <!-- PAGOS -->
 
             <section
                 id="seccionPagos"
@@ -509,25 +752,15 @@
                     <div class="panel-header">
 
                         <div>
-
-                            <h2>
-                                Pagos
-                            </h2>
-
-                            <p>
-                                Administración de pagos de los clientes
-                            </p>
-
+                            <h2>Pagos</h2>
+                            <p>Administración de pagos de los clientes</p>
                         </div>
 
                     </div>
 
-
                     <div class="menu-extra-vacio">
 
-                        <h3>
-                            Pagos
-                        </h3>
+                        <h3>Pagos</h3>
 
                         <p>
                             Aquí podremos administrar los pagos de los clientes.
@@ -540,12 +773,10 @@
             </section>
 
 
-            <!-- =========================
-                 CONTRATOS
-            ========================== -->
+            <!-- DATOS: DOCUMENTOS DE CLIENTES -->
 
             <section
-                id="seccionContratos"
+                id="seccionDatos"
                 class="vista-menu-extra">
 
                 <div class="panel">
@@ -553,30 +784,31 @@
                     <div class="panel-header">
 
                         <div>
-
-                            <h2>
-                                Contratos
-                            </h2>
-
-                            <p>
-                                Documentos y contratos de los clientes
-                            </p>
-
+                            <h2>Datos</h2>
+                            <p>Documentos almacenados de los clientes</p>
                         </div>
 
                     </div>
 
+                    <!-- BUSCADOR AGREGADO -->
 
-                    <div class="menu-extra-vacio">
+                    <div class="buscador datos-buscador">
 
-                        <h3>
-                            Contratos
-                        </h3>
+                        <span>⌕</span>
 
-                        <p>
-                            Aquí podremos consultar los contratos almacenados.
-                        </p>
+                        <input
+                            type="search"
+                            id="buscarDatos"
+                            placeholder="Buscar cliente por nombre..."
+                            autocomplete="off">
 
+                    </div>
+
+                    <!-- AQUÍ APARECEN LOS CLIENTES Y SUS DOCUMENTOS -->
+
+                    <div
+                        id="listaDatos"
+                        class="datos-clientes">
                     </div>
 
                 </div>
@@ -584,9 +816,7 @@
             </section>
 
 
-            <!-- =========================
-                 EQUIPOS
-            ========================== -->
+            <!-- EQUIPOS -->
 
             <section
                 id="seccionEquipos"
@@ -597,25 +827,15 @@
                     <div class="panel-header">
 
                         <div>
-
-                            <h2>
-                                Equipos
-                            </h2>
-
-                            <p>
-                                Administración de equipos y conexiones
-                            </p>
-
+                            <h2>Equipos</h2>
+                            <p>Administración de equipos y conexiones</p>
                         </div>
 
                     </div>
 
-
                     <div class="menu-extra-vacio">
 
-                        <h3>
-                            Equipos
-                        </h3>
+                        <h3>Equipos</h3>
 
                         <p>
                             Aquí podremos administrar los equipos de los clientes.
@@ -628,9 +848,7 @@
             </section>
 
 
-            <!-- =========================
-                 SOPORTE
-            ========================== -->
+            <!-- SOPORTE -->
 
             <section
                 id="seccionSoporte"
@@ -641,25 +859,15 @@
                     <div class="panel-header">
 
                         <div>
-
-                            <h2>
-                                Soporte
-                            </h2>
-
-                            <p>
-                                Atención y soporte de clientes
-                            </p>
-
+                            <h2>Soporte</h2>
+                            <p>Atención y soporte de clientes</p>
                         </div>
 
                     </div>
 
-
                     <div class="menu-extra-vacio">
 
-                        <h3>
-                            Soporte
-                        </h3>
+                        <h3>Soporte</h3>
 
                         <p>
                             Aquí podremos administrar las solicitudes de soporte.
@@ -676,55 +884,35 @@
     </div>
 
 
-    <!-- =========================
-         MODAL NUEVO CLIENTE
-    ========================== -->
+    <!-- MODAL NUEVO CLIENTE -->
 
-    <div
-        id="modalCliente"
-        class="modal">
+    <div id="modalCliente" class="modal">
 
         <div class="modal-box">
 
             <div class="modal-header">
 
                 <div>
-
-                    <h2 id="tituloModal">
-                        Nuevo cliente
-                    </h2>
-
-                    <p>
-                        Registra la información del cliente
-                    </p>
-
+                    <h2 id="tituloModal">Nuevo cliente</h2>
+                    <p>Registra la información del cliente</p>
                 </div>
-
 
                 <button
                     id="cerrarModal"
                     class="btn-cerrar"
                     type="button">
-
                     ×
-
                 </button>
 
             </div>
 
-
-            <form
-                id="formCliente"
-                autocomplete="off">
+            <form id="formCliente" autocomplete="off">
 
                 <div class="form-grid">
 
-
                     <div class="campo">
 
-                        <label for="nombre">
-                            Nombre completo
-                        </label>
+                        <label for="nombre">Nombre completo</label>
 
                         <input
                             type="text"
@@ -735,12 +923,9 @@
 
                     </div>
 
-
                     <div class="campo">
 
-                        <label for="cedula">
-                            Cédula
-                        </label>
+                        <label for="cedula">Cédula</label>
 
                         <input
                             type="text"
@@ -750,12 +935,9 @@
 
                     </div>
 
-
                     <div class="campo">
 
-                        <label for="telefono">
-                            Teléfono
-                        </label>
+                        <label for="telefono">Teléfono</label>
 
                         <input
                             type="text"
@@ -766,12 +948,9 @@
 
                     </div>
 
-
                     <div class="campo">
 
-                        <label for="correo">
-                            Correo electrónico
-                        </label>
+                        <label for="correo">Correo electrónico</label>
 
                         <input
                             type="email"
@@ -781,12 +960,9 @@
 
                     </div>
 
-
                     <div class="campo">
 
-                        <label for="direccion">
-                            Dirección
-                        </label>
+                        <label for="direccion">Dirección</label>
 
                         <input
                             type="text"
@@ -797,12 +973,9 @@
 
                     </div>
 
-
                     <div class="campo">
 
-                        <label for="mac">
-                            MAC
-                        </label>
+                        <label for="mac">MAC</label>
 
                         <input
                             type="text"
@@ -813,12 +986,9 @@
 
                     </div>
 
-
                     <div class="campo">
 
-                        <label for="cto">
-                            CTO
-                        </label>
+                        <label for="cto">CTO</label>
 
                         <input
                             type="text"
@@ -829,12 +999,9 @@
 
                     </div>
 
-
                     <div class="campo">
 
-                        <label for="puerto">
-                            # Puerto
-                        </label>
+                        <label for="puerto"># Puerto</label>
 
                         <input
                             type="text"
@@ -845,47 +1012,23 @@
 
                     </div>
 
-
                     <div class="campo">
 
-                        <label for="plan">
-                            Plan de internet
-                        </label>
+                        <label for="plan">Plan de internet</label>
 
-                        <select
-                            id="plan"
-                            name="cliente_plan">
-
-                            <option value="300 Mbps">
-                                300 Mbps
-                            </option>
-
-                            <option value="360 Mbps">
-                                360 Mbps
-                            </option>
-
-                            <option value="600 Mbps">
-                                600 Mbps
-                            </option>
-
-                            <option value="800 Mbps">
-                                800 Mbps
-                            </option>
-
-                            <option value="1 Gbps">
-                                1 Gbps
-                            </option>
-
+                        <select id="plan" name="cliente_plan">
+                            <option value="300 Mbps">300 Mbps</option>
+                            <option value="360 Mbps">360 Mbps</option>
+                            <option value="600 Mbps">600 Mbps</option>
+                            <option value="800 Mbps">800 Mbps</option>
+                            <option value="1 Gbps">1 Gbps</option>
                         </select>
 
                     </div>
 
-
                     <div class="campo">
 
-                        <label for="precio">
-                            Mensualidad
-                        </label>
+                        <label for="precio">Mensualidad</label>
 
                         <input
                             type="number"
@@ -898,12 +1041,9 @@
 
                     </div>
 
-
                     <div class="campo">
 
-                        <label for="fecha">
-                            Fecha de instalación
-                        </label>
+                        <label for="fecha">Fecha de instalación</label>
 
                         <input
                             type="date"
@@ -912,75 +1052,134 @@
 
                     </div>
 
-
                     <div class="campo">
 
-                        <label for="estado">
-                            Estado
-                        </label>
+                        <label for="estado">Estado</label>
 
-                        <select
-                            id="estado"
-                            name="cliente_estado">
-
-                            <option value="Activo">
-                                Activo
-                            </option>
-
-                            <option value="Suspendido">
-                                Suspendido
-                            </option>
-
-                            <option value="Retirado">
-                                Retirado
-                            </option>
-
+                        <select id="estado" name="cliente_estado">
+                            <option value="Activo">Activo</option>
+                            <option value="Suspendido">Suspendido</option>
+                            <option value="Retirado">Retirado</option>
                         </select>
 
                     </div>
 
 
+                    <!-- DOCUMENTOS -->
+
                     <div class="campo campo-completo">
 
-                        <label>
-                            Contrato del cliente
-                        </label>
+                        <label>Documentos del cliente</label>
+
+                        <div class="documentos-cliente">
+
+                            <!-- CÉDULA -->
+
+                            <div class="documento-item">
+
+                                <label
+                                    for="cedulaArchivo"
+                                    class="subir-archivo"
+                                    id="contenedorCedula">
+
+                                    <span class="archivo-icon">🪪</span>
+
+                                    <span class="documento-texto">
+
+                                        <strong id="textoCedula">
+                                            Cédula
+                                        </strong>
+
+                                        <small id="detalleCedula">
+                                            Documento de identidad del cliente
+                                        </small>
+
+                                    </span>
+
+                                </label>
+
+                                <input
+                                    type="file"
+                                    id="cedulaArchivo"
+                                    name="cliente_cedula_archivo"
+                                    accept=".pdf,.jpg,.jpeg,.png,.webp"
+                                    autocomplete="off"
+                                    hidden>
+
+                            </div>
 
 
-                        <label
-                            for="contrato"
-                            class="subir-archivo">
+                            <!-- CONTRATO -->
 
-                            <span class="archivo-icon">
-                                📄
-                            </span>
+                            <div class="documento-item">
 
-                            <span>
+                                <label
+                                    for="contrato"
+                                    class="subir-archivo"
+                                    id="contenedorContrato">
 
-                                <strong>
-                                    Seleccionar contrato
-                                </strong>
+                                    <span class="archivo-icon">📄</span>
 
-                                <small>
-                                    PDF, Word, imágenes o cualquier archivo
-                                </small>
+                                    <span class="documento-texto">
 
-                            </span>
+                                        <strong id="textoContrato">
+                                            Contrato
+                                        </strong>
 
-                        </label>
+                                        <small id="detalleContrato">
+                                            Contrato firmado del cliente
+                                        </small>
+
+                                    </span>
+
+                                </label>
+
+                                <input
+                                    type="file"
+                                    id="contrato"
+                                    name="cliente_contrato"
+                                    accept=".pdf,.jpg,.jpeg,.png,.webp"
+                                    autocomplete="off"
+                                    hidden>
+
+                            </div>
 
 
-                        <input
-                            type="file"
-                            id="contrato"
-                            name="cliente_contrato"
-                            autocomplete="off"
-                            hidden>
+                            <!-- RECIBO -->
 
+                            <div class="documento-item">
 
-                        <div
-                            id="archivoSeleccionado"
-                            class="archivo-seleccionado">
+                                <label
+                                    for="reciboPublico"
+                                    class="subir-archivo"
+                                    id="contenedorRecibo">
+
+                                    <span class="archivo-icon">🧾</span>
+
+                                    <span class="documento-texto">
+
+                                        <strong id="textoRecibo">
+                                            Recibo de Servicio Público
+                                        </strong>
+
+                                        <small id="detalleRecibo">
+                                            Recibo utilizado para verificar la dirección
+                                        </small>
+
+                                    </span>
+
+                                </label>
+
+                                <input
+                                    type="file"
+                                    id="reciboPublico"
+                                    name="cliente_recibo_publico"
+                                    accept=".pdf,.jpg,.jpeg,.png,.webp"
+                                    autocomplete="off"
+                                    hidden>
+
+                            </div>
+
                         </div>
 
                     </div>
@@ -994,18 +1193,13 @@
                         type="button"
                         id="cancelarCliente"
                         class="btn-secondary">
-
                         Cancelar
-
                     </button>
-
 
                     <button
                         type="submit"
                         class="btn-primary">
-
                         Guardar cliente
-
                     </button>
 
                 </div>
@@ -1017,40 +1211,24 @@
     </div>
 
 
-    <!-- =========================
-         MODAL ELIMINAR
-    ========================== -->
+    <!-- MODAL ELIMINAR -->
 
-    <div
-        id="modalEliminar"
-        class="modal">
+    <div id="modalEliminar" class="modal">
 
         <div class="modal-box eliminar-box">
 
-            <div class="eliminar-icon">
-                🗑️
-            </div>
+            <div class="eliminar-icon">🗑️</div>
 
-            <h2>
-                ¿Eliminar cliente?
-            </h2>
+            <h2>¿Eliminar cliente?</h2>
 
             <p>
-
                 Estás a punto de eliminar a
-
-                <strong id="nombreEliminar">
-                    este cliente
-                </strong>.
-
+                <strong id="nombreEliminar">este cliente</strong>.
             </p>
 
             <p class="texto-pequeno">
-
                 Esta acción eliminará también la información asociada al cliente.
-
             </p>
-
 
             <div class="modal-footer">
 
@@ -1058,19 +1236,14 @@
                     type="button"
                     id="cancelarEliminar"
                     class="btn-secondary">
-
                     Cancelar
-
                 </button>
-
 
                 <button
                     type="button"
                     id="confirmarEliminar"
                     class="btn-danger">
-
                     Sí, eliminar
-
                 </button>
 
             </div>
@@ -1080,38 +1253,24 @@
     </div>
 
 
-    <!-- =========================
-         MODAL VER CLIENTE
-    ========================== -->
+    <!-- MODAL VER CLIENTE -->
 
-    <div
-        id="modalVerCliente"
-        class="modal">
+    <div id="modalVerCliente" class="modal">
 
         <div class="modal-box">
 
             <div class="modal-header">
 
                 <div>
-
-                    <h2 id="verNombre">
-                        Cliente
-                    </h2>
-
-                    <p>
-                        Información del cliente
-                    </p>
-
+                    <h2 id="verNombre">Cliente</h2>
+                    <p>Información del cliente</p>
                 </div>
-
 
                 <button
                     id="cerrarVerCliente"
                     class="btn-cerrar"
                     type="button">
-
                     ×
-
                 </button>
 
             </div>
@@ -1119,134 +1278,85 @@
 
             <div class="detalle-cliente">
 
-
                 <div class="detalle">
-
-                    <span>
-                        Teléfono
-                    </span>
-
+                    <span>Teléfono</span>
                     <strong id="verTelefono"></strong>
-
                 </div>
 
-
                 <div class="detalle">
-
-                    <span>
-                        Cédula
-                    </span>
-
+                    <span>Cédula</span>
                     <strong id="verCedula"></strong>
-
                 </div>
 
-
                 <div class="detalle">
-
-                    <span>
-                        Correo electrónico
-                    </span>
-
+                    <span>Correo electrónico</span>
                     <strong id="verCorreo"></strong>
-
                 </div>
 
-
                 <div class="detalle">
-
-                    <span>
-                        Dirección
-                    </span>
-
+                    <span>Dirección</span>
                     <strong id="verDireccion"></strong>
-
                 </div>
 
-
                 <div class="detalle">
-
-                    <span>
-                        MAC
-                    </span>
-
+                    <span>MAC</span>
                     <strong id="verMac"></strong>
-
                 </div>
 
-
                 <div class="detalle">
-
-                    <span>
-                        CTO
-                    </span>
-
+                    <span>CTO</span>
                     <strong id="verCto"></strong>
-
                 </div>
 
-
                 <div class="detalle">
-
-                    <span>
-                        # Puerto
-                    </span>
-
+                    <span># Puerto</span>
                     <strong id="verPuerto"></strong>
-
                 </div>
 
-
                 <div class="detalle">
-
-                    <span>
-                        Plan
-                    </span>
-
+                    <span>Plan</span>
                     <strong id="verPlan"></strong>
-
                 </div>
 
-
                 <div class="detalle">
-
-                    <span>
-                        Mensualidad
-                    </span>
-
+                    <span>Mensualidad</span>
                     <strong id="verPrecio"></strong>
-
                 </div>
 
-
                 <div class="detalle">
-
-                    <span>
-                        Estado
-                    </span>
-
+                    <span>Estado</span>
                     <strong id="verEstado"></strong>
-
                 </div>
-
 
                 <div class="detalle">
-
-                    <span>
-                        Fecha de instalación
-                    </span>
-
+                    <span>Fecha de instalación</span>
                     <strong id="verFecha"></strong>
-
                 </div>
-
 
             </div>
 
 
-            <div
-                id="verContrato"
-                class="contrato-ver">
+            <!-- DOCUMENTOS -->
+
+            <div class="documentos-ver">
+
+                <h3>Documentos del cliente</h3>
+
+                <div
+                    id="verCedulaArchivo"
+                    class="contrato-ver">
+                </div>
+
+                <div
+                    id="verContrato"
+                    class="contrato-ver">
+                </div>
+
+                <div
+                    id="verReciboPublico"
+                    class="contrato-ver">
+                </div>
+
             </div>
 
         </div>
