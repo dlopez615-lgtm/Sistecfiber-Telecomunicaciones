@@ -9,10 +9,7 @@
 
     <link rel="stylesheet" href="style.css">
 
-    <style>
-        /* ==================================================
-           MEJORAS
-        ================================================== */
+    <style id="sistecfiber-mejoras">
 
         .cliente-card {
             min-height: auto !important;
@@ -104,140 +101,6 @@
             font-weight: 600;
         }
 
-        /* ==================================================
-           PANTALLA DE ACCESO
-        ================================================== */
-
-        .pantalla-acceso {
-            position: fixed;
-            inset: 0;
-            z-index: 99999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f4f7fb;
-        }
-
-        .pantalla-acceso.oculta {
-            display: none;
-        }
-
-        .acceso-box {
-            width: min(420px, calc(100% - 30px));
-            background: white;
-            border-radius: 18px;
-            padding: 35px;
-            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.12);
-            text-align: center;
-        }
-
-        .acceso-logo {
-            width: 65px;
-            height: 65px;
-            margin: 0 auto 15px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #2563eb;
-            color: white;
-            font-size: 32px;
-            font-weight: bold;
-        }
-
-        .acceso-box h1 {
-            margin: 0;
-        }
-
-        .acceso-box > p {
-            margin-top: 5px;
-            color: #64748b;
-        }
-
-        .form-acceso {
-            margin-top: 25px;
-            text-align: left;
-        }
-
-        .form-acceso h2 {
-            text-align: center;
-            margin-bottom: 8px;
-        }
-
-        .form-acceso > span {
-            display: block;
-            text-align: center;
-            color: #64748b;
-            margin-bottom: 22px;
-        }
-
-        .campo-acceso {
-            margin-bottom: 16px;
-        }
-
-        .campo-acceso label {
-            display: block;
-            margin-bottom: 7px;
-            font-weight: 600;
-        }
-
-        .campo-acceso input {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 12px 14px;
-            border: 1px solid #cbd5e1;
-            border-radius: 9px;
-            outline: none;
-            font-size: 15px;
-        }
-
-        .campo-acceso input:focus {
-            border-color: #2563eb;
-        }
-
-        .btn-acceso {
-            width: 100%;
-            padding: 13px;
-            border: none;
-            border-radius: 9px;
-            background: #2563eb;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .btn-acceso:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-
-        .btn-cambiar-acceso {
-            width: 100%;
-            margin-top: 10px;
-            padding: 11px;
-            border: none;
-            background: transparent;
-            color: #2563eb;
-            cursor: pointer;
-        }
-
-        .mensaje-acceso {
-            min-height: 20px;
-            margin-top: 12px;
-            text-align: center;
-            font-size: 14px;
-        }
-
-        .btn-salir {
-            margin-left: 15px;
-            border: 1px solid #e2e8f0;
-            background: white;
-            color: #475569;
-            border-radius: 8px;
-            padding: 8px 12px;
-            cursor: pointer;
-        }
-
         @media (max-width: 700px) {
 
             .menu-extra-tabla {
@@ -249,52 +112,35 @@
                 padding: 8px;
             }
 
-            .acceso-box {
-                padding: 25px 20px;
-            }
-
         }
+
     </style>
 
 </head>
 
 <body>
 
-    <!-- ==================================================
-         PANTALLA DE INICIO DE SESIÓN
-    ================================================== -->
+    <!-- =========================
+         PANTALLA DE ACCESO
+    ========================== -->
 
     <div id="pantallaAcceso" class="pantalla-acceso">
 
         <div class="acceso-box">
 
             <div class="acceso-logo">
-                S
+                <div class="logo-icon">S</div>
             </div>
 
-            <h1>
-                Sistecfiber
-            </h1>
+            <h1 id="tituloAcceso">Sistecfiber</h1>
 
-            <p>
-                Telecomunicaciones
+            <p id="textoAcceso">
+                Inicia sesión para ingresar al panel
             </p>
 
-            <form
-                id="formLogin"
-                class="form-acceso">
+            <form id="formLogin" autocomplete="off">
 
-                <h2 id="tituloAcceso">
-                    Iniciar sesión
-                </h2>
-
-                <span id="textoAcceso">
-                    Ingresa a tu cuenta para continuar
-                </span>
-
-
-                <div class="campo-acceso">
-
+                <div class="campo">
                     <label for="accesoCorreo">
                         Correo electrónico
                     </label>
@@ -302,14 +148,12 @@
                     <input
                         type="email"
                         id="accesoCorreo"
+                        placeholder="correo@ejemplo.com"
                         autocomplete="email"
                         required>
-
                 </div>
 
-
-                <div class="campo-acceso">
-
+                <div class="campo">
                     <label for="accesoPassword">
                         Contraseña
                     </label>
@@ -317,55 +161,44 @@
                     <input
                         type="password"
                         id="accesoPassword"
+                        placeholder="Contraseña"
                         autocomplete="current-password"
-                        minlength="6"
                         required>
-
                 </div>
-
 
                 <button
                     type="submit"
-                    class="btn-acceso"
-                    id="btnAcceso">
-
+                    id="btnAcceso"
+                    class="btn-primary">
                     Iniciar sesión
-
                 </button>
 
-
-                <button
-                    type="button"
-                    class="btn-cambiar-acceso"
-                    id="btnCambiarAcceso">
-
-                    Crear una cuenta
-
-                </button>
-
-
-                <p
+                <div
                     id="mensajeAcceso"
                     class="mensaje-acceso">
-                </p>
+                </div>
 
             </form>
+
+            <button
+                type="button"
+                id="btnCambiarAcceso"
+                class="btn-cambiar-acceso">
+                Crear una cuenta
+            </button>
 
         </div>
 
     </div>
 
 
-    <!-- ==================================================
+    <!-- =========================
          APLICACIÓN
-    ================================================== -->
+    ========================== -->
 
-    <div class="app">
+    <div class="app" id="aplicacion">
 
-
-        <!-- ==================================================
-             BARRA LATERAL
-        ================================================== -->
+        <!-- SIDEBAR -->
 
         <aside class="sidebar">
 
@@ -376,15 +209,8 @@
                 </div>
 
                 <div class="logo-text">
-
-                    <strong>
-                        Sistecfiber
-                    </strong>
-
-                    <span>
-                        Telecomunicaciones
-                    </span>
-
+                    <strong>Sistecfiber</strong>
+                    <span>Telecomunicaciones</span>
                 </div>
 
             </div>
@@ -393,8 +219,9 @@
             <nav class="menu">
 
                 <button
-                    class="menu-item activo"
-                    type="button">
+                    class="menu-item activo seleccionado"
+                    type="button"
+                    data-seccion="inicio">
 
                     <span>⌂</span>
                     Inicio
@@ -404,7 +231,8 @@
 
                 <button
                     class="menu-item"
-                    type="button">
+                    type="button"
+                    data-seccion="clientes">
 
                     <span>👥</span>
                     Clientes
@@ -414,7 +242,8 @@
 
                 <button
                     class="menu-item"
-                    type="button">
+                    type="button"
+                    data-seccion="pagos">
 
                     <span>💳</span>
                     Pagos
@@ -424,7 +253,8 @@
 
                 <button
                     class="menu-item"
-                    type="button">
+                    type="button"
+                    data-seccion="contratos">
 
                     <span>📄</span>
                     Contratos
@@ -434,7 +264,8 @@
 
                 <button
                     class="menu-item"
-                    type="button">
+                    type="button"
+                    data-seccion="equipos">
 
                     <span>📡</span>
                     Equipos
@@ -444,7 +275,8 @@
 
                 <button
                     class="menu-item"
-                    type="button">
+                    type="button"
+                    data-seccion="soporte">
 
                     <span>🔧</span>
                     Soporte
@@ -453,24 +285,31 @@
 
             </nav>
 
+
+            <button
+                id="btnCerrarSesion"
+                class="btn-cerrar-sesion"
+                type="button">
+
+                Cerrar sesión
+
+            </button>
+
         </aside>
 
 
-        <!-- ==================================================
-             CONTENIDO PRINCIPAL
-        ================================================== -->
+        <!-- CONTENIDO PRINCIPAL -->
 
         <main class="main">
 
-
-            <!-- CABECERA -->
+            <!-- TOPBAR -->
 
             <header class="topbar">
 
                 <div>
 
                     <h1>
-                        Panel de administración
+                        Panel de Control
                     </h1>
 
                 </div>
@@ -478,7 +317,9 @@
 
                 <div class="usuario">
 
-                    <div class="avatar">
+                    <div
+                        class="avatar"
+                        id="avatarUsuario">
                         E
                     </div>
 
@@ -488,126 +329,122 @@
                             Edwin Lopez
                         </strong>
 
-                        <span id="rolUsuario">
+                        <span>
                             Administrador
                         </span>
 
                     </div>
-
-
-                    <button
-                        id="btnCerrarSesion"
-                        class="btn-salir"
-                        type="button"
-                        title="Cerrar sesión">
-
-                        Salir
-
-                    </button>
 
                 </div>
 
             </header>
 
 
-            <!-- ==================================================
-                 ESTADÍSTICAS
-            ================================================== -->
+            <!-- =========================
+                 INICIO
+            ========================== -->
 
-            <section class="estadisticas">
+            <section
+                id="seccionInicio"
+                class="seccion-app">
 
+                <section class="estadisticas">
 
-                <div class="estadistica">
+                    <div class="estadistica">
 
-                    <div class="estadistica-icon azul">
-                        👥
-                    </div>
+                        <div class="estadistica-icon azul">
+                            👥
+                        </div>
 
-                    <div>
+                        <div>
 
-                        <span>
-                            Clientes
-                        </span>
+                            <span>
+                                Clientes
+                            </span>
 
-                        <strong id="totalClientes">
-                            0
-                        </strong>
+                            <strong id="totalClientes">
+                                0
+                            </strong>
 
-                    </div>
-
-                </div>
-
-
-                <div class="estadistica">
-
-                    <div class="estadistica-icon verde">
-                        ✓
-                    </div>
-
-                    <div>
-
-                        <span>
-                            Clientes activos
-                        </span>
-
-                        <strong id="clientesActivos">
-                            0
-                        </strong>
+                        </div>
 
                     </div>
 
-                </div>
 
+                    <div class="estadistica">
 
-                <div class="estadistica">
+                        <div class="estadistica-icon verde">
+                            ✓
+                        </div>
 
-                    <div class="estadistica-icon amarillo">
-                        $
-                    </div>
+                        <div>
 
-                    <div>
+                            <span>
+                                Clientes activos
+                            </span>
 
-                        <span>
-                            Ingresos mensuales
-                        </span>
+                            <strong id="clientesActivos">
+                                0
+                            </strong>
 
-                        <strong id="ingresosMes">
-                            $0
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <div class="estadistica">
-
-                    <div class="estadistica-icon rojo">
-                        !
-                    </div>
-
-                    <div>
-
-                        <span>
-                            Pagos pendientes
-                        </span>
-
-                        <strong id="pagosPendientes">
-                            $0
-                        </strong>
+                        </div>
 
                     </div>
 
-                </div>
+
+                    <div class="estadistica">
+
+                        <div class="estadistica-icon amarillo">
+                            $
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Ingresos mensuales
+                            </span>
+
+                            <strong id="ingresosMes">
+                                $0
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="estadistica">
+
+                        <div class="estadistica-icon rojo">
+                            !
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Pagos pendientes
+                            </span>
+
+                            <strong id="pagosPendientes">
+                                $0
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </section>
 
             </section>
 
 
-            <!-- ==================================================
+            <!-- =========================
                  CLIENTES
-            ================================================== -->
+            ========================== -->
 
-            <section class="panel">
+            <section
+                id="seccionClientes"
+                class="panel">
 
                 <div class="panel-header">
 
@@ -636,8 +473,6 @@
                 </div>
 
 
-                <!-- BUSCADOR -->
-
                 <div class="buscador">
 
                     <span>
@@ -653,11 +488,184 @@
                 </div>
 
 
-                <!-- LISTA -->
-
                 <div
                     id="listaClientes"
                     class="clientes-grid">
+                </div>
+
+            </section>
+
+
+            <!-- =========================
+                 PAGOS
+            ========================== -->
+
+            <section
+                id="seccionPagos"
+                class="vista-menu-extra">
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <div>
+
+                            <h2>
+                                Pagos
+                            </h2>
+
+                            <p>
+                                Administración de pagos de los clientes
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="menu-extra-vacio">
+
+                        <h3>
+                            Pagos
+                        </h3>
+
+                        <p>
+                            Aquí podremos administrar los pagos de los clientes.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================
+                 CONTRATOS
+            ========================== -->
+
+            <section
+                id="seccionContratos"
+                class="vista-menu-extra">
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <div>
+
+                            <h2>
+                                Contratos
+                            </h2>
+
+                            <p>
+                                Documentos y contratos de los clientes
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="menu-extra-vacio">
+
+                        <h3>
+                            Contratos
+                        </h3>
+
+                        <p>
+                            Aquí podremos consultar los contratos almacenados.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================
+                 EQUIPOS
+            ========================== -->
+
+            <section
+                id="seccionEquipos"
+                class="vista-menu-extra">
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <div>
+
+                            <h2>
+                                Equipos
+                            </h2>
+
+                            <p>
+                                Administración de equipos y conexiones
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="menu-extra-vacio">
+
+                        <h3>
+                            Equipos
+                        </h3>
+
+                        <p>
+                            Aquí podremos administrar los equipos de los clientes.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================
+                 SOPORTE
+            ========================== -->
+
+            <section
+                id="seccionSoporte"
+                class="vista-menu-extra">
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <div>
+
+                            <h2>
+                                Soporte
+                            </h2>
+
+                            <p>
+                                Atención y soporte de clientes
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="menu-extra-vacio">
+
+                        <h3>
+                            Soporte
+                        </h3>
+
+                        <p>
+                            Aquí podremos administrar las solicitudes de soporte.
+                        </p>
+
+                    </div>
 
                 </div>
 
@@ -668,16 +676,15 @@
     </div>
 
 
-    <!-- ==================================================
-         MODAL AGREGAR / EDITAR CLIENTE
-    ================================================== -->
+    <!-- =========================
+         MODAL NUEVO CLIENTE
+    ========================== -->
 
     <div
         id="modalCliente"
         class="modal">
 
         <div class="modal-box">
-
 
             <div class="modal-header">
 
@@ -713,8 +720,6 @@
                 <div class="form-grid">
 
 
-                    <!-- NOMBRE -->
-
                     <div class="campo">
 
                         <label for="nombre">
@@ -731,8 +736,6 @@
                     </div>
 
 
-                    <!-- CÉDULA -->
-
                     <div class="campo">
 
                         <label for="cedula">
@@ -747,8 +750,6 @@
 
                     </div>
 
-
-                    <!-- TELÉFONO -->
 
                     <div class="campo">
 
@@ -766,8 +767,6 @@
                     </div>
 
 
-                    <!-- CORREO -->
-
                     <div class="campo">
 
                         <label for="correo">
@@ -782,8 +781,6 @@
 
                     </div>
 
-
-                    <!-- DIRECCIÓN -->
 
                     <div class="campo">
 
@@ -801,8 +798,6 @@
                     </div>
 
 
-                    <!-- MAC -->
-
                     <div class="campo">
 
                         <label for="mac">
@@ -813,13 +808,11 @@
                             type="text"
                             id="mac"
                             name="cliente_mac"
-                            placeholder="Ej. MAC-A12B"
+                            placeholder="Ej. A1:B2:C3:D4:E5:F6"
                             autocomplete="off">
 
                     </div>
 
-
-                    <!-- CTO -->
 
                     <div class="campo">
 
@@ -837,8 +830,6 @@
                     </div>
 
 
-                    <!-- PUERTO -->
-
                     <div class="campo">
 
                         <label for="puerto">
@@ -854,8 +845,6 @@
 
                     </div>
 
-
-                    <!-- PLAN -->
 
                     <div class="campo">
 
@@ -892,8 +881,6 @@
                     </div>
 
 
-                    <!-- MENSUALIDAD -->
-
                     <div class="campo">
 
                         <label for="precio">
@@ -912,8 +899,6 @@
                     </div>
 
 
-                    <!-- FECHA -->
-
                     <div class="campo">
 
                         <label for="fecha">
@@ -927,8 +912,6 @@
 
                     </div>
 
-
-                    <!-- ESTADO -->
 
                     <div class="campo">
 
@@ -957,13 +940,12 @@
                     </div>
 
 
-                    <!-- CONTRATO -->
-
                     <div class="campo campo-completo">
 
                         <label>
                             Contrato del cliente
                         </label>
+
 
                         <label
                             for="contrato"
@@ -991,6 +973,7 @@
                         <input
                             type="file"
                             id="contrato"
+                            name="cliente_contrato"
                             autocomplete="off"
                             hidden>
 
@@ -1004,8 +987,6 @@
 
                 </div>
 
-
-                <!-- BOTONES -->
 
                 <div class="modal-footer">
 
@@ -1036,9 +1017,9 @@
     </div>
 
 
-    <!-- ==================================================
+    <!-- =========================
          MODAL ELIMINAR
-    ================================================== -->
+    ========================== -->
 
     <div
         id="modalEliminar"
@@ -1066,8 +1047,7 @@
 
             <p class="texto-pequeno">
 
-                Esta acción eliminará también
-                la información asociada al cliente.
+                Esta acción eliminará también la información asociada al cliente.
 
             </p>
 
@@ -1100,16 +1080,15 @@
     </div>
 
 
-    <!-- ==================================================
-         MODAL INFORMACIÓN DEL CLIENTE
-    ================================================== -->
+    <!-- =========================
+         MODAL VER CLIENTE
+    ========================== -->
 
     <div
         id="modalVerCliente"
         class="modal">
 
         <div class="modal-box">
-
 
             <div class="modal-header">
 
@@ -1261,13 +1240,13 @@
 
                 </div>
 
+
             </div>
 
 
             <div
                 id="verContrato"
                 class="contrato-ver">
-
             </div>
 
         </div>
@@ -1275,12 +1254,12 @@
     </div>
 
 
-    <!-- ==================================================
-         SUPABASE
-         DEBE IR ANTES DE script.js
-    ================================================== -->
+    <!-- SUPABASE -->
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- JAVASCRIPT -->
+
     <script src="script.js"></script>
 
 </body>
