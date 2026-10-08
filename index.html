@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sistecfiber Telecomunicaciones</title>
+
+    <link rel="stylesheet" href="style.css">
+
+<style id="sistecfiber-mejoras">
+    /* ==================================================
+       MEJORAS AÑADIDAS - NO REEMPLAZAN EL CSS ORIGINAL
+    ================================================== */
+
+    .cliente-card {
+        min-height: auto !important;
+    }
+
+    .cliente-card .cliente-datos {
+        display: none !important;
+    }
+
+    .cliente-card .cliente-top {
+        margin-bottom: 0 !important;
+    }
+
+    .cliente-card .cliente-botones {
+        margin-top: 14px !important;
+    }
+
+    .vista-menu-extra {
+        display: none;
+    }
+
+    .vista-menu-extra.mostrar {
+        display: block;
+    }
+
+    .menu-item.seleccionado {
+        background: #2563eb !important;
+        color: white !important;
+    }
+
+    .menu-item {
+        cursor: pointer;
+    }
+
+    .menu-extra-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .menu-extra-card {
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 18px;
+        background: #fff;
+    }
+
+    .menu-extra-card h3 {
+        margin: 0 0 8px;
+    }
+
+    .menu-extra-card p {
+        margin: 5px 0;
+    }
+
+    .menu-extra-vacio {
+        padding: 30px;
+        text-align: center;
+        border: 1px dashed #cbd5e1;
+        border-radius: 12px;
+        margin-top: 20px;
+    }
+
+    .menu-extra-tabla {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    .menu-extra-tabla th,
+    .menu-extra-tabla td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .menu-extra-tabla th {
+        font-weight: 600;
+    }
+
+    .estado-pendiente {
+        color: #b45309;
+        font-weight: 600;
+    }
+
+    .estado-disponible {
+        color: #15803d;
+        font-weight: 600;
+    }
+
+    @media (max-width: 700px) {
+        .menu-extra-tabla {
+            font-size: 13px;
+        }
+
+        .menu-extra-tabla th,
+        .menu-extra-tabla td {
+            padding: 8px;
+        }
+    }
+</style>
+
+</head>
+
+<body>
+
+    <div class="app">
+
+        <!-- =========================
+             BARRA LATERAL
+        ========================== -->
+
+        <aside class="sidebar">
+
+            <div class="logo">
+
+                <div class="logo-icon">
+                    W
+                </div>
+
+                <div class="logo-text">
+                    <strong>Sistecfiber</strong>
+                    <span>Telecomunicaciones</span>
+                </div>
+
+            </div>
+
+
+            <nav class="menu">
+
+                <button class="menu-item activo">
+                    <span>⌂</span>
+                    Inicio
+                </button>
+
+                <button class="menu-item">
+                    <span>👥</span>
+                    Clientes
+                </button>
+
+                <button class="menu-item">
+                    <span>💳</span>
+                    Pagos
+                </button>
+
+                <button class="menu-item">
+                    <span>📄</span>
+                    Contratos
+                </button>
+
+                <button class="menu-item">
+                    <span>📡</span>
+                    Equipos
+                </button>
+
+                <button class="menu-item">
+                    <span>🔧</span>
+                    Soporte
+                </button>
+
+            </nav>
+
+        </aside>
+
+
+        <!-- =========================
+             CONTENIDO
+        ========================== -->
+
+        <main class="main">
+
+            <!-- CABECERA -->
+
+            <header class="topbar">
+
+                <div>
+
+                    <h1>Panel de administración</h1>
+
+                </div>
+
+
+                <div class="usuario">
+
+                    <div class="avatar">
+                        A
+                    </div>
+
+                    <div>
+
+                        <strong>Edwin Lopez</strong>
+
+                        <span>Administrador</span>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <!-- =========================
+                 ESTADÍSTICAS
+            ========================== -->
+
+            <section class="estadisticas">
+
+                <div class="estadistica">
+
+                    <div class="estadistica-icon azul">
+                        👥
+                    </div>
+
+                    <div>
+
+                        <span>Clientes</span>
+
+                        <strong id="totalClientes">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="estadistica">
+
+                    <div class="estadistica-icon verde">
+                        ✓
+                    </div>
+
+                    <div>
+
+                        <span>Clientes activos</span>
+
+                        <strong id="clientesActivos">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="estadistica">
+
+                    <div class="estadistica-icon amarillo">
+                        $
+                    </div>
+
+                    <div>
+
+                        <span>Ingresos mensuales</span>
+
+                        <strong id="ingresosMes">
+                            $0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="estadistica">
+
+                    <div class="estadistica-icon rojo">
+                        !
+                    </div>
+
+                    <div>
+
+                        <span>Pagos pendientes</span>
+
+                        <strong id="pagosPendientes">
+                            $0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================
+                 CLIENTES
+            ========================== -->
+
+            <section class="panel">
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <h2>Clientes</h2>
+
+                        <p>
+                            Administrar clientes
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        id="btnNuevoCliente"
+                        class="btn-primary"
+                        type="button">
+
+                        + Nuevo cliente
+
+                    </button>
+
+                </div>
+
+
+                <!-- BUSCADOR -->
+
+                <div class="buscador">
+
+                    <span>⌕</span>
+
+                    <input
+                        type="search"
+                        id="buscarCliente"
+                        placeholder="Buscar por nombre, teléfono o dirección..."
+                        autocomplete="off">
+
+                </div>
+
+
+                <!-- LISTA -->
+
+                <div
+                    id="listaClientes"
+                    class="clientes-grid">
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- ==================================================
+         MODAL AGREGAR / EDITAR CLIENTE
+    =================================================== -->
+
+    <div
+        id="modalCliente"
+        class="modal">
+
+        <div class="modal-box">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <h2 id="tituloModal">
+                        Nuevo cliente
+                    </h2>
+
+                    <p>
+                        Registra la información del cliente
+                    </p>
+
+                </div>
+
+
+                <button
+                    id="cerrarModal"
+                    class="btn-cerrar"
+                    type="button">
+
+                    ×
+
+                </button>
+
+            </div>
+
+
+            <form
+                id="formCliente"
+                autocomplete="off">
+
+                <div class="form-grid">
+
+
+                    <!-- NOMBRE -->
+
+                    <div class="campo">
+
+                        <label for="nombre">
+                            Nombre completo
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nombre"
+                            name="cliente_nombre"
+                            placeholder="Ej. Juan Pérez"
+                            autocomplete="off"
+                            required>
+
+                    </div>
+
+
+                    <!-- CÉDULA -->
+
+                    <div class="campo">
+
+                        <label for="cedula">
+                            Cédula
+                        </label>
+
+                        <input
+                            type="text"
+                            id="cedula"
+                            name="cliente_identificacion"
+                            placeholder="Ej. 1234567890"
+                            autocomplete="off">
+
+                    </div>
+
+
+                    <!-- TELÉFONO -->
+
+                    <div class="campo">
+
+                        <label for="telefono">
+                            Teléfono
+                        </label>
+
+                        <input
+                            type="text"
+                            id="telefono"
+                            name="cliente_telefono"
+                            placeholder="Ej. 3001234567"
+                            autocomplete="off"
+                            required>
+
+                    </div>
+
+
+                    <!-- CORREO ELECTRÓNICO -->
+
+                    <div class="campo">
+
+                        <label for="correo">
+                            Correo electrónico
+                        </label>
+
+                        <input
+                            type="email"
+                            id="correo"
+                            name="cliente_correo"
+                            placeholder="Ej. cliente@gmail.com"
+                            autocomplete="off">
+
+                    </div>
+
+
+                    <!-- DIRECCIÓN -->
+
+                    <div class="campo">
+
+                        <label for="direccion">
+                            Dirección
+                        </label>
+
+                        <input
+                            type="text"
+                            id="direccion"
+                            name="cliente_direccion"
+                            placeholder="Ej. Calle 84 Sur #14C-57"
+                            autocomplete="off"
+                            required>
+
+                    </div>
+
+
+                    <!-- DIRECCIÓN IP -->
+
+                    <div class="campo">
+
+                        <label for="ip">
+                            Dirección IP
+                        </label>
+
+                        <input
+                            type="text"
+                            id="ip"
+                            name="cliente_ip"
+                            placeholder="Ej. 192.168.1.100"
+                            autocomplete="off">
+
+                    </div>
+
+
+                    <!-- PLAN -->
+
+                    <div class="campo">
+
+                        <label for="plan">
+                            Plan de internet
+                        </label>
+
+                        <select
+                            id="plan"
+                            name="cliente_plan">
+
+                            <option value="100 Mbps">
+                                100 Mbps
+                            </option>
+
+                            <option value="200 Mbps">
+                                200 Mbps
+                            </option>
+
+                            <option value="300 Mbps">
+                                300 Mbps
+                            </option>
+
+                            <option value="500 Mbps">
+                                500 Mbps
+                            </option>
+
+                            <option value="1 Gbps">
+                                1 Gbps
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- MENSUALIDAD -->
+
+                    <div class="campo">
+
+                        <label for="precio">
+                            Mensualidad
+                        </label>
+
+                        <input
+                            type="number"
+                            id="precio"
+                            name="cliente_precio"
+                            placeholder="Ej. 60000"
+                            min="0"
+                            autocomplete="off"
+                            required>
+
+                    </div>
+
+
+                    <!-- FECHA -->
+
+                    <div class="campo">
+
+                        <label for="fecha">
+                            Fecha de instalación
+                        </label>
+
+                        <input
+                            type="date"
+                            id="fecha"
+                            name="cliente_fecha">
+
+                    </div>
+
+
+                    <!-- ESTADO -->
+
+                    <div class="campo">
+
+                        <label for="estado">
+                            Estado
+                        </label>
+
+                        <select
+                            id="estado"
+                            name="cliente_estado">
+
+                            <option value="Activo">
+                                Activo
+                            </option>
+
+                            <option value="Suspendido">
+                                Suspendido
+                            </option>
+
+                            <option value="Retirado">
+                                Retirado
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- CONTRATO -->
+
+                    <div class="campo campo-completo">
+
+                        <label>
+                            Contrato del cliente
+                        </label>
+
+                        <label
+                            for="contrato"
+                            class="subir-archivo">
+
+                            <span class="archivo-icon">
+                                📄
+                            </span>
+
+                            <span>
+
+                                <strong>
+                                    Seleccionar contrato
+                                </strong>
+
+                                <small>
+                                    PDF, Word, imágenes o cualquier archivo
+                                </small>
+
+                            </span>
+
+                        </label>
+
+                        <input
+                            type="file"
+                            id="contrato"
+                            autocomplete="off"
+                            hidden>
+
+                        <div
+                            id="archivoSeleccionado"
+                            class="archivo-seleccionado">
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- BOTONES -->
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        id="cancelarCliente"
+                        class="btn-secondary">
+
+                        Cancelar
+
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="btn-primary">
+
+                        Guardar cliente
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==================================================
+         MODAL ELIMINAR
+    =================================================== -->
+
+    <div
+        id="modalEliminar"
+        class="modal">
+
+        <div class="modal-box eliminar-box">
+
+            <div class="eliminar-icon">
+                🗑️
+            </div>
+
+            <h2>
+                ¿Eliminar cliente?
+            </h2>
+
+            <p>
+                Estás a punto de eliminar a
+                <strong id="nombreEliminar">
+                    este cliente
+                </strong>.
+            </p>
+
+            <p class="texto-pequeno">
+                Esta acción eliminará también la información
+                asociada al cliente.
+            </p>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    id="cancelarEliminar"
+                    class="btn-secondary">
+
+                    Cancelar
+
+                </button>
+
+
+                <button
+                    type="button"
+                    id="confirmarEliminar"
+                    class="btn-danger">
+
+                    Sí, eliminar
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==================================================
+         MODAL INFORMACIÓN DEL CLIENTE
+    =================================================== -->
+
+    <div
+        id="modalVerCliente"
+        class="modal">
+
+        <div class="modal-box">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <h2 id="verNombre">
+                        Cliente
+                    </h2>
+
+                    <p>
+                        Información del cliente
+                    </p>
+
+                </div>
+
+                <button
+                    id="cerrarVerCliente"
+                    class="btn-cerrar"
+                    type="button">
+
+                    ×
+
+                </button>
+
+            </div>
+
+
+            <div class="detalle-cliente">
+
+                <div class="detalle">
+
+                    <span>Teléfono</span>
+                    <strong id="verTelefono"></strong>
+
+                </div>
+
+                <div class="detalle">
+
+                    <span>Cédula</span>
+                    <strong id="verCedula"></strong>
+
+                </div>
+
+                <div class="detalle">
+
+                    <span>Correo electrónico</span>
+                    <strong id="verCorreo"></strong>
+
+                </div>
+
+                <div class="detalle">
+
+                    <span>Dirección</span>
+                    <strong id="verDireccion"></strong>
+
+                </div>
+
+                <div class="detalle">
+
+                    <span>Dirección IP</span>
+                    <strong id="verIp"></strong>
+
+                </div>
+
+                <div class="detalle">
+
+                    <span>Plan</span>
+                    <strong id="verPlan"></strong>
+
+                </div>
+
+                <div class="detalle">
+
+                    <span>Mensualidad</span>
+                    <strong id="verPrecio"></strong>
+
+                </div>
+
+                <div class="detalle">
+
+                    <span>Estado</span>
+                    <strong id="verEstado"></strong>
+
+                </div>
+
+                <div class="detalle">
+
+                    <span>Fecha de instalación</span>
+                    <strong id="verFecha"></strong>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="verContrato"
+                class="contrato-ver">
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

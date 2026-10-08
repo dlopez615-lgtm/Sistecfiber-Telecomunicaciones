@@ -1,0 +1,1864 @@
+/* ==================================================
+   CONFIGURACIÓN GENERAL
+================================================== */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f7fb;
+    color: #172033;
+}
+
+button,
+input,
+select {
+    font-family: inherit;
+}
+
+
+/* ==================================================
+   ESTRUCTURA
+================================================== */
+
+.app {
+    display: flex;
+    min-height: 100vh;
+}
+
+
+/* ==================================================
+   SIDEBAR
+================================================== */
+
+.sidebar {
+    width: 240px;
+    min-height: 100vh;
+
+    background: #111827;
+
+    color: white;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 20px 15px;
+
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+}
+
+
+/* LOGO */
+
+.logo {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 5px 10px 30px;
+}
+
+.logo-icon {
+    width: 44px;
+    height: 44px;
+
+    background: #2563eb;
+
+    border-radius: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.logo-text strong {
+    font-size: 20px;
+}
+
+.logo-text span {
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+
+/* MENÚ */
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+
+    border: none;
+    background: transparent;
+}
+
+.menu-item {
+    width: 100%;
+
+    padding: 13px 14px;
+
+    border: none;
+
+    background: transparent;
+
+    color: #d1d5db;
+
+    border-radius: 9px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    transition: 0.2s;
+}
+
+.menu-item span {
+    width: 20px;
+}
+
+.menu-item:hover {
+    background: #1f2937;
+    color: white;
+}
+
+.menu-item.activo {
+    background: #2563eb;
+    color: white;
+}
+
+
+/* FOOTER SIDEBAR */
+
+.sidebar-footer {
+    margin-top: auto;
+
+    border-top: 1px solid #293241;
+
+    padding: 18px 10px 5px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+}
+
+.sidebar-footer span {
+    color: #9ca3af;
+    font-size: 11px;
+}
+
+.sidebar-footer strong {
+    font-size: 13px;
+}
+
+
+/* ==================================================
+   CONTENIDO
+================================================== */
+
+.main {
+    margin-left: 240px;
+
+    width: calc(100% - 240px);
+
+    min-height: 100vh;
+
+    padding: 30px;
+}
+
+
+/* ==================================================
+   TOPBAR
+================================================== */
+
+.topbar {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 28px;
+}
+
+.topbar h1 {
+    font-size: 30px;
+
+    margin-bottom: 5px;
+}
+
+.topbar p {
+    color: #718096;
+
+    font-size: 14px;
+}
+
+
+/* USUARIO */
+
+.usuario {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+}
+
+.usuario .avatar {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 50%;
+
+    background: #dbeafe;
+
+    color: #2563eb;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: bold;
+}
+
+.usuario div:last-child {
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+.usuario span {
+    color: #8a94a6;
+    font-size: 12px;
+}
+
+
+/* ==================================================
+   ESTADÍSTICAS
+================================================== */
+
+.estadisticas {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 18px;
+
+    margin-bottom: 25px;
+}
+
+.estadistica {
+    background: white;
+
+    border-radius: 14px;
+
+    padding: 20px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 15px;
+
+    box-shadow:
+        0 4px 15px rgba(15, 23, 42, 0.05);
+}
+
+.estadistica-icon {
+    width: 48px;
+    height: 48px;
+
+    border-radius: 11px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 21px;
+}
+
+.estadistica-icon.azul {
+    background: #dbeafe;
+}
+
+.estadistica-icon.verde {
+    background: #dcfce7;
+}
+
+.estadistica-icon.amarillo {
+    background: #fef3c7;
+}
+
+.estadistica-icon.rojo {
+    background: #fee2e2;
+}
+
+.estadistica span {
+    display: block;
+
+    color: #7b8495;
+
+    font-size: 12px;
+
+    margin-bottom: 5px;
+}
+
+.estadistica strong {
+    font-size: 23px;
+}
+
+
+/* ==================================================
+   PANEL CLIENTES
+================================================== */
+
+.panel {
+    background: white;
+
+    border-radius: 16px;
+
+    padding: 25px;
+
+    box-shadow:
+        0 4px 15px rgba(15, 23, 42, 0.05);
+}
+
+.panel-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 22px;
+}
+
+.panel-header h2 {
+    font-size: 22px;
+
+    margin-bottom: 5px;
+}
+
+.panel-header p {
+    color: #7b8495;
+
+    font-size: 13px;
+}
+
+
+/* ==================================================
+   BOTONES
+================================================== */
+
+.btn-primary {
+    border: none;
+
+    background: #2563eb;
+
+    color: white;
+
+    padding: 11px 18px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+
+    transition: 0.2s;
+}
+
+.btn-primary:hover {
+    background: #1d4ed8;
+
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    border: 1px solid #d8dee8;
+
+    background: white;
+
+    color: #4b5563;
+
+    padding: 11px 18px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+
+    transition: 0.2s;
+}
+
+.btn-secondary:hover {
+    background: #f3f4f6;
+}
+
+.btn-danger {
+    border: none;
+
+    background: #ef4444;
+
+    color: white;
+
+    padding: 11px 18px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+
+    transition: 0.2s;
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+}
+
+
+/* ==================================================
+   BUSCADOR
+================================================== */
+
+.buscador {
+    width: 100%;
+
+    height: 46px;
+
+    border: 1px solid #e1e6ef;
+
+    border-radius: 9px;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 0 14px;
+
+    gap: 10px;
+
+    margin-bottom: 20px;
+
+    background: #fafbfd;
+}
+
+.buscador span {
+    font-size: 22px;
+
+    color: #7d8798;
+}
+
+.buscador input {
+    width: 100%;
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    font-size: 14px;
+}
+
+
+/* ==================================================
+   CLIENTES
+================================================== */
+
+.clientes-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 16px;
+}
+
+.cliente-card {
+    border: 1px solid #e1e6ef;
+
+    border-radius: 13px;
+
+    padding: 18px;
+
+    transition: 0.2s;
+
+    background: white;
+}
+
+.cliente-card:hover {
+    border-color: #b9c9e8;
+
+    box-shadow:
+        0 5px 18px rgba(15, 23, 42, 0.06);
+}
+
+
+/* CABECERA CARD */
+
+.cliente-top {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding-bottom: 15px;
+
+    border-bottom: 1px solid #edf0f5;
+}
+
+.cliente-identidad {
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+}
+
+.cliente-avatar {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 50%;
+
+    background: #dbeafe;
+
+    color: #2563eb;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-weight: bold;
+
+    font-size: 17px;
+}
+
+.cliente-identidad h3 {
+    font-size: 15px;
+
+    margin-bottom: 3px;
+}
+
+.cliente-id {
+    font-size: 11px;
+
+    color: #8993a5;
+}
+
+
+/* ESTADO */
+
+.estado {
+    padding: 5px 9px;
+
+    border-radius: 20px;
+
+    font-size: 11px;
+
+    font-weight: 600;
+}
+
+.estado.activo {
+    color: #15803d;
+
+    background: #dcfce7;
+}
+
+.estado.suspendido {
+    color: #b45309;
+
+    background: #fef3c7;
+}
+
+.estado.retirado {
+    color: #b91c1c;
+
+    background: #fee2e2;
+}
+
+
+/* DATOS */
+
+.cliente-datos {
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 15px;
+
+    padding: 16px 0;
+}
+
+.dato span {
+    display: block;
+
+    color: #929baa;
+
+    font-size: 10px;
+
+    margin-bottom: 5px;
+}
+
+.dato strong {
+    font-size: 13px;
+
+    word-break: break-word;
+}
+
+
+/* BOTONES CARD */
+
+.cliente-botones {
+    display: flex;
+
+    gap: 7px;
+}
+
+.btn-card {
+    border: none;
+
+    padding: 8px 11px;
+
+    border-radius: 7px;
+
+    cursor: pointer;
+
+    font-size: 11px;
+
+    font-weight: 600;
+}
+
+.btn-ver {
+    background: #eff6ff;
+
+    color: #2563eb;
+}
+
+.btn-editar {
+    background: #f1f5f9;
+
+    color: #475569;
+}
+
+.btn-eliminar {
+    background: #fef2f2;
+
+    color: #dc2626;
+}
+
+.btn-contrato {
+    background: #f0fdf4;
+
+    color: #15803d;
+}
+
+
+/* SIN CLIENTES */
+
+.sin-clientes {
+    grid-column: 1 / -1;
+
+    text-align: center;
+
+    padding: 55px 20px;
+
+    color: #7b8495;
+}
+
+.sin-clientes .sin-icono {
+    width: 60px;
+    height: 60px;
+
+    margin: 0 auto 12px;
+
+    border-radius: 50%;
+
+    background: #f1f5f9;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 25px;
+}
+
+.sin-clientes h3 {
+    color: #374151;
+
+    margin-bottom: 5px;
+}
+
+
+/* ==================================================
+   MODALES
+================================================== */
+
+.modal {
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(15, 23, 42, 0.55);
+
+    backdrop-filter: blur(5px);
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    z-index: 9999;
+}
+
+.modal.mostrar {
+    display: flex;
+}
+
+.modal-box {
+    width: 650px;
+
+    max-width: 100%;
+
+    max-height: 90vh;
+
+    overflow-y: auto;
+
+    background: white;
+
+    border-radius: 17px;
+
+    padding: 27px;
+
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.18);
+
+    animation: aparecer 0.2s ease;
+}
+
+@keyframes aparecer {
+
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+}
+
+
+/* HEADER MODAL */
+
+.modal-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-start;
+
+    margin-bottom: 25px;
+}
+
+.modal-header h2 {
+    font-size: 21px;
+
+    margin-bottom: 5px;
+}
+
+.modal-header p {
+    color: #7b8495;
+
+    font-size: 13px;
+}
+
+.btn-cerrar {
+    width: 35px;
+    height: 35px;
+
+    border: none;
+
+    background: #f1f5f9;
+
+    color: #64748b;
+
+    border-radius: 8px;
+
+    font-size: 23px;
+
+    cursor: pointer;
+}
+
+.btn-cerrar:hover {
+    background: #e2e8f0;
+}
+
+
+/* ==================================================
+   FORMULARIO
+================================================== */
+
+.form-grid {
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 17px;
+}
+
+.campo {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+.campo-completo {
+    grid-column: 1 / -1;
+}
+
+.campo label {
+    font-size: 12px;
+
+    font-weight: 600;
+
+    color: #374151;
+}
+
+.campo input,
+.campo select {
+    width: 100%;
+
+    height: 43px;
+
+    border: 1px solid #dce2eb;
+
+    border-radius: 8px;
+
+    padding: 0 12px;
+
+    outline: none;
+
+    background: #fff;
+
+    color: #1f2937;
+
+    font-size: 13px;
+
+    transition: 0.2s;
+}
+
+.campo input:focus,
+.campo select:focus {
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+
+/* ==================================================
+   SUBIR ARCHIVO
+================================================== */
+
+.subir-archivo {
+    border: 1.5px dashed #cbd5e1;
+
+    border-radius: 10px;
+
+    padding: 17px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    cursor: pointer;
+
+    background: #f8fafc;
+
+    transition: 0.2s;
+}
+
+.subir-archivo:hover {
+    border-color: #2563eb;
+
+    background: #eff6ff;
+}
+
+.archivo-icon {
+    width: 40px;
+    height: 40px;
+
+    border-radius: 8px;
+
+    background: #dbeafe;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.subir-archivo span:last-child {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+.subir-archivo strong {
+    font-size: 12px;
+}
+
+.subir-archivo small {
+    color: #8a94a6;
+
+    font-size: 10px;
+}
+
+.archivo-seleccionado {
+    margin-top: 7px;
+
+    font-size: 12px;
+
+    color: #2563eb;
+}
+
+
+/* ==================================================
+   FOOTER MODAL
+================================================== */
+
+.modal-footer {
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-top: 25px;
+
+    padding-top: 20px;
+
+    border-top: 1px solid #edf0f5;
+}
+
+
+/* ==================================================
+   MODAL ELIMINAR
+================================================== */
+
+.eliminar-box {
+    width: 420px;
+
+    text-align: center;
+}
+
+.eliminar-icon {
+    width: 65px;
+    height: 65px;
+
+    border-radius: 50%;
+
+    background: #fee2e2;
+
+    margin: 0 auto 18px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 27px;
+}
+
+.eliminar-box h2 {
+    margin-bottom: 10px;
+
+    font-size: 21px;
+}
+
+.eliminar-box p {
+    color: #64748b;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+.eliminar-box .texto-pequeno {
+    margin-top: 5px;
+
+    font-size: 11px;
+}
+
+.eliminar-box .modal-footer {
+    justify-content: center;
+}
+
+
+/* ==================================================
+   DETALLES CLIENTE
+================================================== */
+
+.detalle-cliente {
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 14px;
+}
+
+.detalle {
+    padding: 13px;
+
+    background: #f8fafc;
+
+    border-radius: 9px;
+}
+
+.detalle span {
+    display: block;
+
+    color: #8993a5;
+
+    font-size: 10px;
+
+    margin-bottom: 5px;
+}
+
+.detalle strong {
+    font-size: 13px;
+}
+
+
+/* CONTRATO */
+
+.contrato-ver {
+    margin-top: 20px;
+
+    padding: 15px;
+
+    border-radius: 10px;
+
+    background: #eff6ff;
+
+    color: #1d4ed8;
+
+    font-size: 13px;
+}
+
+
+/* ==================================================
+   RESPONSIVE
+================================================== */
+
+@media (max-width: 1000px) {
+
+    .estadisticas {
+        grid-template-columns:
+            1fr 1fr;
+    }
+
+    .clientes-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .sidebar {
+        width: 70px;
+
+        padding: 15px 10px;
+    }
+
+    .logo-text,
+    .menu-item:not(.activo)::after,
+    .sidebar-footer {
+        display: none;
+    }
+
+    .menu-item {
+        justify-content: center;
+    }
+
+    .main {
+        margin-left: 70px;
+
+        width: calc(100% - 70px);
+
+        padding: 18px;
+    }
+
+    .topbar {
+        align-items: flex-start;
+    }
+
+    .usuario div:last-child {
+        display: none;
+    }
+
+    .estadisticas {
+        grid-template-columns:
+            1fr;
+    }
+
+    .form-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+    .campo-completo {
+        grid-column: auto;
+    }
+
+    .detalle-cliente {
+        grid-template-columns:
+            1fr;
+    }
+
+}
+
+/* ==================================================
+   MEJORAS PARA CELULAR
+   AGREGAR AL FINAL DEL CSS
+================================================== */
+
+
+/* ==================================================
+   TABLETS
+================================================== */
+
+@media (max-width: 900px) {
+
+    .main {
+        padding: 20px;
+    }
+
+    .estadisticas {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .clientes-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .panel {
+        padding: 20px;
+    }
+
+}
+
+
+/* ==================================================
+   CELULARES
+================================================== */
+
+@media (max-width: 600px) {
+
+    /* ----------------------------------------------
+       ESTRUCTURA GENERAL
+    ---------------------------------------------- */
+
+    body {
+        overflow-x: hidden;
+    }
+
+    .app {
+        width: 100%;
+        min-height: 100vh;
+    }
+
+
+    /* ----------------------------------------------
+       BARRA LATERAL
+    ---------------------------------------------- */
+
+    .sidebar {
+        width: 62px;
+        padding: 15px 7px;
+
+        overflow: hidden;
+    }
+
+
+    .logo {
+        justify-content: center;
+        padding: 5px 0 25px;
+    }
+
+
+    .logo-icon {
+        width: 42px;
+        height: 42px;
+        flex-shrink: 0;
+    }
+
+
+    .logo-text {
+        display: none;
+    }
+
+
+    .menu {
+        width: 100%;
+    }
+
+
+    .menu-item {
+        width: 100%;
+        min-height: 46px;
+
+        padding: 10px 5px;
+
+        justify-content: center;
+
+        gap: 0;
+    }
+
+
+    .menu-item span {
+        width: auto;
+        font-size: 19px;
+    }
+
+
+    .menu-item {
+        font-size: 0;
+    }
+
+
+    .menu-item span {
+        font-size: 19px;
+    }
+
+
+    .sidebar-footer {
+        display: none;
+    }
+
+
+    /* ----------------------------------------------
+       CONTENIDO PRINCIPAL
+    ---------------------------------------------- */
+
+    .main {
+        margin-left: 62px;
+
+        width: calc(100% - 62px);
+
+        padding: 15px;
+
+        min-width: 0;
+    }
+
+
+    /* ----------------------------------------------
+       TOPBAR
+    ---------------------------------------------- */
+
+    .topbar {
+        display: flex;
+
+        align-items: center;
+
+        gap: 10px;
+
+        margin-bottom: 18px;
+    }
+
+
+    .topbar > div:first-child {
+        min-width: 0;
+    }
+
+
+    .topbar h1 {
+        font-size: 22px;
+
+        white-space: nowrap;
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+    }
+
+
+    .topbar p {
+        font-size: 12px;
+    }
+
+
+    .usuario {
+        flex-shrink: 0;
+    }
+
+
+    .usuario .avatar {
+        width: 36px;
+        height: 36px;
+    }
+
+
+    .usuario div:last-child {
+        display: none;
+    }
+
+
+    /* ----------------------------------------------
+       ESTADÍSTICAS
+    ---------------------------------------------- */
+
+    .estadisticas {
+        grid-template-columns: 1fr 1fr;
+
+        gap: 10px;
+
+        margin-bottom: 15px;
+    }
+
+
+    .estadistica {
+        padding: 13px;
+
+        gap: 9px;
+
+        min-width: 0;
+    }
+
+
+    .estadistica-icon {
+        width: 38px;
+        height: 38px;
+
+        min-width: 38px;
+
+        font-size: 17px;
+    }
+
+
+    .estadistica span {
+        font-size: 10px;
+    }
+
+
+    .estadistica strong {
+        font-size: 17px;
+    }
+
+
+    /* ----------------------------------------------
+       PANEL
+    ---------------------------------------------- */
+
+    .panel {
+        padding: 15px;
+
+        border-radius: 12px;
+    }
+
+
+    .panel-header {
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        gap: 12px;
+
+        margin-bottom: 15px;
+    }
+
+
+    .panel-header h2 {
+        font-size: 19px;
+    }
+
+
+    .panel-header p {
+        font-size: 12px;
+    }
+
+
+    .panel-header .btn-primary {
+        width: 100%;
+    }
+
+
+    /* ----------------------------------------------
+       BUSCADOR
+    ---------------------------------------------- */
+
+    .buscador {
+        height: 44px;
+
+        margin-bottom: 15px;
+    }
+
+
+    .buscador input {
+        font-size: 13px;
+    }
+
+
+    /* ----------------------------------------------
+       TARJETAS DE CLIENTES
+    ---------------------------------------------- */
+
+    .clientes-grid {
+        grid-template-columns: 1fr;
+
+        gap: 10px;
+    }
+
+
+    .cliente-card {
+        width: 100%;
+
+        padding: 13px;
+
+        border-radius: 11px;
+    }
+
+
+    .cliente-top {
+        padding-bottom: 11px;
+    }
+
+
+    .cliente-identidad {
+        min-width: 0;
+    }
+
+
+    .cliente-identidad h3 {
+        font-size: 14px;
+
+        max-width: 145px;
+
+        overflow: hidden;
+
+        white-space: nowrap;
+
+        text-overflow: ellipsis;
+    }
+
+
+    .cliente-avatar {
+        width: 38px;
+        height: 38px;
+
+        min-width: 38px;
+
+        font-size: 15px;
+    }
+
+
+    .estado {
+        font-size: 10px;
+
+        padding: 4px 7px;
+
+        flex-shrink: 0;
+    }
+
+
+    /* ----------------------------------------------
+       BOTONES DE CLIENTE
+    ---------------------------------------------- */
+
+    .cliente-botones {
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+        gap: 7px;
+
+        margin-top: 11px;
+    }
+
+
+    .btn-card {
+        width: 100%;
+
+        min-height: 38px;
+
+        padding: 8px 5px;
+
+        font-size: 11px;
+    }
+
+
+    /* ----------------------------------------------
+       MODALES
+    ---------------------------------------------- */
+
+    .modal {
+        padding: 10px;
+    }
+
+
+    .modal-box {
+        width: 100%;
+
+        max-width: 100%;
+
+        max-height: 94vh;
+
+        padding: 18px;
+
+        border-radius: 14px;
+    }
+
+
+    .modal-header {
+        margin-bottom: 18px;
+    }
+
+
+    .modal-header h2 {
+        font-size: 18px;
+    }
+
+
+    .modal-header p {
+        font-size: 11px;
+    }
+
+
+    .btn-cerrar {
+        width: 34px;
+        height: 34px;
+
+        flex-shrink: 0;
+    }
+
+
+    /* ----------------------------------------------
+       FORMULARIOS
+    ---------------------------------------------- */
+
+    .form-grid {
+        grid-template-columns: 1fr;
+
+        gap: 13px;
+    }
+
+
+    .campo-completo {
+        grid-column: auto;
+    }
+
+
+    .campo input,
+    .campo select {
+        height: 44px;
+
+        font-size: 14px;
+    }
+
+
+    .campo label {
+        font-size: 11px;
+    }
+
+
+    /* ----------------------------------------------
+       ARCHIVOS
+    ---------------------------------------------- */
+
+    .subir-archivo {
+        padding: 13px;
+
+        gap: 10px;
+    }
+
+
+    .archivo-icon {
+        width: 36px;
+        height: 36px;
+
+        min-width: 36px;
+    }
+
+
+    .subir-archivo strong {
+        font-size: 11px;
+    }
+
+
+    .subir-archivo small {
+        font-size: 9px;
+    }
+
+
+    /* ----------------------------------------------
+       FOOTER DEL MODAL
+    ---------------------------------------------- */
+
+    .modal-footer {
+        flex-direction: column-reverse;
+
+        gap: 8px;
+
+        margin-top: 18px;
+
+        padding-top: 15px;
+    }
+
+
+    .modal-footer button {
+        width: 100%;
+
+        min-height: 43px;
+    }
+
+
+    /* ----------------------------------------------
+       DETALLES DEL CLIENTE
+    ---------------------------------------------- */
+
+    .detalle-cliente {
+        grid-template-columns: 1fr;
+
+        gap: 9px;
+    }
+
+
+    .detalle {
+        padding: 11px;
+    }
+
+
+    .detalle strong {
+        font-size: 12px;
+
+        word-break: break-word;
+    }
+
+
+    /* ----------------------------------------------
+       CONTRATO
+    ---------------------------------------------- */
+
+    .contrato-ver {
+        padding: 12px;
+
+        font-size: 12px;
+
+        word-break: break-word;
+    }
+
+
+    /* ----------------------------------------------
+       ELIMINAR CLIENTE
+    ---------------------------------------------- */
+
+    .eliminar-box {
+        width: 100%;
+    }
+
+
+    .eliminar-box h2 {
+        font-size: 19px;
+    }
+
+
+    .eliminar-box p {
+        font-size: 12px;
+    }
+
+
+    /* ----------------------------------------------
+       TABLAS
+       Permite deslizar horizontalmente
+    ---------------------------------------------- */
+
+    .menu-extra-tabla {
+        display: block;
+
+        width: 100%;
+
+        overflow-x: auto;
+
+        white-space: nowrap;
+    }
+
+
+    .menu-extra-tabla th,
+    .menu-extra-tabla td {
+        padding: 10px;
+
+        font-size: 11px;
+    }
+
+
+    /* ----------------------------------------------
+       TARJETAS DE PAGOS / CONTRATOS / EQUIPOS
+    ---------------------------------------------- */
+
+    .menu-extra-grid {
+        grid-template-columns: 1fr;
+
+        gap: 10px;
+    }
+
+
+    .menu-extra-card {
+        padding: 14px;
+    }
+
+
+    .menu-extra-card h3 {
+        font-size: 15px;
+    }
+
+
+    .menu-extra-card p {
+        font-size: 12px;
+
+        word-break: break-word;
+    }
+
+
+    .menu-extra-card button {
+        width: 100%;
+
+        min-height: 40px;
+    }
+
+
+    /* ----------------------------------------------
+       MENÚ EXTRA
+    ---------------------------------------------- */
+
+    .vista-menu-extra {
+        width: 100%;
+
+        min-width: 0;
+
+        overflow: hidden;
+    }
+
+
+    /* ----------------------------------------------
+       BOTONES PRINCIPALES
+    ---------------------------------------------- */
+
+    .btn-primary,
+    .btn-secondary,
+    .btn-danger {
+        min-height: 42px;
+
+        font-size: 12px;
+    }
+
+}
+
+
+/* ==================================================
+   CELULARES MUY PEQUEÑOS
+================================================== */
+
+@media (max-width: 380px) {
+
+    .sidebar {
+        width: 55px;
+
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+
+    .main {
+        margin-left: 55px;
+
+        width: calc(100% - 55px);
+
+        padding: 10px;
+    }
+
+
+    .estadisticas {
+        grid-template-columns: 1fr;
+    }
+
+
+    .panel {
+        padding: 12px;
+    }
+
+
+    .cliente-botones {
+        grid-template-columns: 1fr 1fr;
+    }
+
+
+    .topbar h1 {
+        font-size: 19px;
+    }
+
+
+    .topbar p {
+        font-size: 10px;
+    }
+
+
+    .modal {
+        padding: 5px;
+    }
+
+
+    .modal-box {
+        padding: 14px;
+    }
+
+}
