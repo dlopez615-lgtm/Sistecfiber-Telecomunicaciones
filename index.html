@@ -9,122 +9,363 @@
 
     <link rel="stylesheet" href="style.css">
 
-<style id="sistecfiber-mejoras">
-    /* ==================================================
-       MEJORAS AÑADIDAS - NO REEMPLAZAN EL CSS ORIGINAL
-    ================================================== */
+    <style>
+        /* ==================================================
+           MEJORAS
+        ================================================== */
 
-    .cliente-card {
-        min-height: auto !important;
-    }
+        .cliente-card {
+            min-height: auto !important;
+        }
 
-    .cliente-card .cliente-datos {
-        display: none !important;
-    }
+        .cliente-card .cliente-datos {
+            display: none !important;
+        }
 
-    .cliente-card .cliente-top {
-        margin-bottom: 0 !important;
-    }
+        .cliente-card .cliente-top {
+            margin-bottom: 0 !important;
+        }
 
-    .cliente-card .cliente-botones {
-        margin-top: 14px !important;
-    }
+        .cliente-card .cliente-botones {
+            margin-top: 14px !important;
+        }
 
-    .vista-menu-extra {
-        display: none;
-    }
+        .vista-menu-extra {
+            display: none;
+        }
 
-    .vista-menu-extra.mostrar {
-        display: block;
-    }
+        .vista-menu-extra.mostrar {
+            display: block;
+        }
 
-    .menu-item.seleccionado {
-        background: #2563eb !important;
-        color: white !important;
-    }
+        .menu-item.seleccionado {
+            background: #2563eb !important;
+            color: white !important;
+        }
 
-    .menu-item {
-        cursor: pointer;
-    }
+        .menu-item {
+            cursor: pointer;
+        }
 
-    .menu-extra-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 15px;
-        margin-top: 20px;
-    }
+        .menu-extra-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
 
-    .menu-extra-card {
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 18px;
-        background: #fff;
-    }
+        .menu-extra-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 18px;
+            background: #fff;
+        }
 
-    .menu-extra-card h3 {
-        margin: 0 0 8px;
-    }
+        .menu-extra-card h3 {
+            margin: 0 0 8px;
+        }
 
-    .menu-extra-card p {
-        margin: 5px 0;
-    }
+        .menu-extra-card p {
+            margin: 5px 0;
+        }
 
-    .menu-extra-vacio {
-        padding: 30px;
-        text-align: center;
-        border: 1px dashed #cbd5e1;
-        border-radius: 12px;
-        margin-top: 20px;
-    }
+        .menu-extra-vacio {
+            padding: 30px;
+            text-align: center;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
 
-    .menu-extra-tabla {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
-
-    .menu-extra-tabla th,
-    .menu-extra-tabla td {
-        padding: 12px;
-        text-align: left;
-        border-bottom: 1px solid #e5e7eb;
-    }
-
-    .menu-extra-tabla th {
-        font-weight: 600;
-    }
-
-    .estado-pendiente {
-        color: #b45309;
-        font-weight: 600;
-    }
-
-    .estado-disponible {
-        color: #15803d;
-        font-weight: 600;
-    }
-
-    @media (max-width: 700px) {
         .menu-extra-tabla {
-            font-size: 13px;
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
         }
 
         .menu-extra-tabla th,
         .menu-extra-tabla td {
-            padding: 8px;
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
         }
-    }
-</style>
+
+        .menu-extra-tabla th {
+            font-weight: 600;
+        }
+
+        .estado-pendiente {
+            color: #b45309;
+            font-weight: 600;
+        }
+
+        .estado-disponible {
+            color: #15803d;
+            font-weight: 600;
+        }
+
+        /* ==================================================
+           PANTALLA DE ACCESO
+        ================================================== */
+
+        .pantalla-acceso {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f4f7fb;
+        }
+
+        .pantalla-acceso.oculta {
+            display: none;
+        }
+
+        .acceso-box {
+            width: min(420px, calc(100% - 30px));
+            background: white;
+            border-radius: 18px;
+            padding: 35px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.12);
+            text-align: center;
+        }
+
+        .acceso-logo {
+            width: 65px;
+            height: 65px;
+            margin: 0 auto 15px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #2563eb;
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .acceso-box h1 {
+            margin: 0;
+        }
+
+        .acceso-box > p {
+            margin-top: 5px;
+            color: #64748b;
+        }
+
+        .form-acceso {
+            margin-top: 25px;
+            text-align: left;
+        }
+
+        .form-acceso h2 {
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .form-acceso > span {
+            display: block;
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 22px;
+        }
+
+        .campo-acceso {
+            margin-bottom: 16px;
+        }
+
+        .campo-acceso label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: 600;
+        }
+
+        .campo-acceso input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 9px;
+            outline: none;
+            font-size: 15px;
+        }
+
+        .campo-acceso input:focus {
+            border-color: #2563eb;
+        }
+
+        .btn-acceso {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 9px;
+            background: #2563eb;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-acceso:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .btn-cambiar-acceso {
+            width: 100%;
+            margin-top: 10px;
+            padding: 11px;
+            border: none;
+            background: transparent;
+            color: #2563eb;
+            cursor: pointer;
+        }
+
+        .mensaje-acceso {
+            min-height: 20px;
+            margin-top: 12px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .btn-salir {
+            margin-left: 15px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            color: #475569;
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 700px) {
+
+            .menu-extra-tabla {
+                font-size: 13px;
+            }
+
+            .menu-extra-tabla th,
+            .menu-extra-tabla td {
+                padding: 8px;
+            }
+
+            .acceso-box {
+                padding: 25px 20px;
+            }
+
+        }
+    </style>
 
 </head>
 
 <body>
 
+    <!-- ==================================================
+         PANTALLA DE INICIO DE SESIÓN
+    ================================================== -->
+
+    <div id="pantallaAcceso" class="pantalla-acceso">
+
+        <div class="acceso-box">
+
+            <div class="acceso-logo">
+                S
+            </div>
+
+            <h1>
+                Sistecfiber
+            </h1>
+
+            <p>
+                Telecomunicaciones
+            </p>
+
+            <form
+                id="formLogin"
+                class="form-acceso">
+
+                <h2 id="tituloAcceso">
+                    Iniciar sesión
+                </h2>
+
+                <span id="textoAcceso">
+                    Ingresa a tu cuenta para continuar
+                </span>
+
+
+                <div class="campo-acceso">
+
+                    <label for="accesoCorreo">
+                        Correo electrónico
+                    </label>
+
+                    <input
+                        type="email"
+                        id="accesoCorreo"
+                        autocomplete="email"
+                        required>
+
+                </div>
+
+
+                <div class="campo-acceso">
+
+                    <label for="accesoPassword">
+                        Contraseña
+                    </label>
+
+                    <input
+                        type="password"
+                        id="accesoPassword"
+                        autocomplete="current-password"
+                        minlength="6"
+                        required>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn-acceso"
+                    id="btnAcceso">
+
+                    Iniciar sesión
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn-cambiar-acceso"
+                    id="btnCambiarAcceso">
+
+                    Crear una cuenta
+
+                </button>
+
+
+                <p
+                    id="mensajeAcceso"
+                    class="mensaje-acceso">
+                </p>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==================================================
+         APLICACIÓN
+    ================================================== -->
+
     <div class="app">
 
-        <!-- =========================
+
+        <!-- ==================================================
              BARRA LATERAL
-        ========================== -->
+        ================================================== -->
 
         <aside class="sidebar">
 
@@ -135,8 +376,15 @@
                 </div>
 
                 <div class="logo-text">
-                    <strong>Sistecfiber</strong>
-                    <span>Telecomunicaciones</span>
+
+                    <strong>
+                        Sistecfiber
+                    </strong>
+
+                    <span>
+                        Telecomunicaciones
+                    </span>
+
                 </div>
 
             </div>
@@ -144,34 +392,63 @@
 
             <nav class="menu">
 
-                <button class="menu-item activo">
+                <button
+                    class="menu-item activo"
+                    type="button">
+
                     <span>⌂</span>
                     Inicio
+
                 </button>
 
-                <button class="menu-item">
+
+                <button
+                    class="menu-item"
+                    type="button">
+
                     <span>👥</span>
                     Clientes
+
                 </button>
 
-                <button class="menu-item">
+
+                <button
+                    class="menu-item"
+                    type="button">
+
                     <span>💳</span>
                     Pagos
+
                 </button>
 
-                <button class="menu-item">
+
+                <button
+                    class="menu-item"
+                    type="button">
+
                     <span>📄</span>
                     Contratos
+
                 </button>
 
-                <button class="menu-item">
+
+                <button
+                    class="menu-item"
+                    type="button">
+
                     <span>📡</span>
                     Equipos
+
                 </button>
 
-                <button class="menu-item">
+
+                <button
+                    class="menu-item"
+                    type="button">
+
                     <span>🔧</span>
                     Soporte
+
                 </button>
 
             </nav>
@@ -179,11 +456,12 @@
         </aside>
 
 
-        <!-- =========================
-             CONTENIDO
-        ========================== -->
+        <!-- ==================================================
+             CONTENIDO PRINCIPAL
+        ================================================== -->
 
         <main class="main">
+
 
             <!-- CABECERA -->
 
@@ -191,7 +469,9 @@
 
                 <div>
 
-                    <h1>Panel de administración</h1>
+                    <h1>
+                        Panel de administración
+                    </h1>
 
                 </div>
 
@@ -204,22 +484,38 @@
 
                     <div>
 
-                        <strong>Edwin Lopez</strong>
+                        <strong id="nombreUsuario">
+                            Edwin Lopez
+                        </strong>
 
-                        <span>Administrador</span>
+                        <span id="rolUsuario">
+                            Administrador
+                        </span>
 
                     </div>
+
+
+                    <button
+                        id="btnCerrarSesion"
+                        class="btn-salir"
+                        type="button"
+                        title="Cerrar sesión">
+
+                        Salir
+
+                    </button>
 
                 </div>
 
             </header>
 
 
-            <!-- =========================
+            <!-- ==================================================
                  ESTADÍSTICAS
-            ========================== -->
+            ================================================== -->
 
             <section class="estadisticas">
+
 
                 <div class="estadistica">
 
@@ -229,7 +525,9 @@
 
                     <div>
 
-                        <span>Clientes</span>
+                        <span>
+                            Clientes
+                        </span>
 
                         <strong id="totalClientes">
                             0
@@ -248,7 +546,9 @@
 
                     <div>
 
-                        <span>Clientes activos</span>
+                        <span>
+                            Clientes activos
+                        </span>
 
                         <strong id="clientesActivos">
                             0
@@ -267,7 +567,9 @@
 
                     <div>
 
-                        <span>Ingresos mensuales</span>
+                        <span>
+                            Ingresos mensuales
+                        </span>
 
                         <strong id="ingresosMes">
                             $0
@@ -286,7 +588,9 @@
 
                     <div>
 
-                        <span>Pagos pendientes</span>
+                        <span>
+                            Pagos pendientes
+                        </span>
 
                         <strong id="pagosPendientes">
                             $0
@@ -299,9 +603,9 @@
             </section>
 
 
-            <!-- =========================
+            <!-- ==================================================
                  CLIENTES
-            ========================== -->
+            ================================================== -->
 
             <section class="panel">
 
@@ -309,7 +613,9 @@
 
                     <div>
 
-                        <h2>Clientes</h2>
+                        <h2>
+                            Clientes
+                        </h2>
 
                         <p>
                             Administrar clientes
@@ -334,7 +640,9 @@
 
                 <div class="buscador">
 
-                    <span>⌕</span>
+                    <span>
+                        ⌕
+                    </span>
 
                     <input
                         type="search"
@@ -362,13 +670,14 @@
 
     <!-- ==================================================
          MODAL AGREGAR / EDITAR CLIENTE
-    =================================================== -->
+    ================================================== -->
 
     <div
         id="modalCliente"
         class="modal">
 
         <div class="modal-box">
+
 
             <div class="modal-header">
 
@@ -457,7 +766,7 @@
                     </div>
 
 
-                    <!-- CORREO ELECTRÓNICO -->
+                    <!-- CORREO -->
 
                     <div class="campo">
 
@@ -496,51 +805,55 @@
 
                     <div class="campo">
 
-                        <label for="ip">
+                        <label for="mac">
                             MAC
                         </label>
 
                         <input
                             type="text"
-                            id="ip"
-                            name="cliente_ip"
+                            id="mac"
+                            name="cliente_mac"
                             placeholder="Ej. MAC-A12B"
                             autocomplete="off">
 
                     </div>
 
+
                     <!-- CTO -->
 
                     <div class="campo">
 
-                        <label for="ip">
+                        <label for="cto">
                             CTO
                         </label>
 
                         <input
                             type="text"
-                            id="ip"
-                            name="cliente_ip"
+                            id="cto"
+                            name="cliente_cto"
                             placeholder="Ej. CTO-A12B"
                             autocomplete="off">
 
                     </div>
 
-                    <!-- # de Puerto -->
+
+                    <!-- PUERTO -->
 
                     <div class="campo">
 
-                        <label for="ip">
+                        <label for="puerto">
                             # Puerto
                         </label>
 
                         <input
                             type="text"
-                            id="ip"
-                            name="cliente_ip"
+                            id="puerto"
+                            name="cliente_puerto"
+                            placeholder="Ej. 01"
                             autocomplete="off">
 
                     </div>
+
 
                     <!-- PLAN -->
 
@@ -674,11 +987,13 @@
 
                         </label>
 
+
                         <input
                             type="file"
                             id="contrato"
                             autocomplete="off"
                             hidden>
+
 
                         <div
                             id="archivoSeleccionado"
@@ -723,7 +1038,7 @@
 
     <!-- ==================================================
          MODAL ELIMINAR
-    =================================================== -->
+    ================================================== -->
 
     <div
         id="modalEliminar"
@@ -740,15 +1055,20 @@
             </h2>
 
             <p>
+
                 Estás a punto de eliminar a
+
                 <strong id="nombreEliminar">
                     este cliente
                 </strong>.
+
             </p>
 
             <p class="texto-pequeno">
-                Esta acción eliminará también la información
-                asociada al cliente.
+
+                Esta acción eliminará también
+                la información asociada al cliente.
+
             </p>
 
 
@@ -782,13 +1102,14 @@
 
     <!-- ==================================================
          MODAL INFORMACIÓN DEL CLIENTE
-    =================================================== -->
+    ================================================== -->
 
     <div
         id="modalVerCliente"
         class="modal">
 
         <div class="modal-box">
+
 
             <div class="modal-header">
 
@@ -804,6 +1125,7 @@
 
                 </div>
 
+
                 <button
                     id="cerrarVerCliente"
                     class="btn-cerrar"
@@ -818,65 +1140,123 @@
 
             <div class="detalle-cliente">
 
+
                 <div class="detalle">
 
-                    <span>Teléfono</span>
+                    <span>
+                        Teléfono
+                    </span>
+
                     <strong id="verTelefono"></strong>
 
                 </div>
 
+
                 <div class="detalle">
 
-                    <span>Cédula</span>
+                    <span>
+                        Cédula
+                    </span>
+
                     <strong id="verCedula"></strong>
 
                 </div>
 
+
                 <div class="detalle">
 
-                    <span>Correo electrónico</span>
+                    <span>
+                        Correo electrónico
+                    </span>
+
                     <strong id="verCorreo"></strong>
 
                 </div>
 
+
                 <div class="detalle">
 
-                    <span>Dirección</span>
+                    <span>
+                        Dirección
+                    </span>
+
                     <strong id="verDireccion"></strong>
 
                 </div>
 
+
                 <div class="detalle">
 
-                    <span>Dirección IP</span>
-                    <strong id="verIp"></strong>
+                    <span>
+                        MAC
+                    </span>
+
+                    <strong id="verMac"></strong>
 
                 </div>
 
+
                 <div class="detalle">
 
-                    <span>Plan</span>
+                    <span>
+                        CTO
+                    </span>
+
+                    <strong id="verCto"></strong>
+
+                </div>
+
+
+                <div class="detalle">
+
+                    <span>
+                        # Puerto
+                    </span>
+
+                    <strong id="verPuerto"></strong>
+
+                </div>
+
+
+                <div class="detalle">
+
+                    <span>
+                        Plan
+                    </span>
+
                     <strong id="verPlan"></strong>
 
                 </div>
 
+
                 <div class="detalle">
 
-                    <span>Mensualidad</span>
+                    <span>
+                        Mensualidad
+                    </span>
+
                     <strong id="verPrecio"></strong>
 
                 </div>
 
+
                 <div class="detalle">
 
-                    <span>Estado</span>
+                    <span>
+                        Estado
+                    </span>
+
                     <strong id="verEstado"></strong>
 
                 </div>
 
+
                 <div class="detalle">
 
-                    <span>Fecha de instalación</span>
+                    <span>
+                        Fecha de instalación
+                    </span>
+
                     <strong id="verFecha"></strong>
 
                 </div>
@@ -894,6 +1274,13 @@
 
     </div>
 
+
+    <!-- ==================================================
+         SUPABASE
+         DEBE IR ANTES DE script.js
+    ================================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script src="script.js"></script>
 
