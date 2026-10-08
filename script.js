@@ -1,101 +1,37 @@
-/* ==================================================
-   SISTEMA DE CLIENTES - SISTECFIBER
-================================================== */
+// ======================================================
+// CONFIGURACIÓN DE SUPABASE
+// ======================================================
+
+const SUPABASE_URL = "https://pmbcvhkyfoppvyrnuztn.supabase.co";
+
+// PEGA AQUÍ TU CLAVE PUBLISHABLE / ANON DE SUPABASE
+const SUPABASE_ANON_KEY = "sb_publishable_yrZYYb4J2qqZmKTq05T35Q_2DBWRDMY";
+
+
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+);
+
+
+// ======================================================
+// VARIABLES
+// ======================================================
 
 let clientes = [];
 let clienteEditando = null;
-let clienteAEliminar = null;
+let clienteEliminar = null;
 
 
-/* ==================================================
-   ELEMENTOS PRINCIPALES
-================================================== */
-
-const modalCliente = document.getElementById("modalCliente");
-const modalEliminar = document.getElementById("modalEliminar");
-const modalVerCliente = document.getElementById("modalVerCliente");
-
-const formCliente = document.getElementById("formCliente");
-const listaClientes = document.getElementById("listaClientes");
-const buscarCliente = document.getElementById("buscarCliente");
-
-const btnNuevoCliente = document.getElementById("btnNuevoCliente");
-const cerrarModal = document.getElementById("cerrarModal");
-const cancelarCliente = document.getElementById("cancelarCliente");
-
-const cancelarEliminar = document.getElementById("cancelarEliminar");
-const confirmarEliminar = document.getElementById("confirmarEliminar");
-
-const cerrarVerCliente = document.getElementById("cerrarVerCliente");
-
-const archivoInput = document.getElementById("contrato");
-const archivoSeleccionado = document.getElementById("archivoSeleccionado");
-
-
-/* ==================================================
-   FORMATO MAC, CTO Y PUERTO
-================================================== */
-
-const campoMAC = document.getElementById("mac");
-const campoCTO = document.getElementById("cto");
-const campoPuerto = document.getElementById("puerto");
-
-if (campoMAC) {
-    campoMAC.addEventListener("input", function () {
-        this.value = this.value
-            .toUpperCase()
-            .replace(/[^A-Z0-9:-]/g, "");
-    });
-}
-
-if (campoCTO) {
-    campoCTO.addEventListener("input", function () {
-        this.value = this.value
-            .toUpperCase()
-            .replace(/[^A-Z0-9-]/g, "");
-    });
-}
-
-if (campoPuerto) {
-    campoPuerto.addEventListener("input", function () {
-        this.value = this.value
-            .toUpperCase()
-            .replace(/[^A-Z0-9-]/g, "");
-    });
-}
-
-
-/* ==================================================
-   SUPABASE
-================================================== */
-
-const SUPABASE_URL =
-    "https://pmbcvhkyfoppvyrnuztn.supabase.co";
-
-const SUPABASE_PUBLISHABLE_KEY =
-    "sb_publishable_yrZYYb4J2qqZmKTq05T35Q_2DBWRDMY";
-
-let supabaseDB = null;
-let usuarioActual = null;
-
-
-function supabaseConfigurado() {
-
-    return (
-        SUPABASE_URL &&
-        SUPABASE_PUBLISHABLE_KEY &&
-        !SUPABASE_URL.includes("PEGA_AQUI") &&
-        !SUPABASE_PUBLISHABLE_KEY.includes("PEGA_AQUI")
-    );
-}
-
-
-/* ==================================================
-   ACCESO
-================================================== */
+// ======================================================
+// ELEMENTOS
+// ======================================================
 
 const pantallaAcceso =
     document.getElementById("pantallaAcceso");
+
+const aplicacion =
+    document.getElementById("aplicacion");
 
 const formLogin =
     document.getElementById("formLogin");
@@ -106,20 +42,14 @@ const accesoCorreo =
 const accesoPassword =
     document.getElementById("accesoPassword");
 
-const tituloAcceso =
-    document.getElementById("tituloAcceso");
-
-const textoAcceso =
-    document.getElementById("textoAcceso");
-
 const btnAcceso =
     document.getElementById("btnAcceso");
 
-const btnCambiarAcceso =
-    document.getElementById("btnCambiarAcceso");
-
 const mensajeAcceso =
     document.getElementById("mensajeAcceso");
+
+const btnCambiarAcceso =
+    document.getElementById("btnCambiarAcceso");
 
 const btnCerrarSesion =
     document.getElementById("btnCerrarSesion");
@@ -127,994 +57,1998 @@ const btnCerrarSesion =
 const nombreUsuario =
     document.getElementById("nombreUsuario");
 
-let modoRegistro = false;
+const avatarUsuario =
+    document.getElementById("avatarUsuario");
 
 
-function mostrarMensajeAcceso(mensaje, error = true) {
+// ======================================================
+// MODAL CLIENTE
+// ======================================================
 
-    if (!mensajeAcceso) return;
+const modalCliente =
+    document.getElementById("modalCliente");
 
-    mensajeAcceso.textContent = mensaje;
+const formCliente =
+    document.getElementById("formCliente");
 
-    mensajeAcceso.style.color =
-        error ? "#dc2626" : "#15803d";
+const tituloModal =
+    document.getElementById("tituloModal");
+
+const cerrarModal =
+    document.getElementById("cerrarModal");
+
+const cancelarCliente =
+    document.getElementById("cancelarCliente");
+
+const btnNuevoCliente =
+    document.getElementById("btnNuevoCliente");
+
+
+// ======================================================
+// CAMPOS CLIENTE
+// ======================================================
+
+const nombre =
+    document.getElementById("nombre");
+
+const cedula =
+    document.getElementById("cedula");
+
+const telefono =
+    document.getElementById("telefono");
+
+const correo =
+    document.getElementById("correo");
+
+const direccion =
+    document.getElementById("direccion");
+
+const mac =
+    document.getElementById("mac");
+
+const cto =
+    document.getElementById("cto");
+
+const puerto =
+    document.getElementById("puerto");
+
+const plan =
+    document.getElementById("plan");
+
+const precio =
+    document.getElementById("precio");
+
+const fecha =
+    document.getElementById("fecha");
+
+const estado =
+    document.getElementById("estado");
+
+const contrato =
+    document.getElementById("contrato");
+
+const archivoSeleccionado =
+    document.getElementById("archivoSeleccionado");
+
+
+// ======================================================
+// CLIENTES
+// ======================================================
+
+const listaClientes =
+    document.getElementById("listaClientes");
+
+const buscarCliente =
+    document.getElementById("buscarCliente");
+
+
+// ======================================================
+// MODAL ELIMINAR
+// ======================================================
+
+const modalEliminar =
+    document.getElementById("modalEliminar");
+
+const nombreEliminar =
+    document.getElementById("nombreEliminar");
+
+const cancelarEliminar =
+    document.getElementById("cancelarEliminar");
+
+const confirmarEliminar =
+    document.getElementById("confirmarEliminar");
+
+
+// ======================================================
+// MODAL VER CLIENTE
+// ======================================================
+
+const modalVerCliente =
+    document.getElementById("modalVerCliente");
+
+const cerrarVerCliente =
+    document.getElementById("cerrarVerCliente");
+
+const verNombre =
+    document.getElementById("verNombre");
+
+const verTelefono =
+    document.getElementById("verTelefono");
+
+const verCedula =
+    document.getElementById("verCedula");
+
+const verCorreo =
+    document.getElementById("verCorreo");
+
+const verDireccion =
+    document.getElementById("verDireccion");
+
+const verMac =
+    document.getElementById("verMac");
+
+const verCto =
+    document.getElementById("verCto");
+
+const verPuerto =
+    document.getElementById("verPuerto");
+
+const verPlan =
+    document.getElementById("verPlan");
+
+const verPrecio =
+    document.getElementById("verPrecio");
+
+const verEstado =
+    document.getElementById("verEstado");
+
+const verFecha =
+    document.getElementById("verFecha");
+
+const verContrato =
+    document.getElementById("verContrato");
+
+
+// ======================================================
+// ESTADÍSTICAS
+// ======================================================
+
+const totalClientes =
+    document.getElementById("totalClientes");
+
+const clientesActivos =
+    document.getElementById("clientesActivos");
+
+const ingresosMes =
+    document.getElementById("ingresosMes");
+
+const pagosPendientes =
+    document.getElementById("pagosPendientes");
+
+
+// ======================================================
+// NAVEGACIÓN
+// ======================================================
+
+const botonesMenu =
+    document.querySelectorAll(".menu-item");
+
+
+const seccionesMenu = {
+
+    inicio:
+        document.getElementById("seccionInicio"),
+
+    clientes:
+        document.getElementById("seccionClientes"),
+
+    pagos:
+        document.getElementById("seccionPagos"),
+
+    contratos:
+        document.getElementById("seccionContratos"),
+
+    equipos:
+        document.getElementById("seccionEquipos"),
+
+    soporte:
+        document.getElementById("seccionSoporte")
+
+};
+
+
+// ======================================================
+// MOSTRAR SECCIÓN
+// ======================================================
+
+function mostrarSeccion(nombreSeccion) {
+
+    Object.values(seccionesMenu).forEach(seccion => {
+
+        if (seccion) {
+
+            seccion.style.display = "none";
+
+            seccion.classList.remove("mostrar");
+
+        }
+
+    });
+
+
+    botonesMenu.forEach(boton => {
+
+        boton.classList.remove("activo");
+
+        boton.classList.remove("seleccionado");
+
+    });
+
+
+    const seccion =
+        seccionesMenu[nombreSeccion];
+
+
+    if (seccion) {
+
+        seccion.style.display = "block";
+
+        seccion.classList.add("mostrar");
+
+    }
+
+
+    const botonActivo =
+        document.querySelector(
+            `.menu-item[data-seccion="${nombreSeccion}"]`
+        );
+
+
+    if (botonActivo) {
+
+        botonActivo.classList.add("activo");
+
+        botonActivo.classList.add("seleccionado");
+
+    }
+
 }
 
 
-function configurarModoAcceso() {
+// ======================================================
+// EVENTOS DEL MENÚ
+// ======================================================
 
-    if (
-        !tituloAcceso ||
-        !textoAcceso ||
-        !btnAcceso ||
-        !btnCambiarAcceso ||
-        !accesoPassword
-    ) {
-        return;
-    }
+botonesMenu.forEach(boton => {
 
-    if (modoRegistro) {
+    boton.addEventListener("click", function () {
 
-        tituloAcceso.textContent =
-            "Crear cuenta";
+        const seccion =
+            this.dataset.seccion;
 
-        textoAcceso.textContent =
-            "Crea una cuenta para guardar tu información en la nube";
+        mostrarSeccion(seccion);
 
-        btnAcceso.textContent =
-            "Crear cuenta";
+    });
 
-        btnCambiarAcceso.textContent =
-            "Ya tengo una cuenta";
-
-        accesoPassword.autocomplete =
-            "new-password";
-
-    } else {
-
-        tituloAcceso.textContent =
-            "Iniciar sesión";
-
-        textoAcceso.textContent =
-            "Ingresa a tu cuenta para continuar";
-
-        btnAcceso.textContent =
-            "Iniciar sesión";
-
-        btnCambiarAcceso.textContent =
-            "Crear una cuenta";
-
-        accesoPassword.autocomplete =
-            "current-password";
-    }
-
-    mostrarMensajeAcceso("");
-}
+});
 
 
-function bloquearAplicacion() {
-
-    if (pantallaAcceso) {
-        pantallaAcceso.classList.remove("oculta");
-    }
-}
-
+// ======================================================
+// MOSTRAR / OCULTAR APLICACIÓN
+// ======================================================
 
 function mostrarAplicacion() {
 
-    if (pantallaAcceso) {
-        pantallaAcceso.classList.add("oculta");
-    }
+    pantallaAcceso.style.display = "none";
 
-    const correo =
-        usuarioActual?.email || "Usuario";
+    aplicacion.style.display = "flex";
 
-    if (nombreUsuario) {
-
-        nombreUsuario.textContent =
-            correo;
-
-        nombreUsuario.title =
-            correo;
-    }
-
-    const inicial =
-        correo.charAt(0).toUpperCase();
-
-    const avatar =
-        document.querySelector(".usuario .avatar");
-
-    if (avatar) {
-        avatar.textContent = inicial;
-    }
 }
 
 
-/* ==================================================
-   INICIAR SESIÓN
-================================================== */
+function mostrarLogin() {
 
-async function iniciarSesion() {
+    pantallaAcceso.style.display = "flex";
 
-    if (!supabaseConfigurado()) {
+    aplicacion.style.display = "none";
 
-        mostrarMensajeAcceso(
-            "Primero configura la URL y la clave pública de Supabase en script.js."
-        );
+}
 
-        return;
+
+// ======================================================
+// MENSAJE DE LOGIN
+// ======================================================
+
+function mostrarMensajeAcceso(
+    mensaje,
+    tipo = ""
+) {
+
+    mensajeAcceso.textContent = mensaje;
+
+    mensajeAcceso.className =
+        "mensaje-acceso " + tipo;
+
+}
+
+
+// ======================================================
+// CAMPO DE NOMBRE PARA REGISTRO
+// ======================================================
+
+function crearCampoNombreRegistro() {
+
+    let campoNombre =
+        document.getElementById("nombreRegistro");
+
+    if (campoNombre) {
+        return campoNombre;
     }
 
-    if (!supabaseDB) {
 
-        mostrarMensajeAcceso(
-            "Supabase todavía no está listo. Recarga la página."
-        );
+    const contenedor =
+        document.createElement("div");
 
-        return;
-    }
+    contenedor.id =
+        "contenedorNombreRegistro";
 
-    const correo =
-        accesoCorreo?.value.trim();
+    contenedor.style.marginBottom =
+        "12px";
 
-    const password =
-        accesoPassword?.value;
 
-    if (!correo || !password) {
+    campoNombre =
+        document.createElement("input");
 
-        mostrarMensajeAcceso(
-            "Ingresa tu correo y contraseña."
-        );
+    campoNombre.type =
+        "text";
 
-        return;
-    }
+    campoNombre.id =
+        "nombreRegistro";
 
-    btnAcceso.disabled = true;
+    campoNombre.name =
+        "nombreRegistro";
 
-    mostrarMensajeAcceso(
-        "Ingresando...",
-        false
+    campoNombre.placeholder =
+        "Nombre completo";
+
+    campoNombre.autocomplete =
+        "name";
+
+    campoNombre.style.width =
+        "100%";
+
+    campoNombre.style.boxSizing =
+        "border-box";
+
+
+    const campoCorreo =
+        accesoCorreo;
+
+
+    campoCorreo.parentNode.insertBefore(
+        contenedor,
+        campoCorreo
     );
 
-    try {
 
-        const { data, error } =
-            await supabaseDB.auth.signInWithPassword({
-                email: correo,
-                password: password
-            });
+    contenedor.appendChild(
+        campoNombre
+    );
 
-        if (error) {
 
-            console.error(error);
+    return campoNombre;
 
-            if (
-                error.message &&
-                error.message.toLowerCase().includes(
-                    "email not confirmed"
-                )
-            ) {
+}
 
-                mostrarMensajeAcceso(
-                    "Tu correo todavía no está confirmado. Revisa tu correo electrónico."
-                );
 
-            } else {
+function eliminarCampoNombreRegistro() {
 
-                mostrarMensajeAcceso(
-                    "No se pudo iniciar sesión. Revisa el correo y la contraseña."
-                );
-            }
+    const contenedor =
+        document.getElementById(
+            "contenedorNombreRegistro"
+        );
 
-            return;
+    if (contenedor) {
+
+        contenedor.remove();
+
+    }
+
+}
+
+
+// ======================================================
+// LOGIN / REGISTRO
+// ======================================================
+
+let modoRegistro = false;
+
+
+btnCambiarAcceso.addEventListener(
+    "click",
+    function () {
+
+        modoRegistro = !modoRegistro;
+
+
+        if (modoRegistro) {
+
+            document.getElementById("tituloAcceso").textContent =
+                "Crear cuenta";
+
+            document.getElementById("textoAcceso").textContent =
+                "Crea tu cuenta para ingresar al panel";
+
+            btnAcceso.textContent =
+                "Crear cuenta";
+
+            btnCambiarAcceso.textContent =
+                "Ya tengo una cuenta";
+
+
+            crearCampoNombreRegistro();
+
+
+        } else {
+
+            document.getElementById("tituloAcceso").textContent =
+                "Sistecfiber";
+
+            document.getElementById("textoAcceso").textContent =
+                "Inicia sesión para ingresar al panel";
+
+            btnAcceso.textContent =
+                "Iniciar sesión";
+
+            btnCambiarAcceso.textContent =
+                "Crear una cuenta";
+
+
+            eliminarCampoNombreRegistro();
+
         }
 
-        usuarioActual =
-            data.user;
 
-        formLogin?.reset();
+        mostrarMensajeAcceso("");
 
-        mostrarAplicacion();
-
-        await cargarClientes();
-
-    } catch (error) {
-
-        console.error(error);
-
-        mostrarMensajeAcceso(
-            "Ocurrió un error al iniciar sesión."
-        );
-
-    } finally {
-
-        btnAcceso.disabled = false;
     }
-}
+);
 
 
-/* ==================================================
-   CREAR CUENTA
-================================================== */
+formLogin.addEventListener(
+    "submit",
+    async function (event) {
 
-async function crearCuenta() {
+        event.preventDefault();
 
-    if (!supabaseConfigurado()) {
 
-        mostrarMensajeAcceso(
-            "Primero configura la URL y la clave pública de Supabase en script.js."
-        );
+        const email =
+            accesoCorreo.value.trim();
 
-        return;
-    }
+        const password =
+            accesoPassword.value;
 
-    if (!supabaseDB) {
 
-        mostrarMensajeAcceso(
-            "Supabase todavía no está listo. Recarga la página."
-        );
-
-        return;
-    }
-
-    const correo =
-        accesoCorreo?.value.trim();
-
-    const password =
-        accesoPassword?.value;
-
-    if (!correo || !password) {
-
-        mostrarMensajeAcceso(
-            "Ingresa un correo y una contraseña."
-        );
-
-        return;
-    }
-
-    if (!correoValido(correo)) {
-
-        mostrarMensajeAcceso(
-            "Ingresa un correo electrónico válido."
-        );
-
-        return;
-    }
-
-    if (password.length < 6) {
-
-        mostrarMensajeAcceso(
-            "La contraseña debe tener mínimo 6 caracteres."
-        );
-
-        return;
-    }
-
-    btnAcceso.disabled = true;
-
-    mostrarMensajeAcceso(
-        "Creando cuenta...",
-        false
-    );
-
-    try {
-
-        const { data, error } =
-            await supabaseDB.auth.signUp({
-
-                email: correo,
-
-                password: password
-
-            });
-
-        if (error) {
-
-            console.error(error);
+        if (!email || !password) {
 
             mostrarMensajeAcceso(
-                error.message
+                "Completa todos los campos.",
+                "error"
             );
 
             return;
+
         }
 
-        /*
-           Si Supabase devuelve una sesión,
-           la cuenta puede entrar inmediatamente.
-        */
 
-        if (
-            data.session &&
-            data.user
-        ) {
-
-            usuarioActual =
-                data.user;
-
-            formLogin?.reset();
-
-            mostrarAplicacion();
-
-            await cargarClientes();
-
-            return;
-        }
-
-        /*
-           Si no hay sesión, normalmente
-           Supabase está esperando confirmación
-           del correo.
-        */
-
-        mostrarMensajeAcceso(
-            "Cuenta creada. Revisa tu correo para confirmar la cuenta.",
-            false
-        );
-
-        formLogin?.reset();
-
-        modoRegistro = false;
-
-        configurarModoAcceso();
-
-    } catch (error) {
-
-        console.error(error);
-
-        mostrarMensajeAcceso(
-            "Ocurrió un error al crear la cuenta."
-        );
-
-    } finally {
-
-        btnAcceso.disabled = false;
-    }
-}
+        btnAcceso.disabled = true;
 
 
-/* ==================================================
-   EVENTOS DE ACCESO
-================================================== */
+        // ==================================================
+        // REGISTRO
+        // ==================================================
 
-if (formLogin) {
+        if (modoRegistro) {
 
-    formLogin.addEventListener(
-        "submit",
-        async function (event) {
-
-            event.preventDefault();
-
-            if (modoRegistro) {
-
-                await crearCuenta();
-
-            } else {
-
-                await iniciarSesion();
-            }
-        }
-    );
-}
+            const campoNombre =
+                document.getElementById(
+                    "nombreRegistro"
+                );
 
 
-if (btnCambiarAcceso) {
-
-    btnCambiarAcceso.addEventListener(
-        "click",
-        function (event) {
-
-            event.preventDefault();
-
-            modoRegistro =
-                !modoRegistro;
-
-            configurarModoAcceso();
-        }
-    );
-}
+            const nombrePersona =
+                campoNombre
+                    ? campoNombre.value.trim()
+                    : "";
 
 
-if (btnCerrarSesion) {
+            if (!nombrePersona) {
 
-    btnCerrarSesion.addEventListener(
-        "click",
-        async function () {
+                mostrarMensajeAcceso(
+                    "Escribe tu nombre completo.",
+                    "error"
+                );
 
-            if (!supabaseDB) {
+                btnAcceso.disabled = false;
+
                 return;
+
             }
 
-            const { error } =
-                await supabaseDB.auth.signOut();
+
+            mostrarMensajeAcceso(
+                "Creando cuenta..."
+            );
+
+
+            const {
+                data,
+                error
+            } =
+                await supabaseClient.auth.signUp({
+
+                    email: email,
+
+                    password: password,
+
+                    options: {
+
+                        data: {
+
+                            nombre:
+                                nombrePersona
+
+                        }
+
+                    }
+
+                });
+
 
             if (error) {
+
                 console.error(error);
+
+                mostrarMensajeAcceso(
+                    error.message,
+                    "error"
+                );
+
+                btnAcceso.disabled = false;
+
+                return;
+
             }
 
-            usuarioActual = null;
-
-            clientes = [];
-
-            renderizarClientes();
-
-            actualizarEstadisticas();
-
-            bloquearAplicacion();
-        }
-    );
-}
-
-
-/* ==================================================
-   INICIAR SISTEMA
-================================================== */
-
-async function iniciarSistema() {
-
-    configurarModoAcceso();
-
-    bloquearAplicacion();
-
-    if (!supabaseConfigurado()) {
-
-        mostrarMensajeAcceso(
-            "Falta configurar Supabase en script.js."
-        );
-
-        return;
-    }
-
-    try {
-
-        /*
-           Supabase debe estar cargado desde
-           index.html antes de script.js.
-        */
-
-        if (
-            !window.supabase ||
-            typeof window.supabase.createClient !==
-                "function"
-        ) {
 
             mostrarMensajeAcceso(
-                "No se pudo cargar Supabase. Revisa el script de Supabase en index.html."
+                "Cuenta creada correctamente. Revisa tu correo si Supabase solicita confirmación.",
+                "exito"
             );
 
-            console.error(
-                "Supabase JS no está disponible."
-            );
+
+            btnAcceso.disabled = false;
 
             return;
+
         }
 
-        const { createClient } =
-            window.supabase;
 
-        supabaseDB =
-            createClient(
-                SUPABASE_URL,
-                SUPABASE_PUBLISHABLE_KEY,
-                {
-                    auth: {
-                        persistSession: true,
-                        autoRefreshToken: true,
-                        detectSessionInUrl: true
-                    }
-                }
-            );
+        // ==================================================
+        // INICIAR SESIÓN
+        // ==================================================
+
+        mostrarMensajeAcceso(
+            "Iniciando sesión..."
+        );
+
 
         const {
             data,
             error
         } =
-            await supabaseDB.auth.getUser();
+            await supabaseClient.auth.signInWithPassword({
+
+                email: email,
+
+                password: password
+
+            });
+
 
         if (error) {
 
-            console.warn(
-                "No hay usuario activo:",
-                error.message
+            console.error(error);
+
+            mostrarMensajeAcceso(
+                error.message,
+                "error"
             );
 
+            btnAcceso.disabled = false;
+
+            return;
+
         }
 
-        const user =
-            data?.user;
-
-        if (user) {
-
-            usuarioActual =
-                user;
-
-            mostrarAplicacion();
-
-            await cargarClientes();
-        }
-
-        supabaseDB.auth.onAuthStateChange(
-            async function (event, session) {
-
-                if (session?.user) {
-
-                    usuarioActual =
-                        session.user;
-
-                    mostrarAplicacion();
-
-                    /*
-                       No volvemos a cargar clientes
-                       innecesariamente durante todos
-                       los eventos de autenticación.
-                    */
-
-                    if (
-                        event === "SIGNED_IN" ||
-                        event === "INITIAL_SESSION"
-                    ) {
-
-                        await cargarClientes();
-                    }
-
-                } else if (
-                    event === "SIGNED_OUT"
-                ) {
-
-                    usuarioActual = null;
-
-                    clientes = [];
-
-                    bloquearAplicacion();
-
-                    renderizarClientes();
-
-                    actualizarEstadisticas();
-                }
-            }
-        );
-
-    } catch (error) {
-
-        console.error(
-            "Error iniciando Supabase:",
-            error
-        );
 
         mostrarMensajeAcceso(
-            "No se pudo iniciar el sistema. Recarga la página."
+            "Sesión iniciada correctamente.",
+            "exito"
         );
+
+
+        btnAcceso.disabled = false;
+
     }
-}
+);
 
 
-/* ==================================================
-   CONVERTIR CLIENTE PARA SUPABASE
-================================================== */
+// ======================================================
+// CERRAR SESIÓN
+// ======================================================
 
-function clienteParaBaseDatos(cliente) {
+btnCerrarSesion.addEventListener(
+    "click",
+    async function () {
 
-    return {
-
-        id:
-            cliente.id,
-
-        user_id:
-            usuarioActual.id,
-
-        nombre:
-            cliente.nombre || "",
-
-        cedula:
-            cliente.cedula || "",
-
-        telefono:
-            cliente.telefono || "",
-
-        correo:
-            cliente.correo || "",
-
-        direccion:
-            cliente.direccion || "",
-
-        mac:
-            cliente.mac || "",
-
-        cto:
-            cliente.cto || "",
-
-        puerto:
-            cliente.puerto || "",
-
-        plan:
-            cliente.plan || "300 Mbps",
-
-        precio:
-            Number(cliente.precio || 0),
-
-        fecha:
-            cliente.fecha || null,
-
-        estado:
-            cliente.estado || "Activo",
-
-        contrato:
-            cliente.contrato || null
-    };
-}
-
-
-/* ==================================================
-   CARGAR CLIENTES
-================================================== */
-
-async function cargarClientes() {
-
-    if (!supabaseDB || !usuarioActual) {
+        await supabaseClient.auth.signOut();
 
         clientes = [];
 
-        renderizarClientes();
+        listaClientes.innerHTML = "";
 
-        actualizarEstadisticas();
+        mostrarLogin();
 
+    }
+);
+
+
+// ======================================================
+// CAMBIO DE SESIÓN
+// ======================================================
+
+supabaseClient.auth.onAuthStateChange(
+    async function (event, session) {
+
+        if (session) {
+
+            mostrarAplicacion();
+
+            actualizarUsuario(
+                session.user
+            );
+
+            await cargarClientes();
+
+            mostrarSeccion("inicio");
+
+        } else {
+
+            mostrarLogin();
+
+        }
+
+    }
+);
+
+
+// ======================================================
+// ACTUALIZAR USUARIO
+// ======================================================
+
+function actualizarUsuario(usuario) {
+
+    if (!usuario) {
         return;
     }
 
-    const { data, error } =
-        await supabaseDB
-            .from("clientes")
-            .select("*")
-            .eq(
-                "user_id",
-                usuarioActual.id
-            )
-            .order(
-                "created_at",
-                {
-                    ascending: false
-                }
-            );
+
+    const email =
+        usuario.email || "Administrador";
+
+
+    const nombrePersona =
+        usuario.user_metadata?.nombre ||
+        "Administrador";
+
+
+    nombreUsuario.textContent =
+        nombrePersona;
+
+
+    avatarUsuario.textContent =
+        nombrePersona
+            .charAt(0)
+            .toUpperCase();
+
+}
+
+
+// ======================================================
+// COMPROBAR SESIÓN AL CARGAR
+// ======================================================
+
+async function comprobarSesion() {
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient.auth.getSession();
+
 
     if (error) {
 
         console.error(error);
 
-        alertar(
-            "No se pudieron cargar los clientes."
-        );
+        mostrarLogin();
 
         return;
+
     }
+
+
+    if (data.session) {
+
+        mostrarAplicacion();
+
+        actualizarUsuario(
+            data.session.user
+        );
+
+        await cargarClientes();
+
+        mostrarSeccion("inicio");
+
+    } else {
+
+        mostrarLogin();
+
+    }
+
+}
+
+
+// ======================================================
+// CARGAR CLIENTES DESDE SUPABASE
+// ======================================================
+
+async function cargarClientes() {
+
+    listaClientes.innerHTML =
+        "<p>Cargando clientes...</p>";
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("Clientes")
+            .select("*")
+            .order("id", {
+                ascending: false
+            });
+
+
+    if (error) {
+
+        console.error(
+            "Error cargando clientes:",
+            error
+        );
+
+        listaClientes.innerHTML =
+            "<p>No se pudieron cargar los clientes.</p>";
+
+        return;
+
+    }
+
 
     clientes =
         data || [];
 
-    renderizarClientes();
+
+    mostrarClientes(
+        clientes
+    );
+
 
     actualizarEstadisticas();
+
 }
 
 
-/* ==================================================
-   SUBIR CONTRATO
-================================================== */
+// ======================================================
+// MOSTRAR CLIENTES
+// ======================================================
 
-async function subirContrato(
-    archivo,
-    clienteId
+function mostrarClientes(
+    lista
 ) {
 
-    if (!archivo || !usuarioActual) {
-        return null;
-    }
-
-    const nombreSeguro =
-        archivo.name
-            .replace(
-                /[^a-zA-Z0-9._-]/g,
-                "_"
-            );
-
-    const ruta =
-        `${usuarioActual.id}/${clienteId}/${Date.now()}-${nombreSeguro}`;
-
-    const { error } =
-        await supabaseDB
-            .storage
-            .from("documentos")
-            .upload(
-                ruta,
-                archivo,
-                {
-                    upsert: true,
-                    contentType:
-                        archivo.type ||
-                        "application/octet-stream"
-                }
-            );
-
-    if (error) {
-
-        console.error(error);
-
-        throw new Error(
-            "No se pudo subir el contrato."
-        );
-    }
-
-    return {
-
-        nombre:
-            archivo.name,
-
-        tipo:
-            archivo.type,
-
-        tamaño:
-            archivo.size,
-
-        ruta:
-            ruta
-    };
-}
+    listaClientes.innerHTML = "";
 
 
-/* ==================================================
-   GUARDAR CLIENTE
-================================================== */
+    if (!lista || lista.length === 0) {
 
-async function guardarCliente(cliente) {
+        listaClientes.innerHTML = `
 
-    if (!supabaseDB || !usuarioActual) {
+            <div class="menu-extra-vacio">
 
-        alertar(
-            "Debes iniciar sesión primero."
-        );
+                <h3>
+                    No hay clientes
+                </h3>
 
-        return false;
-    }
+                <p>
+                    Todavía no has registrado ningún cliente.
+                </p>
 
-    const registro =
-        clienteParaBaseDatos(
-            cliente
-        );
+            </div>
 
-    const { error } =
-        await supabaseDB
-            .from("clientes")
-            .upsert(
-                registro,
-                {
-                    onConflict: "id"
-                }
-            );
-
-    if (error) {
-
-        console.error(error);
-
-        alertar(
-            "No se pudo guardar el cliente."
-        );
-
-        return false;
-    }
-
-    return true;
-}
-
-
-/* ==================================================
-   ELIMINAR CLIENTE
-================================================== */
-
-async function eliminarClienteDB(
-    id
-) {
-
-    if (!supabaseDB || !usuarioActual) {
-        return false;
-    }
-
-    const cliente =
-        clientes.find(
-            c => c.id === id
-        );
-
-    if (
-        cliente &&
-        cliente.contrato &&
-        cliente.contrato.ruta
-    ) {
-
-        const {
-            error: errorStorage
-        } =
-            await supabaseDB
-                .storage
-                .from("documentos")
-                .remove([
-                    cliente.contrato.ruta
-                ]);
-
-        if (errorStorage) {
-            console.error(errorStorage);
-        }
-    }
-
-    const { error } =
-        await supabaseDB
-            .from("clientes")
-            .delete()
-            .eq(
-                "id",
-                id
-            )
-            .eq(
-                "user_id",
-                usuarioActual.id
-            );
-
-    if (error) {
-
-        console.error(error);
-
-        alertar(
-            "No se pudo eliminar el cliente."
-        );
-
-        return false;
-    }
-
-    return true;
-}
-
-
-/* ==================================================
-   VER CONTRATO
-================================================== */
-
-async function verContrato(
-    id
-) {
-
-    const cliente =
-        clientes.find(
-            c => c.id === id
-        );
-
-    if (
-        !cliente ||
-        !cliente.contrato
-    ) {
-
-        alertar(
-            "Este cliente no tiene contrato."
-        );
+        `;
 
         return;
+
     }
 
-    if (
-        cliente.contrato.ruta &&
-        supabaseDB
-    ) {
 
-        const { data, error } =
-            await supabaseDB
-                .storage
-                .from("documentos")
-                .createSignedUrl(
-                    cliente.contrato.ruta,
-                    3600
+    lista.forEach(cliente => {
+
+        const card =
+            document.createElement("div");
+
+
+        card.className =
+            "cliente-card";
+
+
+        const estadoCliente =
+            cliente.estado || "Activo";
+
+
+        card.innerHTML = `
+
+            <div class="cliente-top">
+
+                <div>
+
+                    <h3>
+                        ${escaparHTML(
+                            cliente.nombre || "Sin nombre"
+                        )}
+                    </h3>
+
+                    <span class="estado ${estadoCliente
+                        .toLowerCase()
+                        .replaceAll(" ", "-")}">
+
+                        ${escaparHTML(
+                            estadoCliente
+                        )}
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="cliente-datos">
+
+                <p>
+                    <strong>Teléfono:</strong>
+                    ${escaparHTML(
+                        cliente.telefono || "No registrado"
+                    )}
+                </p>
+
+                <p>
+                    <strong>Dirección:</strong>
+                    ${escaparHTML(
+                        cliente.direccion || "No registrada"
+                    )}
+                </p>
+
+                <p>
+                    <strong>Plan:</strong>
+                    ${escaparHTML(
+                        cliente.plan || "No registrado"
+                    )}
+                </p>
+
+            </div>
+
+
+            <div class="cliente-botones">
+
+                <button
+                    type="button"
+                    class="btn-secondary btn-ver-cliente">
+
+                    Ver
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn-primary btn-editar-cliente">
+
+                    Editar
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn-danger btn-eliminar-cliente">
+
+                    Eliminar
+
+                </button>
+
+            </div>
+
+        `;
+
+
+        const botonVer =
+            card.querySelector(
+                ".btn-ver-cliente"
+            );
+
+
+        const botonEditar =
+            card.querySelector(
+                ".btn-editar-cliente"
+            );
+
+
+        const botonEliminar =
+            card.querySelector(
+                ".btn-eliminar-cliente"
+            );
+
+
+        botonVer.addEventListener(
+            "click",
+            function () {
+
+                abrirModalVerCliente(
+                    cliente
                 );
 
-        if (error) {
+            }
+        );
 
-            console.error(error);
 
-            alertar(
-                "No se pudo abrir el contrato."
+        botonEditar.addEventListener(
+            "click",
+            function () {
+
+                abrirModalEditar(
+                    cliente
+                );
+
+            }
+        );
+
+
+        botonEliminar.addEventListener(
+            "click",
+            function () {
+
+                abrirModalEliminar(
+                    cliente
+                );
+
+            }
+        );
+
+
+        listaClientes.appendChild(
+            card
+        );
+
+    });
+
+}
+
+
+// ======================================================
+// ESCAPAR HTML
+// ======================================================
+
+function escaparHTML(texto) {
+
+    return String(texto)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+
+// ======================================================
+// BUSCAR CLIENTES
+// ======================================================
+
+buscarCliente.addEventListener(
+    "input",
+    function () {
+
+        const texto =
+            this.value
+                .trim()
+                .toLowerCase();
+
+
+        if (!texto) {
+
+            mostrarClientes(
+                clientes
             );
 
             return;
+
         }
 
-        window.open(
-            data.signedUrl,
-            "_blank"
+
+        const filtrados =
+            clientes.filter(cliente => {
+
+                return (
+
+                    String(
+                        cliente.nombre || ""
+                    )
+                        .toLowerCase()
+                        .includes(texto)
+
+                    ||
+
+                    String(
+                        cliente.telefono || ""
+                    )
+                        .toLowerCase()
+                        .includes(texto)
+
+                    ||
+
+                    String(
+                        cliente.direccion || ""
+                    )
+                        .toLowerCase()
+                        .includes(texto)
+
+                );
+
+            });
+
+
+        mostrarClientes(
+            filtrados
         );
 
-        return;
+    }
+);
+
+
+// ======================================================
+// ABRIR MODAL NUEVO CLIENTE
+// ======================================================
+
+btnNuevoCliente.addEventListener(
+    "click",
+    function () {
+
+        abrirModalCliente();
+
+    }
+);
+
+
+function abrirModalCliente() {
+
+    clienteEditando = null;
+
+
+    tituloModal.textContent =
+        "Nuevo cliente";
+
+
+    formCliente.reset();
+
+
+    archivoSeleccionado.textContent =
+        "";
+
+
+    if (modalCliente) {
+
+        modalCliente.classList.add("activo");
+
+        modalCliente.style.display = "flex";
+
     }
 
-    if (cliente.contrato.archivo) {
-
-        try {
-
-            const binario =
-                atob(
-                    cliente.contrato.archivo
-                );
-
-            const bytes =
-                new Uint8Array(
-                    binario.length
-                );
-
-            for (
-                let i = 0;
-                i < binario.length;
-                i++
-            ) {
-
-                bytes[i] =
-                    binario.charCodeAt(i);
-            }
-
-            const blob =
-                new Blob(
-                    [bytes],
-                    {
-                        type:
-                            cliente.contrato.tipo ||
-                            "application/octet-stream"
-                    }
-                );
-
-            const url =
-                URL.createObjectURL(
-                    blob
-                );
-
-            window.open(
-                url,
-                "_blank"
-            );
-
-            setTimeout(
-                () =>
-                    URL.revokeObjectURL(url),
-                60000
-            );
-
-        } catch (error) {
-
-            console.error(error);
-
-            alertar(
-                "No se pudo abrir el archivo."
-            );
-        }
-    }
 }
 
 
-/* ==================================================
-   ESTADÍSTICAS
-================================================== */
+// ======================================================
+// ABRIR MODAL EDITAR
+// ======================================================
+
+function abrirModalEditar(
+    cliente
+) {
+
+    clienteEditando =
+        cliente;
+
+
+    tituloModal.textContent =
+        "Editar cliente";
+
+
+    nombre.value =
+        cliente.nombre || "";
+
+    cedula.value =
+        cliente.identificacion || "";
+
+    telefono.value =
+        cliente.telefono || "";
+
+    correo.value =
+        cliente.correo || "";
+
+    direccion.value =
+        cliente.direccion || "";
+
+    mac.value =
+        cliente.mac || "";
+
+    cto.value =
+        cliente.cto || "";
+
+    puerto.value =
+        cliente.puerto || "";
+
+    plan.value =
+        cliente.plan || "300 Mbps";
+
+    precio.value =
+        cliente.precio || "";
+
+    fecha.value =
+        cliente.fecha || "";
+
+    estado.value =
+        cliente.estado || "Activo";
+
+
+    archivoSeleccionado.textContent =
+        cliente.contrato_nombre
+            ? `Contrato actual: ${cliente.contrato_nombre}`
+            : "";
+
+
+    modalCliente.classList.add("activo");
+
+    modalCliente.style.display =
+        "flex";
+
+}
+
+
+// ======================================================
+// CERRAR MODAL CLIENTE
+// ======================================================
+
+function cerrarModalCliente() {
+
+    modalCliente.classList.remove(
+        "activo"
+    );
+
+    modalCliente.style.display =
+        "none";
+
+    clienteEditando = null;
+
+    formCliente.reset();
+
+    archivoSeleccionado.textContent =
+        "";
+
+}
+
+
+cerrarModal.addEventListener(
+    "click",
+    cerrarModalCliente
+);
+
+
+cancelarCliente.addEventListener(
+    "click",
+    cerrarModalCliente
+);
+
+
+// ======================================================
+// MOSTRAR ARCHIVO SELECCIONADO
+// ======================================================
+
+contrato.addEventListener(
+    "change",
+    function () {
+
+        if (this.files.length > 0) {
+
+            archivoSeleccionado.textContent =
+                "Archivo seleccionado: " +
+                this.files[0].name;
+
+        } else {
+
+            archivoSeleccionado.textContent =
+                "";
+
+        }
+
+    }
+);
+
+
+// ======================================================
+// NOTIFICACIONES BONITAS
+// ======================================================
+
+function mostrarNotificacion(
+    titulo,
+    mensaje,
+    tipo = "exito"
+) {
+
+    const anterior =
+        document.querySelector(
+            ".notificacion-sistecfiber"
+        );
+
+
+    if (anterior) {
+
+        anterior.remove();
+
+    }
+
+
+    const notificacion =
+        document.createElement("div");
+
+
+    notificacion.className =
+        `notificacion-sistecfiber notificacion-${tipo}`;
+
+
+    const icono =
+        tipo === "exito"
+            ? "✓"
+            : "✕";
+
+
+    notificacion.innerHTML = `
+
+        <div class="notificacion-icono">
+            ${icono}
+        </div>
+
+        <div class="notificacion-contenido">
+
+            <div class="notificacion-titulo">
+                ${titulo}
+            </div>
+
+            <div class="notificacion-mensaje">
+                ${mensaje}
+            </div>
+
+        </div>
+
+    `;
+
+
+    document.body.appendChild(
+        notificacion
+    );
+
+
+    setTimeout(() => {
+
+        notificacion.classList.add(
+            "notificacion-saliendo"
+        );
+
+
+        setTimeout(() => {
+
+            notificacion.remove();
+
+        }, 250);
+
+
+    }, 3000);
+
+}
+
+
+// ======================================================
+// GUARDAR CLIENTE
+// ======================================================
+
+formCliente.addEventListener(
+    "submit",
+    async function (event) {
+
+        event.preventDefault();
+
+
+        const botonGuardar =
+            formCliente.querySelector(
+                'button[type="submit"]'
+            );
+
+
+        botonGuardar.disabled =
+            true;
+
+
+        try {
+
+            let rutaContrato =
+                clienteEditando?.contrato_ruta ||
+                null;
+
+            let nombreContrato =
+                clienteEditando?.contrato_nombre ||
+                null;
+
+
+            // ------------------------------------------
+            // SUBIR CONTRATO
+            // ------------------------------------------
+
+            if (
+                contrato.files &&
+                contrato.files.length > 0
+            ) {
+
+                const archivo =
+                    contrato.files[0];
+
+
+                const nombreArchivo =
+                    Date.now() +
+                    "_" +
+                    archivo.name
+                        .replace(
+                            /[^a-zA-Z0-9._-]/g,
+                            "_"
+                        );
+
+
+                const {
+                    data: {
+                        user
+                    }
+                } = await supabaseClient.auth.getUser();
+
+
+                if (!user) {
+
+                    mostrarNotificacion(
+                        "Sesión no encontrada",
+                        "No se encontró el usuario autenticado.",
+                        "error"
+                    );
+
+                    botonGuardar.disabled =
+                        false;
+
+                    return;
+
+                }
+
+
+                const ruta =
+                    user.id +
+                    "/contratos/" +
+                    nombreArchivo;
+
+
+                const {
+                    error: errorSubida
+                } =
+                    await supabaseClient
+                        .storage
+                        .from("documentos")
+                        .upload(
+                            ruta,
+                            archivo,
+                            {
+                                upsert: false
+                            }
+                        );
+
+
+                if (errorSubida) {
+
+                    console.error(
+                        errorSubida
+                    );
+
+
+                    mostrarNotificacion(
+                        "Error al subir",
+                        "No se pudo subir el contrato.",
+                        "error"
+                    );
+
+
+                    botonGuardar.disabled =
+                        false;
+
+                    return;
+
+                }
+
+
+                rutaContrato =
+                    ruta;
+
+                nombreContrato =
+                    archivo.name;
+
+            }
+
+
+            // ------------------------------------------
+            // DATOS
+            // ------------------------------------------
+
+            const datosCliente = {
+
+                nombre:
+                    nombre.value.trim(),
+
+                identificacion:
+                    cedula.value.trim(),
+
+                telefono:
+                    telefono.value.trim(),
+
+                correo:
+                    correo.value.trim(),
+
+                direccion:
+                    direccion.value.trim(),
+
+                mac:
+                    mac.value.trim(),
+
+                cto:
+                    cto.value.trim(),
+
+                puerto:
+                    puerto.value.trim(),
+
+                plan:
+                    plan.value,
+
+                precio:
+                    Number(precio.value) || 0,
+
+                fecha:
+                    fecha.value || null,
+
+                estado:
+                    estado.value,
+
+                contrato_ruta:
+                    rutaContrato,
+
+                contrato_nombre:
+                    nombreContrato
+
+            };
+
+
+            // ------------------------------------------
+            // EDITAR
+            // ------------------------------------------
+
+            if (clienteEditando) {
+
+                const {
+                    error
+                } =
+                    await supabaseClient
+                        .from("Clientes")
+                        .update(
+                            datosCliente
+                        )
+                        .eq(
+                            "id",
+                            clienteEditando.id
+                        );
+
+
+                if (error) {
+
+                    console.error(
+                        "Error actualizando:",
+                        error
+                    );
+
+
+                    mostrarNotificacion(
+                        "No se pudo actualizar",
+                        "Revisa los datos e inténtalo nuevamente.",
+                        "error"
+                    );
+
+
+                    botonGuardar.disabled =
+                        false;
+
+                    return;
+
+                }
+
+
+                mostrarNotificacion(
+                    "Cliente actualizado",
+                    "Los datos del cliente se actualizaron correctamente."
+                );
+
+            }
+
+
+            // ------------------------------------------
+            // CREAR
+            // ------------------------------------------
+
+            else {
+
+                const {
+                    error
+                } =
+                    await supabaseClient
+                        .from("Clientes")
+                        .insert(
+                            datosCliente
+                        );
+
+
+                if (error) {
+
+                    console.error(
+                        "Error guardando:",
+                        error
+                    );
+
+
+                    mostrarNotificacion(
+                        "No se pudo guardar",
+                        "Revisa los datos e inténtalo nuevamente.",
+                        "error"
+                    );
+
+
+                    botonGuardar.disabled =
+                        false;
+
+                    return;
+
+                }
+
+
+                mostrarNotificacion(
+                    "Cliente guardado",
+                    "El cliente se agregó correctamente."
+                );
+
+            }
+
+
+            cerrarModalCliente();
+
+            await cargarClientes();
+
+        } catch (error) {
+
+            console.error(
+                "Error general:",
+                error
+            );
+
+
+            mostrarNotificacion(
+                "Ocurrió un error",
+                "No se pudo completar la operación.",
+                "error"
+            );
+
+        }
+
+
+        botonGuardar.disabled =
+            false;
+
+    }
+);
+
+
+// ======================================================
+// MODAL VER CLIENTE
+// ======================================================
+
+function abrirModalVerCliente(
+    cliente
+) {
+
+    verNombre.textContent =
+        cliente.nombre || "Cliente";
+
+    verTelefono.textContent =
+        cliente.telefono || "No registrado";
+
+    verCedula.textContent =
+        cliente.identificacion || "No registrada";
+
+    verCorreo.textContent =
+        cliente.correo || "No registrado";
+
+    verDireccion.textContent =
+        cliente.direccion || "No registrada";
+
+    verMac.textContent =
+        cliente.mac || "No registrada";
+
+    verCto.textContent =
+        cliente.cto || "No registrado";
+
+    verPuerto.textContent =
+        cliente.puerto || "No registrado";
+
+    verPlan.textContent =
+        cliente.plan || "No registrado";
+
+
+    verPrecio.textContent =
+        cliente.precio
+            ? formatearMoneda(cliente.precio)
+            : "$0";
+
+
+    verEstado.textContent =
+        cliente.estado || "No registrado";
+
+
+    verFecha.textContent =
+        cliente.fecha || "No registrada";
+
+
+    verContrato.innerHTML =
+        "";
+
+
+    if (
+        cliente.contrato_ruta
+    ) {
+
+        const botonContrato =
+            document.createElement(
+                "button"
+            );
+
+
+        botonContrato.type =
+            "button";
+
+
+        botonContrato.className =
+            "btn-primary";
+
+
+        botonContrato.textContent =
+            "Ver contrato";
+
+
+        botonContrato.addEventListener(
+            "click",
+            function () {
+
+                abrirContrato(
+                    cliente.contrato_ruta
+                );
+
+            }
+        );
+
+
+        verContrato.appendChild(
+            botonContrato
+        );
+
+    } else {
+
+        verContrato.textContent =
+            "No hay contrato cargado.";
+
+    }
+
+
+    modalVerCliente.classList.add(
+        "activo"
+    );
+
+    modalVerCliente.style.display =
+        "flex";
+
+}
+
+
+cerrarVerCliente.addEventListener(
+    "click",
+    function () {
+
+        modalVerCliente.classList.remove(
+            "activo"
+        );
+
+        modalVerCliente.style.display =
+            "none";
+
+    }
+);
+
+
+// ======================================================
+// ABRIR CONTRATO
+// ======================================================
+
+async function abrirContrato(
+    ruta
+) {
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .storage
+            .from("documentos")
+            .createSignedUrl(
+                ruta,
+                3600
+            );
+
+
+    if (error) {
+
+        console.error(
+            error
+        );
+
+
+        mostrarNotificacion(
+            "No se pudo abrir",
+            "No se pudo abrir el contrato.",
+            "error"
+        );
+
+
+        return;
+
+    }
+
+
+    window.open(
+        data.signedUrl,
+        "_blank"
+    );
+
+}
+
+
+// ======================================================
+// MODAL ELIMINAR
+// ======================================================
+
+function abrirModalEliminar(
+    cliente
+) {
+
+    clienteEliminar =
+        cliente;
+
+
+    nombreEliminar.textContent =
+        cliente.nombre || "este cliente";
+
+
+    modalEliminar.classList.add(
+        "activo"
+    );
+
+    modalEliminar.style.display =
+        "flex";
+
+}
+
+
+function cerrarModalEliminar() {
+
+    modalEliminar.classList.remove(
+        "activo"
+    );
+
+    modalEliminar.style.display =
+        "none";
+
+    clienteEliminar =
+        null;
+
+}
+
+
+cancelarEliminar.addEventListener(
+    "click",
+    cerrarModalEliminar
+);
+
+
+confirmarEliminar.addEventListener(
+    "click",
+    async function () {
+
+        if (!clienteEliminar) {
+            return;
+        }
+
+
+        confirmarEliminar.disabled =
+            true;
+
+
+        try {
+
+            // ------------------------------------------
+            // ELIMINAR CONTRATO DEL STORAGE
+            // ------------------------------------------
+
+            if (
+                clienteEliminar.contrato_ruta
+            ) {
+
+                const {
+                    error:
+                        errorStorage
+                } =
+                    await supabaseClient
+                        .storage
+                        .from("documentos")
+                        .remove([
+                            clienteEliminar.contrato_ruta
+                        ]);
+
+
+                if (errorStorage) {
+
+                    console.warn(
+                        "No se pudo eliminar el archivo:",
+                        errorStorage
+                    );
+
+                }
+
+            }
+
+
+            // ------------------------------------------
+            // ELIMINAR CLIENTE
+            // ------------------------------------------
+
+            const {
+                error
+            } =
+                await supabaseClient
+                    .from("Clientes")
+                    .delete()
+                    .eq(
+                        "id",
+                        clienteEliminar.id
+                    );
+
+
+            if (error) {
+
+                console.error(
+                    error
+                );
+
+
+                mostrarNotificacion(
+                    "No se pudo eliminar",
+                    "No fue posible eliminar el cliente.",
+                    "error"
+                );
+
+
+                confirmarEliminar.disabled =
+                    false;
+
+                return;
+
+            }
+
+
+            const nombreClienteEliminado =
+                clienteEliminar.nombre ||
+                "El cliente";
+
+
+            cerrarModalEliminar();
+
+
+            mostrarNotificacion(
+                "Cliente eliminado",
+                `${nombreClienteEliminado} fue eliminado correctamente.`
+            );
+
+
+            await cargarClientes();
+
+
+        } catch (error) {
+
+            console.error(
+                error
+            );
+
+
+            mostrarNotificacion(
+                "Ocurrió un error",
+                "No se pudo completar la eliminación.",
+                "error"
+            );
+
+        }
+
+
+        confirmarEliminar.disabled =
+            false;
+
+    }
+);
+
+
+// ======================================================
+// ESTADÍSTICAS
+// ======================================================
 
 function actualizarEstadisticas() {
 
-    const totalClientes =
-        document.getElementById("totalClientes");
-
-    const clientesActivos =
-        document.getElementById("clientesActivos");
-
-    const ingresosMes =
-        document.getElementById("ingresosMes");
-
-    const pagosPendientes =
-        document.getElementById("pagosPendientes");
-
-
-    if (totalClientes) {
-
-        totalClientes.textContent =
-            clientes.length;
-    }
+    const total =
+        clientes.length;
 
 
     const activos =
@@ -1124,13 +2058,6 @@ function actualizarEstadisticas() {
         ).length;
 
 
-    if (clientesActivos) {
-
-        clientesActivos.textContent =
-            activos;
-    }
-
-
     const ingresos =
         clientes
             .filter(
@@ -1138,7 +2065,10 @@ function actualizarEstadisticas() {
                     cliente.estado === "Activo"
             )
             .reduce(
-                (total, cliente) =>
+                (
+                    total,
+                    cliente
+                ) =>
                     total +
                     Number(
                         cliente.precio || 0
@@ -1147,1822 +2077,125 @@ function actualizarEstadisticas() {
             );
 
 
-    if (ingresosMes) {
-
-        ingresosMes.textContent =
-            "$" +
-            ingresos.toLocaleString(
-                "es-CO"
-            );
-    }
+    totalClientes.textContent =
+        total;
 
 
-    if (pagosPendientes) {
+    clientesActivos.textContent =
+        activos;
 
-        pagosPendientes.textContent =
-            "0";
-    }
+
+    ingresosMes.textContent =
+        formatearMoneda(
+            ingresos
+        );
+
+
+    pagosPendientes.textContent =
+        "$0";
+
 }
 
 
-/* ==================================================
-   ALERTAS
-================================================== */
+// ======================================================
+// FORMATO MONEDA
+// ======================================================
 
-function alertar(mensaje) {
-
-    alert(mensaje);
-}
-
-
-/* ==================================================
-   GENERAR ID
-================================================== */
-
-function generarId() {
-
-    return (
-        Date.now().toString(36) +
-        Math.random()
-            .toString(36)
-            .substring(2, 8)
-    );
-}
-
-
-/* ==================================================
-   ABRIR MODAL NUEVO CLIENTE
-================================================== */
-
-function abrirModalCliente(
-    cliente = null
+function formatearMoneda(
+    valor
 ) {
 
-    clienteEditando =
-        cliente;
-
-    if (!formCliente) {
-        return;
-    }
-
-    formCliente.reset();
-
-
-    if (archivoSeleccionado) {
-
-        archivoSeleccionado.textContent =
-            "Ningún archivo seleccionado";
-    }
-
-
-    if (cliente) {
-
-        const nombre =
-            document.getElementById("nombre");
-
-        const cedula =
-            document.getElementById("cedula");
-
-        const telefono =
-            document.getElementById("telefono");
-
-        const correo =
-            document.getElementById("correo");
-
-        const direccion =
-            document.getElementById("direccion");
-
-        const mac =
-            document.getElementById("mac");
-
-        const cto =
-            document.getElementById("cto");
-
-        const puerto =
-            document.getElementById("puerto");
-
-        const plan =
-            document.getElementById("plan");
-
-        const precio =
-            document.getElementById("precio");
-
-        const fecha =
-            document.getElementById("fecha");
-
-        const estado =
-            document.getElementById("estado");
-
-
-        if (nombre)
-            nombre.value =
-                cliente.nombre || "";
-
-        if (cedula)
-            cedula.value =
-                cliente.cedula || "";
-
-        if (telefono)
-            telefono.value =
-                cliente.telefono || "";
-
-        if (correo)
-            correo.value =
-                cliente.correo || "";
-
-        if (direccion)
-            direccion.value =
-                cliente.direccion || "";
-
-        if (mac)
-            mac.value =
-                cliente.mac || "";
-
-        if (cto)
-            cto.value =
-                cliente.cto || "";
-
-        if (puerto)
-            puerto.value =
-                cliente.puerto || "";
-
-        if (plan)
-            plan.value =
-                cliente.plan || "";
-
-        if (precio)
-            precio.value =
-                cliente.precio || "";
-
-        if (fecha)
-            fecha.value =
-                cliente.fecha || "";
-
-        if (estado)
-            estado.value =
-                cliente.estado || "Activo";
-
-
-        if (archivoSeleccionado) {
-
-            if (
-                cliente.contrato &&
-                cliente.contrato.nombre
-            ) {
-
-                archivoSeleccionado.textContent =
-                    cliente.contrato.nombre;
-
-            } else {
-
-                archivoSeleccionado.textContent =
-                    "Ningún archivo seleccionado";
-            }
+    return new Intl.NumberFormat(
+        "es-CO",
+        {
+            style: "currency",
+            currency: "COP",
+            maximumFractionDigits: 0
         }
-
-
-        const titulo =
-            document.querySelector(
-                "#modalCliente h2"
-            );
-
-        if (titulo) {
-
-            titulo.textContent =
-                "Editar cliente";
-        }
-
-    } else {
-
-        const titulo =
-            document.querySelector(
-                "#modalCliente h2"
-            );
-
-        if (titulo) {
-
-            titulo.textContent =
-                "Nuevo cliente";
-        }
-
-        const estado =
-            document.getElementById("estado");
-
-        if (estado) {
-
-            estado.value =
-                "Activo";
-        }
-    }
-
-
-    if (modalCliente) {
-
-        modalCliente.classList.add(
-            "activo"
-        );
-    }
-}
-
-
-/* ==================================================
-   CERRAR MODAL CLIENTE
-================================================== */
-
-function cerrarModalCliente() {
-
-    if (modalCliente) {
-
-        modalCliente.classList.remove(
-            "activo"
-        );
-    }
-
-    clienteEditando =
-        null;
-
-    if (formCliente) {
-
-        formCliente.reset();
-    }
-
-    if (archivoSeleccionado) {
-
-        archivoSeleccionado.textContent =
-            "Ningún archivo seleccionado";
-    }
-}
-
-
-/* ==================================================
-   OBTENER DATOS DEL FORMULARIO
-================================================== */
-
-function obtenerDatosFormulario() {
-
-    const nombre =
-        document.getElementById("nombre");
-
-    const cedula =
-        document.getElementById("cedula");
-
-    const telefono =
-        document.getElementById("telefono");
-
-    const correo =
-        document.getElementById("correo");
-
-    const direccion =
-        document.getElementById("direccion");
-
-    const mac =
-        document.getElementById("mac");
-
-    const cto =
-        document.getElementById("cto");
-
-    const puerto =
-        document.getElementById("puerto");
-
-    const plan =
-        document.getElementById("plan");
-
-    const precio =
-        document.getElementById("precio");
-
-    const fecha =
-        document.getElementById("fecha");
-
-    const estado =
-        document.getElementById("estado");
-
-
-    return {
-
-        id:
-            clienteEditando?.id ||
-            generarId(),
-
-        nombre:
-            nombre?.value.trim() || "",
-
-        cedula:
-            cedula?.value.trim() || "",
-
-        telefono:
-            telefono?.value.trim() || "",
-
-        correo:
-            correo?.value.trim() || "",
-
-        direccion:
-            direccion?.value.trim() || "",
-
-        mac:
-            mac?.value.trim() || "",
-
-        cto:
-            cto?.value.trim() || "",
-
-        puerto:
-            puerto?.value.trim() || "",
-
-        plan:
-            plan?.value.trim() ||
-            "300 Mbps",
-
-        precio:
-            Number(
-                precio?.value || 0
-            ),
-
-        fecha:
-            fecha?.value || "",
-
-        estado:
-            estado?.value ||
-            "Activo",
-
-        contrato:
-            clienteEditando?.contrato ||
-            null
-    };
-}
-
-
-/* ==================================================
-   GUARDAR DESDE FORMULARIO
-================================================== */
-
-if (formCliente) {
-
-    formCliente.addEventListener(
-        "submit",
-        async function (event) {
-
-            event.preventDefault();
-
-
-            if (!usuarioActual) {
-
-                alertar(
-                    "Debes iniciar sesión primero."
-                );
-
-                return;
-            }
-
-
-            const botonGuardar =
-                formCliente.querySelector(
-                    'button[type="submit"]'
-                );
-
-
-            if (botonGuardar) {
-
-                botonGuardar.disabled =
-                    true;
-
-                botonGuardar.textContent =
-                    "Guardando...";
-            }
-
-
-            try {
-
-                const cliente =
-                    obtenerDatosFormulario();
-
-
-                const archivo =
-                    archivoInput?.files?.[0];
-
-
-                if (archivo) {
-
-                    const contratoNuevo =
-                        await subirContrato(
-                            archivo,
-                            cliente.id
-                        );
-
-                    cliente.contrato =
-                        contratoNuevo;
-                }
-
-
-                const guardado =
-                    await guardarCliente(
-                        cliente
-                    );
-
-
-                if (!guardado) {
-                    return;
-                }
-
-
-                const indice =
-                    clientes.findIndex(
-                        c =>
-                            c.id ===
-                            cliente.id
-                    );
-
-
-                if (indice >= 0) {
-
-                    clientes[indice] =
-                        cliente;
-
-                } else {
-
-                    clientes.unshift(
-                        cliente
-                    );
-                }
-
-
-                renderizarClientes();
-
-                actualizarEstadisticas();
-
-                cerrarModalCliente();
-
-
-                alertar(
-                    "Cliente guardado correctamente."
-                );
-
-
-            } catch (error) {
-
-                console.error(error);
-
-                alertar(
-                    error.message ||
-                    "Ocurrió un error al guardar el cliente."
-                );
-
-            } finally {
-
-                if (botonGuardar) {
-
-                    botonGuardar.disabled =
-                        false;
-
-                    botonGuardar.textContent =
-                        "Guardar cliente";
-                }
-            }
-        }
-    );
-}
-
-
-/* ==================================================
-   SELECCIÓN DE ARCHIVO
-================================================== */
-
-if (archivoInput) {
-
-    archivoInput.addEventListener(
-        "change",
-        function () {
-
-            const archivo =
-                this.files?.[0];
-
-
-            if (!archivo) {
-
-                if (archivoSeleccionado) {
-
-                    archivoSeleccionado.textContent =
-                        "Ningún archivo seleccionado";
-                }
-
-                return;
-            }
-
-
-            if (archivoSeleccionado) {
-
-                archivoSeleccionado.textContent =
-                    archivo.name;
-            }
-        }
-    );
-}
-
-
-/* ==================================================
-   RENDERIZAR CLIENTES
-================================================== */
-
-function renderizarClientes(
-    filtro = ""
-) {
-
-    if (!listaClientes) {
-        return;
-    }
-
-
-    listaClientes.innerHTML =
-        "";
-
-
-    const textoFiltro =
-        filtro
-            .toLowerCase()
-            .trim();
-
-
-    const clientesFiltrados =
-        clientes.filter(
-            cliente => {
-
-                const nombre =
-                    (
-                        cliente.nombre ||
-                        ""
-                    ).toLowerCase();
-
-                const cedula =
-                    (
-                        cliente.cedula ||
-                        ""
-                    ).toLowerCase();
-
-                const telefono =
-                    (
-                        cliente.telefono ||
-                        ""
-                    ).toLowerCase();
-
-                return (
-                    nombre.includes(
-                        textoFiltro
-                    ) ||
-                    cedula.includes(
-                        textoFiltro
-                    ) ||
-                    telefono.includes(
-                        textoFiltro
-                    )
-                );
-            }
-        );
-
-
-    if (
-        clientesFiltrados.length ===
-        0
-    ) {
-
-        listaClientes.innerHTML = `
-            <div class="sin-clientes">
-                <div class="sin-clientes-icono">
-                    👤
-                </div>
-                <h3>No hay clientes</h3>
-                <p>
-                    ${
-                        textoFiltro
-                            ? "No se encontraron clientes con esa búsqueda."
-                            : "Agrega tu primer cliente para comenzar."
-                    }
-                </p>
-            </div>
-        `;
-
-        return;
-    }
-
-
-    clientesFiltrados.forEach(
-        cliente => {
-
-            const tarjeta =
-                document.createElement(
-                    "div"
-                );
-
-            tarjeta.className =
-                "cliente-card";
-
-
-            const nombre =
-                cliente.nombre ||
-                "Sin nombre";
-
-
-            const inicial =
-                nombre
-                    .charAt(0)
-                    .toUpperCase();
-
-
-            tarjeta.innerHTML = `
-
-                <div class="cliente-card-info">
-
-                    <div class="cliente-avatar">
-                        ${inicial}
-                    </div>
-
-                    <div class="cliente-card-nombre">
-                        <h3>
-                            ${escapeHTML(nombre)}
-                        </h3>
-                    </div>
-
-                </div>
-
-                <div class="cliente-card-acciones">
-
-                    <button
-                        type="button"
-                        class="btn-ver"
-                        data-id="${cliente.id}">
-                        Ver
-                    </button>
-
-                    <button
-                        type="button"
-                        class="btn-editar"
-                        data-id="${cliente.id}">
-                        Editar
-                    </button>
-
-                    <button
-                        type="button"
-                        class="btn-eliminar"
-                        data-id="${cliente.id}">
-                        Eliminar
-                    </button>
-
-                </div>
-            `;
-
-
-            listaClientes.appendChild(
-                tarjeta
-            );
-        }
+    ).format(
+        Number(valor) || 0
     );
 
-
-    listaClientes
-        .querySelectorAll(
-            ".btn-ver"
-        )
-        .forEach(
-            boton => {
-
-                boton.addEventListener(
-                    "click",
-                    function () {
-
-                        const cliente =
-                            clientes.find(
-                                c =>
-                                    c.id ===
-                                    this.dataset.id
-                            );
-
-                        if (cliente) {
-
-                            verCliente(
-                                cliente
-                            );
-                        }
-                    }
-                );
-            }
-        );
-
-
-    listaClientes
-        .querySelectorAll(
-            ".btn-editar"
-        )
-        .forEach(
-            boton => {
-
-                boton.addEventListener(
-                    "click",
-                    function () {
-
-                        const cliente =
-                            clientes.find(
-                                c =>
-                                    c.id ===
-                                    this.dataset.id
-                            );
-
-                        if (cliente) {
-
-                            abrirModalCliente(
-                                cliente
-                            );
-                        }
-                    }
-                );
-            }
-        );
-
-
-    listaClientes
-        .querySelectorAll(
-            ".btn-eliminar"
-        )
-        .forEach(
-            boton => {
-
-                boton.addEventListener(
-                    "click",
-                    function () {
-
-                        const cliente =
-                            clientes.find(
-                                c =>
-                                    c.id ===
-                                    this.dataset.id
-                            );
-
-                        if (cliente) {
-
-                            abrirModalEliminar(
-                                cliente
-                            );
-                        }
-                    }
-                );
-            }
-        );
 }
 
 
-/* ==================================================
-   ESCAPAR HTML
-================================================== */
-
-function escapeHTML(
-    texto
-) {
-
-    const div =
-        document.createElement(
-            "div"
-        );
-
-    div.textContent =
-        texto ?? "";
-
-    return div.innerHTML;
-}
-
-
-/* ==================================================
-   VER CLIENTE
-================================================== */
-
-function verCliente(
-    cliente
-) {
-
-    if (!modalVerCliente) {
-        return;
-    }
-
-
-    const elementos = {
-
-        nombre:
-            document.getElementById(
-                "verNombre"
-            ),
-
-        telefono:
-            document.getElementById(
-                "verTelefono"
-            ),
-
-        cedula:
-            document.getElementById(
-                "verCedula"
-            ),
-
-        correo:
-            document.getElementById(
-                "verCorreo"
-            ),
-
-        direccion:
-            document.getElementById(
-                "verDireccion"
-            ),
-
-        mac:
-            document.getElementById(
-                "verMac"
-            ),
-
-        cto:
-            document.getElementById(
-                "verCto"
-            ),
-
-        puerto:
-            document.getElementById(
-                "verPuerto"
-            ),
-
-        plan:
-            document.getElementById(
-                "verPlan"
-            ),
-
-        precio:
-            document.getElementById(
-                "verPrecio"
-            ),
-
-        estado:
-            document.getElementById(
-                "verEstado"
-            ),
-
-        fecha:
-            document.getElementById(
-                "verFecha"
-            )
-    };
-
-
-    if (elementos.nombre) {
-
-        elementos.nombre.textContent =
-            cliente.nombre ||
-            "Sin nombre";
-    }
-
-
-    if (elementos.telefono) {
-
-        elementos.telefono.textContent =
-            cliente.telefono ||
-            "No registrado";
-    }
-
-
-    if (elementos.cedula) {
-
-        elementos.cedula.textContent =
-            cliente.cedula ||
-            "No registrada";
-    }
-
-
-    if (elementos.correo) {
-
-        elementos.correo.textContent =
-            cliente.correo ||
-            "No registrado";
-    }
-
-
-    if (elementos.direccion) {
-
-        elementos.direccion.textContent =
-            cliente.direccion ||
-            "No registrada";
-    }
-
-
-    if (elementos.mac) {
-
-        elementos.mac.textContent =
-            cliente.mac ||
-            "No registrada";
-    }
-
-
-    if (elementos.cto) {
-
-        elementos.cto.textContent =
-            cliente.cto ||
-            "No registrada";
-    }
-
-
-    if (elementos.puerto) {
-
-        elementos.puerto.textContent =
-            cliente.puerto ||
-            "No registrado";
-    }
-
-
-    if (elementos.plan) {
-
-        elementos.plan.textContent =
-            cliente.plan ||
-            "No registrado";
-    }
-
-
-    if (elementos.precio) {
-
-        elementos.precio.textContent =
-            "$" +
-            Number(
-                cliente.precio || 0
-            ).toLocaleString(
-                "es-CO"
-            );
-    }
-
-
-    if (elementos.estado) {
-
-        elementos.estado.textContent =
-            cliente.estado ||
-            "Activo";
-    }
-
-
-    if (elementos.fecha) {
-
-        elementos.fecha.textContent =
-            cliente.fecha ||
-            "No registrada";
-    }
-
-
-    const botonContrato =
-        document.getElementById(
-            "btnVerContrato"
-        );
-
-
-    if (botonContrato) {
-
-        botonContrato.onclick =
-            function () {
-
-                verContrato(
-                    cliente.id
-                );
-            };
-
-
-        if (
-            cliente.contrato
-        ) {
-
-            botonContrato.style.display =
-                "inline-flex";
-
-        } else {
-
-            botonContrato.style.display =
-                "none";
-        }
-    }
-
-
-    modalVerCliente.classList.add(
-        "activo"
-    );
-}
-
-
-/* ==================================================
-   CERRAR MODAL VER CLIENTE
-================================================== */
-
-function cerrarModalVerCliente() {
-
-    if (modalVerCliente) {
-
-        modalVerCliente.classList.remove(
-            "activo"
-        );
-    }
-}
-
-
-/* ==================================================
-   MODAL ELIMINAR
-================================================== */
-
-function abrirModalEliminar(
-    cliente
-) {
-
-    clienteAEliminar =
-        cliente;
-
-
-    const nombre =
-        document.getElementById(
-            "nombreClienteEliminar"
-        );
-
-
-    if (nombre) {
-
-        nombre.textContent =
-            cliente.nombre ||
-            "este cliente";
-    }
-
-
-    if (modalEliminar) {
-
-        modalEliminar.classList.add(
-            "activo"
-        );
-    }
-}
-
-
-/* ==================================================
-   CERRAR MODAL ELIMINAR
-================================================== */
-
-function cerrarModalEliminar() {
-
-    clienteAEliminar =
-        null;
-
-
-    if (modalEliminar) {
-
-        modalEliminar.classList.remove(
-            "activo"
-        );
-    }
-}
-
-
-/* ==================================================
-   CONFIRMAR ELIMINACIÓN
-================================================== */
-
-if (confirmarEliminar) {
-
-    confirmarEliminar.addEventListener(
-        "click",
-        async function () {
-
-            if (!clienteAEliminar) {
-                return;
-            }
-
-
-            const id =
-                clienteAEliminar.id;
-
-
-            confirmarEliminar.disabled =
-                true;
-
-            confirmarEliminar.textContent =
-                "Eliminando...";
-
-
-            try {
-
-                const eliminado =
-                    await eliminarClienteDB(
-                        id
-                    );
-
-
-                if (!eliminado) {
-                    return;
-                }
-
-
-                clientes =
-                    clientes.filter(
-                        cliente =>
-                            cliente.id !==
-                            id
-                    );
-
-
-                renderizarClientes();
-
-                actualizarEstadisticas();
-
-                cerrarModalEliminar();
-
-
-                alertar(
-                    "Cliente eliminado correctamente."
-                );
-
-
-            } catch (error) {
-
-                console.error(error);
-
-                alertar(
-                    "No se pudo eliminar el cliente."
-                );
-
-            } finally {
-
-                confirmarEliminar.disabled =
-                    false;
-
-                confirmarEliminar.textContent =
-                    "Eliminar";
-            }
-        }
-    );
-}
-
-
-/* ==================================================
-   BOTONES DE MODALES
-================================================== */
-
-if (btnNuevoCliente) {
-
-    btnNuevoCliente.addEventListener(
-        "click",
-        function () {
-
-            abrirModalCliente();
-        }
-    );
-}
-
-
-if (cerrarModal) {
-
-    cerrarModal.addEventListener(
-        "click",
-        cerrarModalCliente
-    );
-}
-
-
-if (cancelarCliente) {
-
-    cancelarCliente.addEventListener(
-        "click",
-        cerrarModalCliente
-    );
-}
-
-
-if (cerrarVerCliente) {
-
-    cerrarVerCliente.addEventListener(
-        "click",
-        cerrarModalVerCliente
-    );
-}
-
-
-if (cancelarEliminar) {
-
-    cancelarEliminar.addEventListener(
-        "click",
-        cerrarModalEliminar
-    );
-}
-
-
-/* ==================================================
-   CERRAR MODALES HACIENDO CLICK AFUERA
-================================================== */
+// ======================================================
+// CERRAR MODALES AL HACER CLICK AFUERA
+// ======================================================
 
 window.addEventListener(
     "click",
     function (event) {
 
         if (
-            event.target ===
-            modalCliente
+            event.target === modalCliente
         ) {
 
             cerrarModalCliente();
+
         }
 
 
         if (
-            event.target ===
-            modalEliminar
+            event.target === modalEliminar
         ) {
 
             cerrarModalEliminar();
+
         }
 
 
         if (
-            event.target ===
-            modalVerCliente
+            event.target === modalVerCliente
         ) {
 
-            cerrarModalVerCliente();
-        }
-    }
-);
-
-
-/* ==================================================
-   BUSCADOR
-================================================== */
-
-if (buscarCliente) {
-
-    buscarCliente.addEventListener(
-        "input",
-        function () {
-
-            renderizarClientes(
-                this.value
+            modalVerCliente.classList.remove(
+                "activo"
             );
+
+            modalVerCliente.style.display =
+                "none";
+
         }
-    );
-}
+
+    }
+);
 
 
-/* ==================================================
-   ESCAPE PARA CERRAR MODALES
-================================================== */
+// ======================================================
+// ESCAPE PARA CERRAR MODALES
+// ======================================================
 
 document.addEventListener(
     "keydown",
     function (event) {
 
         if (
-            event.key !==
-            "Escape"
-        ) {
-            return;
-        }
-
-
-        cerrarModalCliente();
-
-        cerrarModalEliminar();
-
-        cerrarModalVerCliente();
-    }
-);
-
-
-/* ==================================================
-   NAVEGACIÓN PRINCIPAL
-================================================== */
-
-const enlacesMenu =
-    document.querySelectorAll(
-        ".sidebar nav a, .sidebar a"
-    );
-
-
-/* ==================================================
-   ELEMENTOS DE LAS SECCIONES
-================================================== */
-
-const seccionInicio =
-    document.getElementById("inicio");
-
-const seccionClientes =
-    document.getElementById("clientes");
-
-const seccionPagos =
-    document.getElementById("pagos");
-
-const seccionContratos =
-    document.getElementById("contratos");
-
-const seccionEquipos =
-    document.getElementById("equipos");
-
-const seccionSoporte =
-    document.getElementById("soporte");
-
-
-/* ==================================================
-   MOSTRAR INICIO
-================================================== */
-
-function mostrarInicio() {
-
-    ocultarSecciones();
-
-    if (seccionInicio) {
-
-        seccionInicio.style.display =
-            "";
-    }
-
-    actualizarEstadisticas();
-}
-
-
-/* ==================================================
-   MOSTRAR CLIENTES
-================================================== */
-
-function mostrarClientes() {
-
-    ocultarSecciones();
-
-    if (seccionClientes) {
-
-        seccionClientes.style.display =
-            "";
-    }
-
-    renderizarClientes();
-
-    actualizarEstadisticas();
-}
-
-
-/* ==================================================
-   MOSTRAR PAGOS
-================================================== */
-
-function mostrarPagos() {
-
-    ocultarSecciones();
-
-    if (seccionPagos) {
-
-        seccionPagos.style.display =
-            "";
-    }
-}
-
-
-/* ==================================================
-   MOSTRAR CONTRATOS
-================================================== */
-
-function mostrarContratos() {
-
-    ocultarSecciones();
-
-    if (seccionContratos) {
-
-        seccionContratos.style.display =
-            "";
-    }
-}
-
-
-/* ==================================================
-   MOSTRAR EQUIPOS
-================================================== */
-
-function mostrarEquipos() {
-
-    ocultarSecciones();
-
-    if (seccionEquipos) {
-
-        seccionEquipos.style.display =
-            "";
-    }
-}
-
-
-/* ==================================================
-   MOSTRAR SOPORTE
-================================================== */
-
-function mostrarSoporte() {
-
-    ocultarSecciones();
-
-    if (seccionSoporte) {
-
-        seccionSoporte.style.display =
-            "";
-    }
-}
-
-
-/* ==================================================
-   OCULTAR SECCIONES
-================================================== */
-
-function ocultarSecciones() {
-
-    const secciones = [
-
-        seccionInicio,
-        seccionClientes,
-        seccionPagos,
-        seccionContratos,
-        seccionEquipos,
-        seccionSoporte
-
-    ];
-
-
-    secciones.forEach(
-        seccion => {
-
-            if (seccion) {
-
-                seccion.style.display =
-                    "none";
-            }
-        }
-    );
-}
-
-
-/* ==================================================
-   NAVEGACIÓN DEL MENÚ
-================================================== */
-
-enlacesMenu.forEach(
-    enlace => {
-
-        enlace.addEventListener(
-            "click",
-            function (event) {
-
-                event.preventDefault();
-
-
-                const destino =
-                    this.getAttribute(
-                        "href"
-                    );
-
-
-                enlacesMenu.forEach(
-                    item => {
-
-                        item.classList.remove(
-                            "activo"
-                        );
-                    }
-                );
-
-
-                this.classList.add(
-                    "activo"
-                );
-
-
-                if (
-                    destino ===
-                    "#inicio"
-                ) {
-
-                    mostrarInicio();
-
-                } else if (
-                    destino ===
-                    "#clientes"
-                ) {
-
-                    mostrarClientes();
-
-                } else if (
-                    destino ===
-                    "#pagos"
-                ) {
-
-                    mostrarPagos();
-
-                } else if (
-                    destino ===
-                    "#contratos"
-                ) {
-
-                    mostrarContratos();
-
-                } else if (
-                    destino ===
-                    "#equipos"
-                ) {
-
-                    mostrarEquipos();
-
-                } else if (
-                    destino ===
-                    "#soporte"
-                ) {
-
-                    mostrarSoporte();
-                }
-
-            }
-        );
-    }
-);
-
-
-/* ==================================================
-   SOPORTE DE CLIENTE
-================================================== */
-
-function abrirSoporteCliente(
-    cliente
-) {
-
-    if (!cliente) {
-        return;
-    }
-
-
-    const telefono =
-        cliente.telefono || "";
-
-
-    if (!telefono) {
-
-        alertar(
-            "Este cliente no tiene un número de teléfono registrado."
-        );
-
-        return;
-    }
-
-
-    const numero =
-        telefono.replace(
-            /\D/g,
-            ""
-        );
-
-
-    const mensaje =
-        encodeURIComponent(
-            "Hola " +
-            (cliente.nombre || "") +
-            ", somos Sistecfiber Telecomunicaciones. Nos comunicamos contigo para brindarte soporte."
-        );
-
-
-    window.open(
-        "https://wa.me/57" +
-        numero +
-        "?text=" +
-        mensaje,
-        "_blank"
-    );
-}
-
-
-/* ==================================================
-   INICIALIZAR BOTONES DE SOPORTE
-================================================== */
-
-function configurarBotonesSoporte() {
-
-    document
-        .querySelectorAll(
-            ".btn-soporte-cliente"
-        )
-        .forEach(
-            boton => {
-
-                boton.addEventListener(
-                    "click",
-                    function () {
-
-                        const cliente =
-                            clientes.find(
-                                c =>
-                                    c.id ===
-                                    this.dataset.id
-                            );
-
-
-                        if (cliente) {
-
-                            abrirSoporteCliente(
-                                cliente
-                            );
-                        }
-                    }
-                );
-            }
-        );
-}
-
-
-/* ==================================================
-   FORMATO DE DINERO
-================================================== */
-
-function formatoDinero(
-    valor
-) {
-
-    return (
-        "$" +
-        Number(
-            valor || 0
-        ).toLocaleString(
-            "es-CO"
-        )
-    );
-}
-
-
-/* ==================================================
-   ACTUALIZAR PRECIO AUTOMÁTICAMENTE
-================================================== */
-
-const campoPlan =
-    document.getElementById(
-        "plan"
-    );
-
-const campoPrecio =
-    document.getElementById(
-        "precio"
-    );
-
-
-if (
-    campoPlan &&
-    campoPrecio
-) {
-
-    campoPlan.addEventListener(
-        "change",
-        function () {
-
-            const texto =
-                this.value
-                    .toLowerCase();
-
-
-            if (
-                texto.includes(
-                    "100"
-                )
-            ) {
-
-                campoPrecio.value =
-                    50000;
-
-            } else if (
-                texto.includes(
-                    "200"
-                )
-            ) {
-
-                campoPrecio.value =
-                    60000;
-
-            } else if (
-                texto.includes(
-                    "300"
-                )
-            ) {
-
-                campoPrecio.value =
-                    70000;
-
-            } else if (
-                texto.includes(
-                    "400"
-                )
-            ) {
-
-                campoPrecio.value =
-                    80000;
-            }
-        }
-    );
-}
-
-
-/* ==================================================
-   VALIDAR CORREO
-================================================== */
-
-function correoValido(
-    correo
-) {
-
-    if (!correo) {
-        return true;
-    }
-
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
-        correo
-    );
-}
-
-
-/* ==================================================
-   VALIDAR FORMULARIO
-================================================== */
-
-if (formCliente) {
-
-    formCliente.addEventListener(
-        "submit",
-        function (event) {
-
-            const correo =
-                document.getElementById(
-                    "correo"
-                );
-
-
-            if (
-                correo &&
-                correo.value &&
-                !correoValido(
-                    correo.value.trim()
-                )
-            ) {
-
-                event.preventDefault();
-
-                alertar(
-                    "Ingresa un correo electrónico válido."
-                );
-
-                correo.focus();
-            }
-        },
-        true
-    );
-}
-
-
-/* ==================================================
-   CERRAR MODALES AL CAMBIAR DE SECCIÓN
-================================================== */
-
-function cerrarTodosLosModales() {
-
-    cerrarModalCliente();
-
-    cerrarModalEliminar();
-
-    cerrarModalVerCliente();
-}
-
-
-/* ==================================================
-   CONTROL DE TECLA ENTER
-================================================== */
-
-document.addEventListener(
-    "keydown",
-    function (event) {
-
-        if (
-            event.key === "Enter" &&
-            event.target.tagName !==
-                "TEXTAREA"
+            event.key === "Escape"
         ) {
 
-            /*
-               Se deja que el formulario
-               maneje normalmente el Enter.
-            */
+            cerrarModalCliente();
+
+            cerrarModalEliminar();
+
+            modalVerCliente.classList.remove(
+                "activo"
+            );
+
+            modalVerCliente.style.display =
+                "none";
+
         }
+
     }
 );
 
 
-/* ==================================================
-   CONTROL DE ERRORES
-================================================== */
+// ======================================================
+// INICIAR
+// ======================================================
 
-window.addEventListener(
-    "error",
-    function (event) {
+mostrarSeccion("inicio");
 
-        console.error(
-            "Error en Sistecfiber:",
-            event.error ||
-            event.message
-        );
-    }
-);
+comprobarSesion();
 
-
-/* ==================================================
-   INICIAR APLICACIÓN
-================================================== */
-
-iniciarSistema();
