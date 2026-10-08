@@ -1,2201 +1,2431 @@
-// ======================================================
-// CONFIGURACIÓN DE SUPABASE
-// ======================================================
+/* ==================================================
+   CONFIGURACIÓN GENERAL
+================================================== */
 
-const SUPABASE_URL = "https://pmbcvhkyfoppvyrnuztn.supabase.co";
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-// PEGA AQUÍ TU CLAVE PUBLISHABLE / ANON DE SUPABASE
-const SUPABASE_ANON_KEY = "sb_publishable_yrZYYb4J2qqZmKTq05T35Q_2DBWRDMY";
+html {
+    width: 100%;
+    min-height: 100%;
+}
 
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f7fb;
+    color: #172033;
+    min-height: 100vh;
+}
 
-const supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-);
+button,
+input,
+select {
+    font-family: inherit;
+}
 
 
-// ======================================================
-// VARIABLES
-// ======================================================
+/* ==================================================
+   PANTALLA DE INICIO DE SESIÓN
+================================================== */
 
-let clientes = [];
-let clienteEditando = null;
-let clienteEliminar = null;
+.pantalla-acceso {
+    position: fixed;
+    inset: 0;
 
+    width: 100%;
+    min-height: 100vh;
 
-// ======================================================
-// ELEMENTOS
-// ======================================================
+    background: #f4f7fb;
 
-const pantallaAcceso =
-    document.getElementById("pantallaAcceso");
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-const aplicacion =
-    document.getElementById("aplicacion");
+    padding: 20px;
 
-const formLogin =
-    document.getElementById("formLogin");
+    z-index: 20000;
+}
 
-const accesoCorreo =
-    document.getElementById("accesoCorreo");
+.pantalla-acceso.oculta {
+    display: none !important;
+}
 
-const accesoPassword =
-    document.getElementById("accesoPassword");
+.acceso-box {
+    width: 100%;
+    max-width: 410px;
 
-const btnAcceso =
-    document.getElementById("btnAcceso");
+    background: white;
 
-const mensajeAcceso =
-    document.getElementById("mensajeAcceso");
+    border-radius: 18px;
 
-const btnCambiarAcceso =
-    document.getElementById("btnCambiarAcceso");
+    padding: 35px;
 
-const btnCerrarSesion =
-    document.getElementById("btnCerrarSesion");
+    box-shadow:
+        0 15px 50px rgba(15, 23, 42, 0.10);
 
-const nombreUsuario =
-    document.getElementById("nombreUsuario");
+    text-align: center;
+}
 
-const avatarUsuario =
-    document.getElementById("avatarUsuario");
+.acceso-logo {
+    display: flex;
+    justify-content: center;
 
+    margin-bottom: 18px;
+}
 
-// ======================================================
-// MODAL CLIENTE
-// ======================================================
+.acceso-logo .logo-icon {
+    width: 58px;
+    height: 58px;
 
-const modalCliente =
-    document.getElementById("modalCliente");
+    border-radius: 14px;
 
-const formCliente =
-    document.getElementById("formCliente");
+    background: #2563eb;
 
-const tituloModal =
-    document.getElementById("tituloModal");
+    color: white;
 
-const cerrarModal =
-    document.getElementById("cerrarModal");
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-const cancelarCliente =
-    document.getElementById("cancelarCliente");
+    font-size: 28px;
+    font-weight: bold;
 
-const btnNuevoCliente =
-    document.getElementById("btnNuevoCliente");
+    box-shadow:
+        0 8px 20px rgba(37, 99, 235, 0.22);
+}
 
+.acceso-box h1 {
+    font-size: 25px;
 
-// ======================================================
-// CAMPOS CLIENTE
-// ======================================================
+    margin-bottom: 7px;
 
-const nombre =
-    document.getElementById("nombre");
+    color: #172033;
+}
 
-const cedula =
-    document.getElementById("cedula");
+.acceso-box > p {
+    color: #7b8495;
 
-const telefono =
-    document.getElementById("telefono");
+    font-size: 13px;
 
-const correo =
-    document.getElementById("correo");
+    margin-bottom: 25px;
+}
 
-const direccion =
-    document.getElementById("direccion");
+.acceso-box form {
+    text-align: left;
+}
 
-const mac =
-    document.getElementById("mac");
+.acceso-box .campo {
+    margin-bottom: 15px;
+}
 
-const cto =
-    document.getElementById("cto");
+.acceso-box .btn-primary {
+    width: 100%;
 
-const puerto =
-    document.getElementById("puerto");
+    min-height: 44px;
 
-const plan =
-    document.getElementById("plan");
+    margin-top: 5px;
+}
 
-const precio =
-    document.getElementById("precio");
+.mensaje-acceso {
+    min-height: 20px;
 
-const fecha =
-    document.getElementById("fecha");
+    margin-top: 12px;
 
-const estado =
-    document.getElementById("estado");
+    text-align: center;
 
-const contrato =
-    document.getElementById("contrato");
+    font-size: 12px;
 
-const archivoSeleccionado =
-    document.getElementById("archivoSeleccionado");
+    color: #dc2626;
+}
 
+.btn-cambiar-acceso {
+    margin-top: 18px;
 
-// ======================================================
-// CLIENTES
-// ======================================================
+    border: none;
 
-const listaClientes =
-    document.getElementById("listaClientes");
+    background: transparent;
 
-const buscarCliente =
-    document.getElementById("buscarCliente");
+    color: #2563eb;
 
+    cursor: pointer;
 
-// ======================================================
-// MODAL ELIMINAR
-// ======================================================
+    font-size: 12px;
 
-const modalEliminar =
-    document.getElementById("modalEliminar");
+    font-weight: 600;
+}
 
-const nombreEliminar =
-    document.getElementById("nombreEliminar");
+.btn-cambiar-acceso:hover {
+    text-decoration: underline;
+}
 
-const cancelarEliminar =
-    document.getElementById("cancelarEliminar");
 
-const confirmarEliminar =
-    document.getElementById("confirmarEliminar");
+/* ==================================================
+   ESTRUCTURA
+================================================== */
 
+.app {
+    display: flex;
+    min-height: 100vh;
+}
 
-// ======================================================
-// MODAL VER CLIENTE
-// ======================================================
+.app.oculta {
+    display: none !important;
+}
 
-const modalVerCliente =
-    document.getElementById("modalVerCliente");
 
-const cerrarVerCliente =
-    document.getElementById("cerrarVerCliente");
+/* ==================================================
+   SIDEBAR
+================================================== */
 
-const verNombre =
-    document.getElementById("verNombre");
+.sidebar {
+    width: 240px;
+    min-height: 100vh;
 
-const verTelefono =
-    document.getElementById("verTelefono");
+    background: #111827;
 
-const verCedula =
-    document.getElementById("verCedula");
+    color: white;
 
-const verCorreo =
-    document.getElementById("verCorreo");
+    display: flex;
+    flex-direction: column;
 
-const verDireccion =
-    document.getElementById("verDireccion");
+    padding: 20px 15px;
 
-const verMac =
-    document.getElementById("verMac");
+    position: fixed;
 
-const verCto =
-    document.getElementById("verCto");
+    left: 0;
+    top: 0;
+    bottom: 0;
 
-const verPuerto =
-    document.getElementById("verPuerto");
+    z-index: 1000;
+}
 
-const verPlan =
-    document.getElementById("verPlan");
 
-const verPrecio =
-    document.getElementById("verPrecio");
+/* LOGO */
 
-const verEstado =
-    document.getElementById("verEstado");
+.logo {
+    display: flex;
+    align-items: center;
 
-const verFecha =
-    document.getElementById("verFecha");
+    gap: 12px;
 
-const verContrato =
-    document.getElementById("verContrato");
+    padding: 5px 10px 30px;
+}
 
+.logo-icon {
+    width: 44px;
+    height: 44px;
 
-// ======================================================
-// ESTADÍSTICAS
-// ======================================================
+    background: #2563eb;
 
-const totalClientes =
-    document.getElementById("totalClientes");
+    border-radius: 10px;
 
-const clientesActivos =
-    document.getElementById("clientesActivos");
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-const ingresosMes =
-    document.getElementById("ingresosMes");
+    font-size: 22px;
+    font-weight: bold;
 
-const pagosPendientes =
-    document.getElementById("pagosPendientes");
+    flex-shrink: 0;
+}
 
+.logo-text {
+    display: flex;
+    flex-direction: column;
+}
 
-// ======================================================
-// NAVEGACIÓN
-// ======================================================
+.logo-text strong {
+    font-size: 20px;
+}
 
-const botonesMenu =
-    document.querySelectorAll(".menu-item");
+.logo-text span {
+    font-size: 12px;
+    color: #9ca3af;
+}
 
 
-const seccionesMenu = {
+/* MENÚ */
 
-    inicio:
-        document.getElementById("seccionInicio"),
+.menu {
+    display: flex;
+    flex-direction: column;
 
-    clientes:
-        document.getElementById("seccionClientes"),
+    gap: 7px;
 
-    pagos:
-        document.getElementById("seccionPagos"),
+    border: none;
 
-    contratos:
-        document.getElementById("seccionContratos"),
+    background: transparent;
+}
 
-    equipos:
-        document.getElementById("seccionEquipos"),
+.menu-item {
+    width: 100%;
 
-    soporte:
-        document.getElementById("seccionSoporte")
+    padding: 13px 14px;
 
-};
+    border: none;
 
+    background: transparent;
 
-// ======================================================
-// MOSTRAR SECCIÓN
-// ======================================================
+    color: #d1d5db;
 
-function mostrarSeccion(nombreSeccion) {
+    border-radius: 9px;
 
-    Object.values(seccionesMenu).forEach(seccion => {
+    display: flex;
+    align-items: center;
 
-        if (seccion) {
+    gap: 13px;
 
-            seccion.style.display = "none";
+    text-align: left;
 
-            seccion.classList.remove("mostrar");
+    cursor: pointer;
 
-        }
+    font-size: 14px;
 
-    });
+    transition: 0.2s;
+}
 
+.menu-item span {
+    width: 20px;
 
-    botonesMenu.forEach(boton => {
+    text-align: center;
+}
 
-        boton.classList.remove("activo");
+.menu-item:hover {
+    background: #1f2937;
 
-        boton.classList.remove("seleccionado");
+    color: white;
+}
 
-    });
+.menu-item.activo,
+.menu-item.seleccionado {
+    background: #2563eb;
 
+    color: white;
+}
 
-    const seccion =
-        seccionesMenu[nombreSeccion];
 
+/* ==================================================
+   BOTÓN CERRAR SESIÓN
+================================================== */
 
-    if (seccion) {
+.btn-cerrar-sesion {
+    margin-top: auto;
 
-        seccion.style.display = "block";
+    width: 100%;
 
-        seccion.classList.add("mostrar");
+    padding: 12px 10px;
 
+    border: 1px solid #374151;
+
+    border-radius: 9px;
+
+    background: transparent;
+
+    color: #d1d5db;
+
+    cursor: pointer;
+
+    font-size: 13px;
+
+    transition: 0.2s;
+}
+
+.btn-cerrar-sesion:hover {
+    background: #1f2937;
+
+    color: white;
+}
+
+
+/* ==================================================
+   FOOTER SIDEBAR
+================================================== */
+
+.sidebar-footer {
+    margin-top: auto;
+
+    border-top: 1px solid #293241;
+
+    padding: 18px 10px 5px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+}
+
+.sidebar-footer span {
+    color: #9ca3af;
+
+    font-size: 11px;
+}
+
+.sidebar-footer strong {
+    font-size: 13px;
+}
+
+
+/* ==================================================
+   CONTENIDO
+================================================== */
+
+.main {
+    margin-left: 240px;
+
+    width: calc(100% - 240px);
+
+    min-height: 100vh;
+
+    padding: 30px;
+}
+
+
+/* ==================================================
+   SECCIONES DE LA APLICACIÓN
+================================================== */
+
+.seccion-app {
+    width: 100%;
+}
+
+.vista-menu-extra {
+    display: none;
+
+    width: 100%;
+}
+
+.vista-menu-extra.mostrar {
+    display: block;
+}
+
+
+/* ==================================================
+   TOPBAR
+================================================== */
+
+.topbar {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 28px;
+}
+
+.topbar h1 {
+    font-size: 30px;
+
+    margin-bottom: 5px;
+}
+
+.topbar p {
+    color: #718096;
+
+    font-size: 14px;
+}
+
+
+/* USUARIO */
+
+.usuario {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+.usuario .avatar {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 50%;
+
+    background: #dbeafe;
+
+    color: #2563eb;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: bold;
+
+    flex-shrink: 0;
+}
+
+.usuario div:last-child {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+.usuario span {
+    color: #8a94a6;
+
+    font-size: 12px;
+}
+
+
+/* ==================================================
+   ESTADÍSTICAS
+================================================== */
+
+.estadisticas {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 18px;
+
+    margin-bottom: 25px;
+}
+
+.estadistica {
+    background: white;
+
+    border-radius: 14px;
+
+    padding: 20px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 15px;
+
+    box-shadow:
+        0 4px 15px rgba(15, 23, 42, 0.05);
+}
+
+.estadistica-icon {
+    width: 48px;
+    height: 48px;
+
+    border-radius: 11px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 21px;
+
+    flex-shrink: 0;
+}
+
+.estadistica-icon.azul {
+    background: #dbeafe;
+}
+
+.estadistica-icon.verde {
+    background: #dcfce7;
+}
+
+.estadistica-icon.amarillo {
+    background: #fef3c7;
+}
+
+.estadistica-icon.rojo {
+    background: #fee2e2;
+}
+
+.estadistica span {
+    display: block;
+
+    color: #7b8495;
+
+    font-size: 12px;
+
+    margin-bottom: 5px;
+}
+
+.estadistica strong {
+    font-size: 23px;
+}
+
+
+/* ==================================================
+   PANEL
+================================================== */
+
+.panel {
+    background: white;
+
+    border-radius: 16px;
+
+    padding: 25px;
+
+    box-shadow:
+        0 4px 15px rgba(15, 23, 42, 0.05);
+}
+
+.panel-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 22px;
+}
+
+.panel-header h2 {
+    font-size: 22px;
+
+    margin-bottom: 5px;
+}
+
+.panel-header p {
+    color: #7b8495;
+
+    font-size: 13px;
+}
+
+
+/* ==================================================
+   BOTONES
+================================================== */
+
+.btn-primary {
+    border: none;
+
+    background: #2563eb;
+
+    color: white;
+
+    padding: 11px 18px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+
+    transition: 0.2s;
+}
+
+.btn-primary:hover {
+    background: #1d4ed8;
+
+    transform: translateY(-1px);
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+
+    cursor: not-allowed;
+
+    transform: none;
+}
+
+.btn-secondary {
+    border: 1px solid #d8dee8;
+
+    background: white;
+
+    color: #4b5563;
+
+    padding: 11px 18px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+
+    transition: 0.2s;
+}
+
+.btn-secondary:hover {
+    background: #f3f4f6;
+}
+
+.btn-danger {
+    border: none;
+
+    background: #ef4444;
+
+    color: white;
+
+    padding: 11px 18px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+
+    transition: 0.2s;
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+}
+
+
+/* ==================================================
+   BUSCADOR
+================================================== */
+
+.buscador {
+    width: 100%;
+
+    height: 46px;
+
+    border: 1px solid #e1e6ef;
+
+    border-radius: 9px;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 0 14px;
+
+    gap: 10px;
+
+    margin-bottom: 20px;
+
+    background: #fafbfd;
+}
+
+.buscador span {
+    font-size: 22px;
+
+    color: #7d8798;
+}
+
+.buscador input {
+    width: 100%;
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    font-size: 14px;
+}
+
+
+/* ==================================================
+   CLIENTES
+================================================== */
+
+.clientes-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 16px;
+}
+
+.cliente-card {
+    border: 1px solid #e1e6ef;
+
+    border-radius: 13px;
+
+    padding: 18px;
+
+    transition: 0.2s;
+
+    background: white;
+
+    min-height: auto;
+}
+
+.cliente-card:hover {
+    border-color: #b9c9e8;
+
+    box-shadow:
+        0 5px 18px rgba(15, 23, 42, 0.06);
+}
+
+
+/* CABECERA CARD */
+
+.cliente-top {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding-bottom: 15px;
+
+    border-bottom: 1px solid #edf0f5;
+
+    margin-bottom: 0;
+}
+
+.cliente-identidad {
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    min-width: 0;
+}
+
+.cliente-avatar {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 50%;
+
+    background: #dbeafe;
+
+    color: #2563eb;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-weight: bold;
+
+    font-size: 17px;
+
+    flex-shrink: 0;
+}
+
+.cliente-identidad h3 {
+    font-size: 15px;
+
+    margin-bottom: 3px;
+}
+
+.cliente-id {
+    font-size: 11px;
+
+    color: #8993a5;
+}
+
+
+/* ESTADO */
+
+.estado {
+    padding: 5px 9px;
+
+    border-radius: 20px;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    flex-shrink: 0;
+}
+
+.estado.activo {
+    color: #15803d;
+
+    background: #dcfce7;
+}
+
+.estado.suspendido {
+    color: #b45309;
+
+    background: #fef3c7;
+}
+
+.estado.retirado {
+    color: #b91c1c;
+
+    background: #fee2e2;
+}
+
+
+/* DATOS */
+
+.cliente-datos {
+    display: none;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 15px;
+
+    padding: 16px 0;
+}
+
+.dato span {
+    display: block;
+
+    color: #929baa;
+
+    font-size: 10px;
+
+    margin-bottom: 5px;
+}
+
+.dato strong {
+    font-size: 13px;
+
+    word-break: break-word;
+}
+
+
+/* BOTONES CARD */
+
+.cliente-botones {
+    display: flex;
+
+    gap: 7px;
+
+    margin-top: 14px;
+}
+
+.btn-card {
+    border: none;
+
+    padding: 8px 11px;
+
+    border-radius: 7px;
+
+    cursor: pointer;
+
+    font-size: 11px;
+
+    font-weight: 600;
+}
+
+.btn-ver {
+    background: #eff6ff;
+
+    color: #2563eb;
+}
+
+.btn-editar {
+    background: #f1f5f9;
+
+    color: #475569;
+}
+
+.btn-eliminar {
+    background: #fef2f2;
+
+    color: #dc2626;
+}
+
+.btn-contrato {
+    background: #f0fdf4;
+
+    color: #15803d;
+}
+
+
+/* SIN CLIENTES */
+
+.sin-clientes {
+    grid-column: 1 / -1;
+
+    text-align: center;
+
+    padding: 55px 20px;
+
+    color: #7b8495;
+}
+
+.sin-clientes .sin-icono {
+    width: 60px;
+    height: 60px;
+
+    margin: 0 auto 12px;
+
+    border-radius: 50%;
+
+    background: #f1f5f9;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 25px;
+}
+
+.sin-clientes h3 {
+    color: #374151;
+
+    margin-bottom: 5px;
+}
+
+
+/* ==================================================
+   MODALES
+================================================== */
+
+.modal {
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(15, 23, 42, 0.55);
+
+    backdrop-filter: blur(5px);
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    z-index: 9999;
+}
+
+.modal.mostrar,
+.modal.activo {
+    display: flex;
+}
+
+.modal-box {
+    width: 650px;
+
+    max-width: 100%;
+
+    max-height: 90vh;
+
+    overflow-y: auto;
+
+    background: white;
+
+    border-radius: 17px;
+
+    padding: 27px;
+
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.18);
+
+    animation: aparecer 0.2s ease;
+}
+
+@keyframes aparecer {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(12px)
+            scale(0.97);
     }
 
+    to {
+        opacity: 1;
 
-    const botonActivo =
-        document.querySelector(
-            `.menu-item[data-seccion="${nombreSeccion}"]`
-        );
-
-
-    if (botonActivo) {
-
-        botonActivo.classList.add("activo");
-
-        botonActivo.classList.add("seleccionado");
-
+        transform:
+            translateY(0)
+            scale(1);
     }
 
 }
 
 
-// ======================================================
-// EVENTOS DEL MENÚ
-// ======================================================
+/* HEADER MODAL */
 
-botonesMenu.forEach(boton => {
+.modal-header {
+    display: flex;
 
-    boton.addEventListener("click", function () {
+    justify-content: space-between;
 
-        const seccion =
-            this.dataset.seccion;
+    align-items: flex-start;
 
-        mostrarSeccion(seccion);
+    margin-bottom: 25px;
+}
 
-    });
+.modal-header h2 {
+    font-size: 21px;
 
-});
+    margin-bottom: 5px;
+}
 
+.modal-header p {
+    color: #7b8495;
 
-// ======================================================
-// MOSTRAR / OCULTAR APLICACIÓN
-// ======================================================
+    font-size: 13px;
+}
 
-function mostrarAplicacion() {
+.btn-cerrar {
+    width: 35px;
+    height: 35px;
 
-    pantallaAcceso.style.display = "none";
+    border: none;
 
-    aplicacion.style.display = "flex";
+    background: #f1f5f9;
 
+    color: #64748b;
+
+    border-radius: 8px;
+
+    font-size: 23px;
+
+    cursor: pointer;
+
+    flex-shrink: 0;
+}
+
+.btn-cerrar:hover {
+    background: #e2e8f0;
 }
 
 
-function mostrarLogin() {
+/* ==================================================
+   FORMULARIO
+================================================== */
 
-    pantallaAcceso.style.display = "flex";
+.form-grid {
+    display: grid;
 
-    aplicacion.style.display = "none";
+    grid-template-columns:
+        1fr 1fr;
 
+    gap: 17px;
+}
+
+.campo {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+.campo-completo {
+    grid-column: 1 / -1;
+}
+
+.campo label {
+    font-size: 12px;
+
+    font-weight: 600;
+
+    color: #374151;
+}
+
+.campo input,
+.campo select {
+    width: 100%;
+
+    height: 43px;
+
+    border: 1px solid #dce2eb;
+
+    border-radius: 8px;
+
+    padding: 0 12px;
+
+    outline: none;
+
+    background: #fff;
+
+    color: #1f2937;
+
+    font-size: 13px;
+
+    transition: 0.2s;
+}
+
+.campo input:focus,
+.campo select:focus {
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.campo input::placeholder {
+    color: #a0a8b6;
 }
 
 
-// ======================================================
-// MENSAJE DE LOGIN
-// ======================================================
+/* ==================================================
+   SUBIR ARCHIVO
+================================================== */
 
-function mostrarMensajeAcceso(
-    mensaje,
-    tipo = ""
-) {
+.subir-archivo {
+    border: 1.5px dashed #cbd5e1;
 
-    mensajeAcceso.textContent = mensaje;
+    border-radius: 10px;
 
-    mensajeAcceso.className =
-        "mensaje-acceso " + tipo;
+    padding: 17px;
 
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    cursor: pointer;
+
+    background: #f8fafc;
+
+    transition: 0.2s;
+}
+
+.subir-archivo:hover {
+    border-color: #2563eb;
+
+    background: #eff6ff;
+}
+
+.archivo-icon {
+    width: 40px;
+    height: 40px;
+
+    border-radius: 8px;
+
+    background: #dbeafe;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+}
+
+.subir-archivo span:last-child {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+
+    min-width: 0;
+}
+
+.subir-archivo strong {
+    font-size: 12px;
+}
+
+.subir-archivo small {
+    color: #8a94a6;
+
+    font-size: 10px;
+}
+
+.archivo-seleccionado {
+    margin-top: 7px;
+
+    font-size: 12px;
+
+    color: #2563eb;
+
+    word-break: break-word;
 }
 
 
-// ======================================================
-// CAMPO DE NOMBRE PARA REGISTRO
-// ======================================================
+/* ==================================================
+   FOOTER MODAL
+================================================== */
 
-function crearCampoNombreRegistro() {
+.modal-footer {
+    display: flex;
 
-    let campoNombre =
-        document.getElementById("nombreRegistro");
+    justify-content: flex-end;
 
-    if (campoNombre) {
-        return campoNombre;
-    }
+    gap: 10px;
 
+    margin-top: 25px;
 
-    const contenedor =
-        document.createElement("div");
+    padding-top: 20px;
 
-    contenedor.id =
-        "contenedorNombreRegistro";
-
-    contenedor.style.marginBottom =
-        "12px";
-
-
-    campoNombre =
-        document.createElement("input");
-
-    campoNombre.type =
-        "text";
-
-    campoNombre.id =
-        "nombreRegistro";
-
-    campoNombre.name =
-        "nombreRegistro";
-
-    campoNombre.placeholder =
-        "Nombre completo";
-
-    campoNombre.autocomplete =
-        "name";
-
-    campoNombre.style.width =
-        "100%";
-
-    campoNombre.style.boxSizing =
-        "border-box";
-
-
-    const campoCorreo =
-        accesoCorreo;
-
-
-    campoCorreo.parentNode.insertBefore(
-        contenedor,
-        campoCorreo
-    );
-
-
-    contenedor.appendChild(
-        campoNombre
-    );
-
-
-    return campoNombre;
-
+    border-top: 1px solid #edf0f5;
 }
 
 
-function eliminarCampoNombreRegistro() {
+/* ==================================================
+   MODAL ELIMINAR
+================================================== */
 
-    const contenedor =
-        document.getElementById(
-            "contenedorNombreRegistro"
-        );
+.eliminar-box {
+    width: 420px;
 
-    if (contenedor) {
+    text-align: center;
+}
 
-        contenedor.remove();
+.eliminar-icon {
+    width: 65px;
+    height: 65px;
 
-    }
+    border-radius: 50%;
 
+    background: #fee2e2;
+
+    margin: 0 auto 18px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 27px;
+}
+
+.eliminar-box h2 {
+    margin-bottom: 10px;
+
+    font-size: 21px;
+}
+
+.eliminar-box p {
+    color: #64748b;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+.eliminar-box .texto-pequeno {
+    margin-top: 5px;
+
+    font-size: 11px;
+}
+
+.eliminar-box .modal-footer {
+    justify-content: center;
 }
 
 
-// ======================================================
-// LOGIN / REGISTRO
-// ======================================================
+/* ==================================================
+   DETALLES CLIENTE
+================================================== */
 
-let modoRegistro = false;
+.detalle-cliente {
+    display: grid;
 
+    grid-template-columns:
+        1fr 1fr;
 
-btnCambiarAcceso.addEventListener(
-    "click",
-    function () {
+    gap: 14px;
+}
 
-        modoRegistro = !modoRegistro;
+.detalle {
+    padding: 13px;
 
+    background: #f8fafc;
 
-        if (modoRegistro) {
+    border-radius: 9px;
+}
 
-            document.getElementById("tituloAcceso").textContent =
-                "Crear cuenta";
+.detalle span {
+    display: block;
 
-            document.getElementById("textoAcceso").textContent =
-                "Crea tu cuenta para ingresar al panel";
+    color: #8993a5;
 
-            btnAcceso.textContent =
-                "Crear cuenta";
+    font-size: 10px;
 
-            btnCambiarAcceso.textContent =
-                "Ya tengo una cuenta";
+    margin-bottom: 5px;
+}
 
+.detalle strong {
+    font-size: 13px;
 
-            crearCampoNombreRegistro();
-
-
-        } else {
-
-            document.getElementById("tituloAcceso").textContent =
-                "Sistecfiber";
-
-            document.getElementById("textoAcceso").textContent =
-                "Inicia sesión para ingresar al panel";
-
-            btnAcceso.textContent =
-                "Iniciar sesión";
-
-            btnCambiarAcceso.textContent =
-                "Crear una cuenta";
-
-
-            eliminarCampoNombreRegistro();
-
-        }
-
-
-        mostrarMensajeAcceso("");
-
-    }
-);
-
-
-formLogin.addEventListener(
-    "submit",
-    async function (event) {
-
-        event.preventDefault();
-
-
-        const email =
-            accesoCorreo.value.trim();
-
-        const password =
-            accesoPassword.value;
-
-
-        if (!email || !password) {
-
-            mostrarMensajeAcceso(
-                "Completa todos los campos.",
-                "error"
-            );
-
-            return;
-
-        }
-
-
-        btnAcceso.disabled = true;
-
-
-        // ==================================================
-        // REGISTRO
-        // ==================================================
-
-        if (modoRegistro) {
-
-            const campoNombre =
-                document.getElementById(
-                    "nombreRegistro"
-                );
-
-
-            const nombrePersona =
-                campoNombre
-                    ? campoNombre.value.trim()
-                    : "";
-
-
-            if (!nombrePersona) {
-
-                mostrarMensajeAcceso(
-                    "Escribe tu nombre completo.",
-                    "error"
-                );
-
-                btnAcceso.disabled = false;
-
-                return;
-
-            }
-
-
-            mostrarMensajeAcceso(
-                "Creando cuenta..."
-            );
-
-
-            const {
-                data,
-                error
-            } =
-                await supabaseClient.auth.signUp({
-
-                    email: email,
-
-                    password: password,
-
-                    options: {
-
-                        data: {
-
-                            nombre:
-                                nombrePersona
-
-                        }
-
-                    }
-
-                });
-
-
-            if (error) {
-
-                console.error(error);
-
-                mostrarMensajeAcceso(
-                    error.message,
-                    "error"
-                );
-
-                btnAcceso.disabled = false;
-
-                return;
-
-            }
-
-
-            mostrarMensajeAcceso(
-                "Cuenta creada correctamente. Revisa tu correo si Supabase solicita confirmación.",
-                "exito"
-            );
-
-
-            btnAcceso.disabled = false;
-
-            return;
-
-        }
-
-
-        // ==================================================
-        // INICIAR SESIÓN
-        // ==================================================
-
-        mostrarMensajeAcceso(
-            "Iniciando sesión..."
-        );
-
-
-        const {
-            data,
-            error
-        } =
-            await supabaseClient.auth.signInWithPassword({
-
-                email: email,
-
-                password: password
-
-            });
-
-
-        if (error) {
-
-            console.error(error);
-
-            mostrarMensajeAcceso(
-                error.message,
-                "error"
-            );
-
-            btnAcceso.disabled = false;
-
-            return;
-
-        }
-
-
-        mostrarMensajeAcceso(
-            "Sesión iniciada correctamente.",
-            "exito"
-        );
-
-
-        btnAcceso.disabled = false;
-
-    }
-);
-
-
-// ======================================================
-// CERRAR SESIÓN
-// ======================================================
-
-btnCerrarSesion.addEventListener(
-    "click",
-    async function () {
-
-        await supabaseClient.auth.signOut();
-
-        clientes = [];
-
-        listaClientes.innerHTML = "";
-
-        mostrarLogin();
-
-    }
-);
-
-
-// ======================================================
-// CAMBIO DE SESIÓN
-// ======================================================
-
-supabaseClient.auth.onAuthStateChange(
-    async function (event, session) {
-
-        if (session) {
-
-            mostrarAplicacion();
-
-            actualizarUsuario(
-                session.user
-            );
-
-            await cargarClientes();
-
-            mostrarSeccion("inicio");
-
-        } else {
-
-            mostrarLogin();
-
-        }
-
-    }
-);
-
-
-// ======================================================
-// ACTUALIZAR USUARIO
-// ======================================================
-
-function actualizarUsuario(usuario) {
-
-    if (!usuario) {
-        return;
-    }
-
-
-    const email =
-        usuario.email || "Administrador";
-
-
-    const nombrePersona =
-        usuario.user_metadata?.nombre ||
-        "Administrador";
-
-
-    nombreUsuario.textContent =
-        nombrePersona;
-
-
-    avatarUsuario.textContent =
-        nombrePersona
-            .charAt(0)
-            .toUpperCase();
-
+    word-break: break-word;
 }
 
 
-// ======================================================
-// COMPROBAR SESIÓN AL CARGAR
-// ======================================================
+/* ==================================================
+   CONTRATO
+================================================== */
 
-async function comprobarSesion() {
+.contrato-ver {
+    margin-top: 20px;
 
-    const {
-        data,
-        error
-    } =
-        await supabaseClient.auth.getSession();
+    padding: 15px;
+
+    border-radius: 10px;
+
+    background: #eff6ff;
+
+    color: #1d4ed8;
+
+    font-size: 13px;
+
+    word-break: break-word;
+}
+
+.contrato-ver a {
+    color: #1d4ed8;
+
+    font-weight: 600;
+
+    text-decoration: none;
+}
+
+.contrato-ver a:hover {
+    text-decoration: underline;
+}
 
 
-    if (error) {
+/* ==================================================
+   MENÚ EXTRA
+================================================== */
 
-        console.error(error);
+.menu-extra-grid {
+    display: grid;
 
-        mostrarLogin();
+    grid-template-columns:
+        repeat(auto-fit, minmax(240px, 1fr));
 
-        return;
+    gap: 15px;
 
+    margin-top: 20px;
+}
+
+.menu-extra-card {
+    border: 1px solid #e2e8f0;
+
+    border-radius: 12px;
+
+    padding: 18px;
+
+    background: #fff;
+}
+
+.menu-extra-card h3 {
+    margin: 0 0 8px;
+}
+
+.menu-extra-card p {
+    margin: 5px 0;
+}
+
+.menu-extra-vacio {
+    padding: 30px;
+
+    text-align: center;
+
+    border: 1px dashed #cbd5e1;
+
+    border-radius: 12px;
+
+    margin-top: 20px;
+}
+
+.menu-extra-tabla {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    margin-top: 20px;
+}
+
+.menu-extra-tabla th,
+.menu-extra-tabla td {
+    padding: 12px;
+
+    text-align: left;
+
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.menu-extra-tabla th {
+    font-weight: 600;
+}
+
+.estado-pendiente {
+    color: #b45309;
+
+    font-weight: 600;
+}
+
+.estado-disponible {
+    color: #15803d;
+
+    font-weight: 600;
+}
+
+
+/* ==================================================
+   RESPONSIVE - TABLET
+================================================== */
+
+@media (max-width: 1000px) {
+
+    .estadisticas {
+        grid-template-columns:
+            1fr 1fr;
     }
 
-
-    if (data.session) {
-
-        mostrarAplicacion();
-
-        actualizarUsuario(
-            data.session.user
-        );
-
-        await cargarClientes();
-
-        mostrarSeccion("inicio");
-
-    } else {
-
-        mostrarLogin();
-
+    .clientes-grid {
+        grid-template-columns:
+            1fr;
     }
 
 }
 
 
-// ======================================================
-// CARGAR CLIENTES DESDE SUPABASE
-// ======================================================
+/* ==================================================
+   TABLETS
+================================================== */
 
-async function cargarClientes() {
+@media (max-width: 900px) {
 
-    listaClientes.innerHTML =
-        "<p>Cargando clientes...</p>";
-
-
-    const {
-        data,
-        error
-    } =
-        await supabaseClient
-            .from("Clientes")
-            .select("*")
-            .order("id", {
-                ascending: false
-            });
-
-
-    if (error) {
-
-        console.error(
-            "Error cargando clientes:",
-            error
-        );
-
-        listaClientes.innerHTML =
-            "<p>No se pudieron cargar los clientes.</p>";
-
-        return;
-
+    .main {
+        padding: 20px;
     }
 
-
-    clientes =
-        data || [];
-
-
-    mostrarClientes(
-        clientes
-    );
-
-
-    actualizarEstadisticas();
-
-}
-
-
-// ======================================================
-// MOSTRAR CLIENTES
-// ======================================================
-
-function mostrarClientes(
-    lista
-) {
-
-    listaClientes.innerHTML = "";
-
-
-    if (!lista || lista.length === 0) {
-
-        listaClientes.innerHTML = `
-
-            <div class="menu-extra-vacio">
-
-                <h3>
-                    No hay clientes
-                </h3>
-
-                <p>
-                    Todavía no has registrado ningún cliente.
-                </p>
-
-            </div>
-
-        `;
-
-        return;
-
+    .estadisticas {
+        grid-template-columns:
+            1fr 1fr;
     }
 
-
-    lista.forEach(cliente => {
-
-        const card =
-            document.createElement("div");
-
-
-        card.className =
-            "cliente-card";
-
-
-        const estadoCliente =
-            cliente.estado || "Activo";
-
-
-        card.innerHTML = `
-
-            <div class="cliente-top">
-
-                <div>
-
-                    <h3>
-                        ${escaparHTML(
-                            cliente.nombre || "Sin nombre"
-                        )}
-                    </h3>
-
-                    <span class="estado ${estadoCliente
-                        .toLowerCase()
-                        .replaceAll(" ", "-")}">
-
-                        ${escaparHTML(
-                            estadoCliente
-                        )}
-
-                    </span>
-
-                </div>
-
-            </div>
-
-
-            <div class="cliente-datos">
-
-                <p>
-                    <strong>Teléfono:</strong>
-                    ${escaparHTML(
-                        cliente.telefono || "No registrado"
-                    )}
-                </p>
-
-                <p>
-                    <strong>Dirección:</strong>
-                    ${escaparHTML(
-                        cliente.direccion || "No registrada"
-                    )}
-                </p>
-
-                <p>
-                    <strong>Plan:</strong>
-                    ${escaparHTML(
-                        cliente.plan || "No registrado"
-                    )}
-                </p>
-
-            </div>
-
-
-            <div class="cliente-botones">
-
-                <button
-                    type="button"
-                    class="btn-secondary btn-ver-cliente">
-
-                    Ver
-
-                </button>
-
-
-                <button
-                    type="button"
-                    class="btn-primary btn-editar-cliente">
-
-                    Editar
-
-                </button>
-
-
-                <button
-                    type="button"
-                    class="btn-danger btn-eliminar-cliente">
-
-                    Eliminar
-
-                </button>
-
-            </div>
-
-        `;
-
-
-        const botonVer =
-            card.querySelector(
-                ".btn-ver-cliente"
-            );
-
-
-        const botonEditar =
-            card.querySelector(
-                ".btn-editar-cliente"
-            );
-
-
-        const botonEliminar =
-            card.querySelector(
-                ".btn-eliminar-cliente"
-            );
-
-
-        botonVer.addEventListener(
-            "click",
-            function () {
-
-                abrirModalVerCliente(
-                    cliente
-                );
-
-            }
-        );
-
-
-        botonEditar.addEventListener(
-            "click",
-            function () {
-
-                abrirModalEditar(
-                    cliente
-                );
-
-            }
-        );
-
-
-        botonEliminar.addEventListener(
-            "click",
-            function () {
-
-                abrirModalEliminar(
-                    cliente
-                );
-
-            }
-        );
-
-
-        listaClientes.appendChild(
-            card
-        );
-
-    });
-
-}
-
-
-// ======================================================
-// ESCAPAR HTML
-// ======================================================
-
-function escaparHTML(texto) {
-
-    return String(texto)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-
-}
-
-
-// ======================================================
-// BUSCAR CLIENTES
-// ======================================================
-
-buscarCliente.addEventListener(
-    "input",
-    function () {
-
-        const texto =
-            this.value
-                .trim()
-                .toLowerCase();
-
-
-        if (!texto) {
-
-            mostrarClientes(
-                clientes
-            );
-
-            return;
-
-        }
-
-
-        const filtrados =
-            clientes.filter(cliente => {
-
-                return (
-
-                    String(
-                        cliente.nombre || ""
-                    )
-                        .toLowerCase()
-                        .includes(texto)
-
-                    ||
-
-                    String(
-                        cliente.telefono || ""
-                    )
-                        .toLowerCase()
-                        .includes(texto)
-
-                    ||
-
-                    String(
-                        cliente.direccion || ""
-                    )
-                        .toLowerCase()
-                        .includes(texto)
-
-                );
-
-            });
-
-
-        mostrarClientes(
-            filtrados
-        );
-
+    .clientes-grid {
+        grid-template-columns:
+            1fr;
     }
-);
 
-
-// ======================================================
-// ABRIR MODAL NUEVO CLIENTE
-// ======================================================
-
-btnNuevoCliente.addEventListener(
-    "click",
-    function () {
-
-        abrirModalCliente();
-
-    }
-);
-
-
-function abrirModalCliente() {
-
-    clienteEditando = null;
-
-
-    tituloModal.textContent =
-        "Nuevo cliente";
-
-
-    formCliente.reset();
-
-
-    archivoSeleccionado.textContent =
-        "";
-
-
-    if (modalCliente) {
-
-        modalCliente.classList.add("activo");
-
-        modalCliente.style.display = "flex";
-
+    .panel {
+        padding: 20px;
     }
 
 }
 
 
-// ======================================================
-// ABRIR MODAL EDITAR
-// ======================================================
+/* ==================================================
+   CELULARES
+================================================== */
 
-function abrirModalEditar(
-    cliente
-) {
+@media (max-width: 700px) {
 
-    clienteEditando =
-        cliente;
+    .form-grid {
+        grid-template-columns:
+            1fr;
+    }
 
+    .campo-completo {
+        grid-column: auto;
+    }
 
-    tituloModal.textContent =
-        "Editar cliente";
-
-
-    nombre.value =
-        cliente.nombre || "";
-
-    cedula.value =
-        cliente.identificacion || "";
-
-    telefono.value =
-        cliente.telefono || "";
-
-    correo.value =
-        cliente.correo || "";
-
-    direccion.value =
-        cliente.direccion || "";
-
-    mac.value =
-        cliente.mac || "";
-
-    cto.value =
-        cliente.cto || "";
-
-    puerto.value =
-        cliente.puerto || "";
-
-    plan.value =
-        cliente.plan || "300 Mbps";
-
-    precio.value =
-        cliente.precio || "";
-
-    fecha.value =
-        cliente.fecha || "";
-
-    estado.value =
-        cliente.estado || "Activo";
-
-
-    archivoSeleccionado.textContent =
-        cliente.contrato_nombre
-            ? `Contrato actual: ${cliente.contrato_nombre}`
-            : "";
-
-
-    modalCliente.classList.add("activo");
-
-    modalCliente.style.display =
-        "flex";
+    .detalle-cliente {
+        grid-template-columns:
+            1fr;
+    }
 
 }
 
 
-// ======================================================
-// CERRAR MODAL CLIENTE
-// ======================================================
+@media (max-width: 600px) {
 
-function cerrarModalCliente() {
+    /* ----------------------------------------------
+       ESTRUCTURA GENERAL
+    ---------------------------------------------- */
 
-    modalCliente.classList.remove(
-        "activo"
-    );
+    body {
+        overflow-x: hidden;
+    }
 
-    modalCliente.style.display =
-        "none";
+    .app {
+        width: 100%;
 
-    clienteEditando = null;
+        min-height: 100vh;
+    }
 
-    formCliente.reset();
 
-    archivoSeleccionado.textContent =
-        "";
+    /* ----------------------------------------------
+       LOGIN
+    ---------------------------------------------- */
+
+    .pantalla-acceso {
+        padding: 15px;
+    }
+
+    .acceso-box {
+        max-width: 100%;
+
+        padding: 25px 20px;
+
+        border-radius: 15px;
+    }
+
+    .acceso-box h1 {
+        font-size: 22px;
+    }
+
+    .acceso-box > p {
+        font-size: 12px;
+    }
+
+
+    /* ----------------------------------------------
+       BARRA LATERAL
+    ---------------------------------------------- */
+
+    .sidebar {
+        width: 62px;
+
+        padding: 15px 7px;
+
+        overflow: hidden;
+    }
+
+    .logo {
+        justify-content: center;
+
+        padding: 5px 0 25px;
+    }
+
+    .logo-icon {
+        width: 42px;
+        height: 42px;
+
+        flex-shrink: 0;
+    }
+
+    .logo-text {
+        display: none;
+    }
+
+    .menu {
+        width: 100%;
+    }
+
+    .menu-item {
+        width: 100%;
+
+        min-height: 46px;
+
+        padding: 10px 5px;
+
+        justify-content: center;
+
+        gap: 0;
+    }
+
+    .menu-item span {
+        width: auto;
+
+        font-size: 19px;
+    }
+
+    .menu-item {
+        font-size: 0;
+    }
+
+    .menu-item span {
+        font-size: 19px;
+    }
+
+    .btn-cerrar-sesion {
+        font-size: 0;
+
+        padding: 10px 5px;
+
+        min-height: 44px;
+    }
+
+    .btn-cerrar-sesion::before {
+        content: "↪";
+
+        font-size: 19px;
+    }
+
+
+    /* ----------------------------------------------
+       CONTENIDO PRINCIPAL
+    ---------------------------------------------- */
+
+    .main {
+        margin-left: 62px;
+
+        width: calc(100% - 62px);
+
+        padding: 15px;
+
+        min-width: 0;
+    }
+
+
+    /* ----------------------------------------------
+       TOPBAR
+    ---------------------------------------------- */
+
+    .topbar {
+        display: flex;
+
+        align-items: center;
+
+        gap: 10px;
+
+        margin-bottom: 18px;
+    }
+
+    .topbar > div:first-child {
+        min-width: 0;
+    }
+
+    .topbar h1 {
+        font-size: 22px;
+
+        white-space: nowrap;
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+    }
+
+    .topbar p {
+        font-size: 12px;
+    }
+
+    .usuario {
+        flex-shrink: 0;
+    }
+
+    .usuario .avatar {
+        width: 36px;
+        height: 36px;
+    }
+
+    .usuario div:last-child {
+        display: none;
+    }
+
+
+    /* ----------------------------------------------
+       ESTADÍSTICAS
+    ---------------------------------------------- */
+
+    .estadisticas {
+        grid-template-columns:
+            1fr 1fr;
+
+        gap: 10px;
+
+        margin-bottom: 15px;
+    }
+
+    .estadistica {
+        padding: 13px;
+
+        gap: 9px;
+
+        min-width: 0;
+    }
+
+    .estadistica-icon {
+        width: 38px;
+        height: 38px;
+
+        min-width: 38px;
+
+        font-size: 17px;
+    }
+
+    .estadistica span {
+        font-size: 10px;
+    }
+
+    .estadistica strong {
+        font-size: 17px;
+    }
+
+
+    /* ----------------------------------------------
+       PANEL
+    ---------------------------------------------- */
+
+    .panel {
+        padding: 15px;
+
+        border-radius: 12px;
+    }
+
+    .panel-header {
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        gap: 12px;
+
+        margin-bottom: 15px;
+    }
+
+    .panel-header h2 {
+        font-size: 19px;
+    }
+
+    .panel-header p {
+        font-size: 12px;
+    }
+
+    .panel-header .btn-primary {
+        width: 100%;
+    }
+
+
+    /* ----------------------------------------------
+       BUSCADOR
+    ---------------------------------------------- */
+
+    .buscador {
+        height: 44px;
+
+        margin-bottom: 15px;
+    }
+
+    .buscador input {
+        font-size: 13px;
+    }
+
+
+    /* ----------------------------------------------
+       TARJETAS CLIENTES
+    ---------------------------------------------- */
+
+    .clientes-grid {
+        grid-template-columns:
+            1fr;
+
+        gap: 10px;
+    }
+
+    .cliente-card {
+        width: 100%;
+
+        padding: 13px;
+
+        border-radius: 11px;
+    }
+
+    .cliente-top {
+        padding-bottom: 11px;
+    }
+
+    .cliente-identidad {
+        min-width: 0;
+    }
+
+    .cliente-identidad h3 {
+        font-size: 14px;
+
+        max-width: 145px;
+
+        overflow: hidden;
+
+        white-space: nowrap;
+
+        text-overflow: ellipsis;
+    }
+
+    .cliente-avatar {
+        width: 38px;
+        height: 38px;
+
+        min-width: 38px;
+
+        font-size: 15px;
+    }
+
+    .estado {
+        font-size: 10px;
+
+        padding: 4px 7px;
+
+        flex-shrink: 0;
+    }
+
+
+    /* ----------------------------------------------
+       BOTONES CLIENTE
+    ---------------------------------------------- */
+
+    .cliente-botones {
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+        gap: 7px;
+
+        margin-top: 11px;
+    }
+
+    .btn-card {
+        width: 100%;
+
+        min-height: 38px;
+
+        padding: 8px 5px;
+
+        font-size: 11px;
+    }
+
+
+    /* ----------------------------------------------
+       MODALES
+    ---------------------------------------------- */
+
+    .modal {
+        padding: 10px;
+    }
+
+    .modal-box {
+        width: 100%;
+
+        max-width: 100%;
+
+        max-height: 94vh;
+
+        padding: 18px;
+
+        border-radius: 14px;
+    }
+
+    .modal-header {
+        margin-bottom: 18px;
+    }
+
+    .modal-header h2 {
+        font-size: 18px;
+    }
+
+    .modal-header p {
+        font-size: 11px;
+    }
+
+    .btn-cerrar {
+        width: 34px;
+        height: 34px;
+
+        flex-shrink: 0;
+    }
+
+
+    /* ----------------------------------------------
+       FORMULARIOS
+    ---------------------------------------------- */
+
+    .form-grid {
+        grid-template-columns:
+            1fr;
+
+        gap: 13px;
+    }
+
+    .campo-completo {
+        grid-column: auto;
+    }
+
+    .campo input,
+    .campo select {
+        height: 44px;
+
+        font-size: 14px;
+    }
+
+    .campo label {
+        font-size: 11px;
+    }
+
+
+    /* ----------------------------------------------
+       ARCHIVOS
+    ---------------------------------------------- */
+
+    .subir-archivo {
+        padding: 13px;
+
+        gap: 10px;
+    }
+
+    .archivo-icon {
+        width: 36px;
+        height: 36px;
+
+        min-width: 36px;
+    }
+
+    .subir-archivo strong {
+        font-size: 11px;
+    }
+
+    .subir-archivo small {
+        font-size: 9px;
+    }
+
+
+    /* ----------------------------------------------
+       FOOTER MODAL
+    ---------------------------------------------- */
+
+    .modal-footer {
+        flex-direction: column-reverse;
+
+        gap: 8px;
+
+        margin-top: 18px;
+
+        padding-top: 15px;
+    }
+
+    .modal-footer button {
+        width: 100%;
+
+        min-height: 43px;
+    }
+
+
+    /* ----------------------------------------------
+       DETALLES CLIENTE
+    ---------------------------------------------- */
+
+    .detalle-cliente {
+        grid-template-columns:
+            1fr;
+
+        gap: 9px;
+    }
+
+    .detalle {
+        padding: 11px;
+    }
+
+    .detalle strong {
+        font-size: 12px;
+
+        word-break: break-word;
+    }
+
+
+    /* ----------------------------------------------
+       CONTRATO
+    ---------------------------------------------- */
+
+    .contrato-ver {
+        padding: 12px;
+
+        font-size: 12px;
+
+        word-break: break-word;
+    }
+
+
+    /* ----------------------------------------------
+       ELIMINAR CLIENTE
+    ---------------------------------------------- */
+
+    .eliminar-box {
+        width: 100%;
+    }
+
+    .eliminar-box h2 {
+        font-size: 19px;
+    }
+
+    .eliminar-box p {
+        font-size: 12px;
+    }
+
+
+    /* ----------------------------------------------
+       TABLAS
+    ---------------------------------------------- */
+
+    .menu-extra-tabla {
+        display: block;
+
+        width: 100%;
+
+        overflow-x: auto;
+
+        white-space: nowrap;
+    }
+
+    .menu-extra-tabla th,
+    .menu-extra-tabla td {
+        padding: 10px;
+
+        font-size: 11px;
+    }
+
+
+    /* ----------------------------------------------
+       TARJETAS EXTRA
+    ---------------------------------------------- */
+
+    .menu-extra-grid {
+        grid-template-columns:
+            1fr;
+
+        gap: 10px;
+    }
+
+    .menu-extra-card {
+        padding: 14px;
+    }
+
+    .menu-extra-card h3 {
+        font-size: 15px;
+    }
+
+    .menu-extra-card p {
+        font-size: 12px;
+
+        word-break: break-word;
+    }
+
+    .menu-extra-card button {
+        width: 100%;
+
+        min-height: 40px;
+    }
+
+
+    /* ----------------------------------------------
+       MENÚ EXTRA
+    ---------------------------------------------- */
+
+    .vista-menu-extra {
+        width: 100%;
+
+        min-width: 0;
+
+        overflow: hidden;
+    }
+
+
+    /* ----------------------------------------------
+       BOTONES
+    ---------------------------------------------- */
+
+    .btn-primary,
+    .btn-secondary,
+    .btn-danger {
+        min-height: 42px;
+
+        font-size: 12px;
+    }
 
 }
 
 
-cerrarModal.addEventListener(
-    "click",
-    cerrarModalCliente
-);
+/* ==================================================
+   CELULARES MUY PEQUEÑOS
+================================================== */
 
+@media (max-width: 380px) {
 
-cancelarCliente.addEventListener(
-    "click",
-    cerrarModalCliente
-);
+    .sidebar {
+        width: 55px;
 
-
-// ======================================================
-// MOSTRAR ARCHIVO SELECCIONADO
-// ======================================================
-
-contrato.addEventListener(
-    "change",
-    function () {
-
-        if (this.files.length > 0) {
-
-            archivoSeleccionado.textContent =
-                "Archivo seleccionado: " +
-                this.files[0].name;
-
-        } else {
-
-            archivoSeleccionado.textContent =
-                "";
-
-        }
-
-    }
-);
-
-
-// ======================================================
-// NOTIFICACIONES BONITAS
-// ======================================================
-
-function mostrarNotificacion(
-    titulo,
-    mensaje,
-    tipo = "exito"
-) {
-
-    const anterior =
-        document.querySelector(
-            ".notificacion-sistecfiber"
-        );
-
-
-    if (anterior) {
-
-        anterior.remove();
-
+        padding-left: 5px;
+        padding-right: 5px;
     }
 
+    .main {
+        margin-left: 55px;
 
-    const notificacion =
-        document.createElement("div");
+        width: calc(100% - 55px);
 
+        padding: 10px;
+    }
 
-    notificacion.className =
-        `notificacion-sistecfiber notificacion-${tipo}`;
+    .estadisticas {
+        grid-template-columns:
+            1fr;
+    }
 
+    .panel {
+        padding: 12px;
+    }
 
-    const icono =
-        tipo === "exito"
-            ? "✓"
-            : "✕";
+    .cliente-botones {
+        grid-template-columns:
+            1fr 1fr;
+    }
 
+    .topbar h1 {
+        font-size: 19px;
+    }
 
-    notificacion.innerHTML = `
+    .topbar p {
+        font-size: 10px;
+    }
 
-        <div class="notificacion-icono">
-            ${icono}
-        </div>
+    .modal {
+        padding: 5px;
+    }
 
-        <div class="notificacion-contenido">
+    .modal-box {
+        padding: 14px;
+    }
 
-            <div class="notificacion-titulo">
-                ${titulo}
-            </div>
-
-            <div class="notificacion-mensaje">
-                ${mensaje}
-            </div>
-
-        </div>
-
-    `;
-
-
-    document.body.appendChild(
-        notificacion
-    );
-
-
-    setTimeout(() => {
-
-        notificacion.classList.add(
-            "notificacion-saliendo"
-        );
-
-
-        setTimeout(() => {
-
-            notificacion.remove();
-
-        }, 250);
-
-
-    }, 3000);
+    .acceso-box {
+        padding: 22px 16px;
+    }
 
 }
 
-
-// ======================================================
-// GUARDAR CLIENTE
-// ======================================================
-
-formCliente.addEventListener(
-    "submit",
-    async function (event) {
-
-        event.preventDefault();
-
-
-        const botonGuardar =
-            formCliente.querySelector(
-                'button[type="submit"]'
-            );
-
-
-        botonGuardar.disabled =
-            true;
-
-
-        try {
-
-            let rutaContrato =
-                clienteEditando?.contrato_ruta ||
-                null;
-
-            let nombreContrato =
-                clienteEditando?.contrato_nombre ||
-                null;
-
-
-            // ------------------------------------------
-            // SUBIR CONTRATO
-            // ------------------------------------------
-
-            if (
-                contrato.files &&
-                contrato.files.length > 0
-            ) {
-
-                const archivo =
-                    contrato.files[0];
-
-
-                const nombreArchivo =
-                    Date.now() +
-                    "_" +
-                    archivo.name
-                        .replace(
-                            /[^a-zA-Z0-9._-]/g,
-                            "_"
-                        );
-
-
-                const {
-                    data: {
-                        user
-                    }
-                } = await supabaseClient.auth.getUser();
-
-
-                if (!user) {
-
-                    mostrarNotificacion(
-                        "Sesión no encontrada",
-                        "No se encontró el usuario autenticado.",
-                        "error"
-                    );
-
-                    botonGuardar.disabled =
-                        false;
-
-                    return;
-
-                }
-
-
-                const ruta =
-                    user.id +
-                    "/contratos/" +
-                    nombreArchivo;
-
-
-                const {
-                    error: errorSubida
-                } =
-                    await supabaseClient
-                        .storage
-                        .from("documentos")
-                        .upload(
-                            ruta,
-                            archivo,
-                            {
-                                upsert: false
-                            }
-                        );
-
-
-                if (errorSubida) {
-
-                    console.error(
-                        errorSubida
-                    );
-
-
-                    mostrarNotificacion(
-                        "Error al subir",
-                        "No se pudo subir el contrato.",
-                        "error"
-                    );
-
-
-                    botonGuardar.disabled =
-                        false;
-
-                    return;
-
-                }
-
-
-                rutaContrato =
-                    ruta;
-
-                nombreContrato =
-                    archivo.name;
-
-            }
-
-
-            // ------------------------------------------
-            // DATOS
-            // ------------------------------------------
-
-            const datosCliente = {
-
-                nombre:
-                    nombre.value.trim(),
-
-                identificacion:
-                    cedula.value.trim(),
-
-                telefono:
-                    telefono.value.trim(),
-
-                correo:
-                    correo.value.trim(),
-
-                direccion:
-                    direccion.value.trim(),
-
-                mac:
-                    mac.value.trim(),
-
-                cto:
-                    cto.value.trim(),
-
-                puerto:
-                    puerto.value.trim(),
-
-                plan:
-                    plan.value,
-
-                precio:
-                    Number(precio.value) || 0,
-
-                fecha:
-                    fecha.value || null,
-
-                estado:
-                    estado.value,
-
-                contrato_ruta:
-                    rutaContrato,
-
-                contrato_nombre:
-                    nombreContrato
-
-            };
-
-
-            // ------------------------------------------
-            // EDITAR
-            // ------------------------------------------
-
-            if (clienteEditando) {
-
-                const {
-                    error
-                } =
-                    await supabaseClient
-                        .from("Clientes")
-                        .update(
-                            datosCliente
-                        )
-                        .eq(
-                            "id",
-                            clienteEditando.id
-                        );
-
-
-                if (error) {
-
-                    console.error(
-                        "Error actualizando:",
-                        error
-                    );
-
-
-                    mostrarNotificacion(
-                        "No se pudo actualizar",
-                        "Revisa los datos e inténtalo nuevamente.",
-                        "error"
-                    );
-
-
-                    botonGuardar.disabled =
-                        false;
-
-                    return;
-
-                }
-
-
-                mostrarNotificacion(
-                    "Cliente actualizado",
-                    "Los datos del cliente se actualizaron correctamente."
-                );
-
-            }
-
-
-            // ------------------------------------------
-            // CREAR
-            // ------------------------------------------
-
-            else {
-
-                const {
-                    error
-                } =
-                    await supabaseClient
-                        .from("Clientes")
-                        .insert(
-                            datosCliente
-                        );
-
-
-                if (error) {
-
-                    console.error(
-                        "Error guardando:",
-                        error
-                    );
-
-
-                    mostrarNotificacion(
-                        "No se pudo guardar",
-                        "Revisa los datos e inténtalo nuevamente.",
-                        "error"
-                    );
-
-
-                    botonGuardar.disabled =
-                        false;
-
-                    return;
-
-                }
-
-
-                mostrarNotificacion(
-                    "Cliente guardado",
-                    "El cliente se agregó correctamente."
-                );
-
-            }
-
-
-            cerrarModalCliente();
-
-            await cargarClientes();
-
-        } catch (error) {
-
-            console.error(
-                "Error general:",
-                error
-            );
-
-
-            mostrarNotificacion(
-                "Ocurrió un error",
-                "No se pudo completar la operación.",
-                "error"
-            );
-
-        }
-
-
-        botonGuardar.disabled =
-            false;
-
-    }
-);
-
-
-// ======================================================
-// MODAL VER CLIENTE
-// ======================================================
-
-function abrirModalVerCliente(
-    cliente
-) {
-
-    verNombre.textContent =
-        cliente.nombre || "Cliente";
-
-    verTelefono.textContent =
-        cliente.telefono || "No registrado";
-
-    verCedula.textContent =
-        cliente.identificacion || "No registrada";
-
-    verCorreo.textContent =
-        cliente.correo || "No registrado";
-
-    verDireccion.textContent =
-        cliente.direccion || "No registrada";
-
-    verMac.textContent =
-        cliente.mac || "No registrada";
-
-    verCto.textContent =
-        cliente.cto || "No registrado";
-
-    verPuerto.textContent =
-        cliente.puerto || "No registrado";
-
-    verPlan.textContent =
-        cliente.plan || "No registrado";
-
-
-    verPrecio.textContent =
-        cliente.precio
-            ? formatearMoneda(cliente.precio)
-            : "$0";
-
-
-    verEstado.textContent =
-        cliente.estado || "No registrado";
-
-
-    verFecha.textContent =
-        cliente.fecha || "No registrada";
-
-
-    verContrato.innerHTML =
-        "";
-
-
-    if (
-        cliente.contrato_ruta
-    ) {
-
-        const botonContrato =
-            document.createElement(
-                "button"
-            );
-
-
-        botonContrato.type =
-            "button";
-
-
-        botonContrato.className =
-            "btn-primary";
-
-
-        botonContrato.textContent =
-            "Ver contrato";
-
-
-        botonContrato.addEventListener(
-            "click",
-            function () {
-
-                abrirContrato(
-                    cliente.contrato_ruta
-                );
-
-            }
-        );
-
-
-        verContrato.appendChild(
-            botonContrato
-        );
-
-    } else {
-
-        verContrato.textContent =
-            "No hay contrato cargado.";
-
-    }
-
-
-    modalVerCliente.classList.add(
-        "activo"
-    );
-
-    modalVerCliente.style.display =
-        "flex";
-
+/* =========================================
+   AJUSTE SUAVE DE COLORES Y BOTONES
+========================================= */
+
+/* Botones generales un poco más pequeños */
+.btn-primary,
+.btn-secondary,
+.btn-danger {
+    padding: 9px 15px !important;
+    font-size: 13px !important;
+    border-radius: 8px !important;
 }
 
 
-cerrarVerCliente.addEventListener(
-    "click",
-    function () {
+/* Botones de las tarjetas de clientes */
+.cliente-botones {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+}
 
-        modalVerCliente.classList.remove(
-            "activo"
-        );
-
-        modalVerCliente.style.display =
-            "none";
-
-    }
-);
-
-
-// ======================================================
-// ABRIR CONTRATO
-// ======================================================
-
-async function abrirContrato(
-    ruta
-) {
-
-    const {
-        data,
-        error
-    } =
-        await supabaseClient
-            .storage
-            .from("documentos")
-            .createSignedUrl(
-                ruta,
-                3600
-            );
-
-
-    if (error) {
-
-        console.error(
-            error
-        );
-
-
-        mostrarNotificacion(
-            "No se pudo abrir",
-            "No se pudo abrir el contrato.",
-            "error"
-        );
-
-
-        return;
-
-    }
-
-
-    window.open(
-        data.signedUrl,
-        "_blank"
-    );
-
+.cliente-botones button {
+    padding: 6px 11px !important;
+    font-size: 12px !important;
+    min-width: auto !important;
+    width: auto !important;
+    border-radius: 7px !important;
 }
 
 
-// ======================================================
-// MODAL ELIMINAR
-// ======================================================
-
-function abrirModalEliminar(
-    cliente
-) {
-
-    clienteEliminar =
-        cliente;
-
-
-    nombreEliminar.textContent =
-        cliente.nombre || "este cliente";
-
-
-    modalEliminar.classList.add(
-        "activo"
-    );
-
-    modalEliminar.style.display =
-        "flex";
-
+/* Azul más suave */
+.btn-primary {
+    background: #3b82f6 !important;
 }
 
 
-function cerrarModalEliminar() {
-
-    modalEliminar.classList.remove(
-        "activo"
-    );
-
-    modalEliminar.style.display =
-        "none";
-
-    clienteEliminar =
-        null;
-
+/* Azul al pasar el mouse */
+.btn-primary:hover {
+    background: #2563eb !important;
 }
 
 
-cancelarEliminar.addEventListener(
-    "click",
-    cerrarModalEliminar
-);
+/* Botón secundario más discreto */
+.btn-secondary {
+    background: #f1f5f9 !important;
+    color: #475569 !important;
+    border: 1px solid #e2e8f0 !important;
+}
 
 
-confirmarEliminar.addEventListener(
-    "click",
-    async function () {
-
-        if (!clienteEliminar) {
-            return;
-        }
+/* Botón eliminar menos intenso */
+.btn-danger {
+    background: #ef4444 !important;
+}
 
 
-        confirmarEliminar.disabled =
-            true;
+/* Estados más suaves */
+.estado-activo {
+    background: #dcfce7 !important;
+    color: #166534 !important;
+}
+
+.estado-suspendido {
+    background: #fef3c7 !important;
+    color: #92400e !important;
+}
+
+.estado-retirado {
+    background: #fee2e2 !important;
+    color: #991b1b !important;
+}
 
 
-        try {
+/* Iconos de estadísticas un poco menos fuertes */
+.estadistica-icon.azul {
+    background: #dbeafe !important;
+    color: #2563eb !important;
+}
 
-            // ------------------------------------------
-            // ELIMINAR CONTRATO DEL STORAGE
-            // ------------------------------------------
+.estadistica-icon.verde {
+    background: #dcfce7 !important;
+    color: #16a34a !important;
+}
 
-            if (
-                clienteEliminar.contrato_ruta
-            ) {
+.estadistica-icon.amarillo {
+    background: #fef3c7 !important;
+    color: #d97706 !important;
+}
 
-                const {
-                    error:
-                        errorStorage
-                } =
-                    await supabaseClient
-                        .storage
-                        .from("documentos")
-                        .remove([
-                            clienteEliminar.contrato_ruta
-                        ]);
+.estadistica-icon.rojo {
+    background: #fee2e2 !important;
+    color: #dc2626 !important;
+}
 
+/* =========================================
+   NOTIFICACIONES BONITAS
+   ========================================= */
 
-                if (errorStorage) {
+.notificacion-sistecfiber {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    min-width: 280px;
+    max-width: 380px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
+    z-index: 99999;
+    animation: aparecerNotificacion 0.25s ease;
+}
 
-                    console.warn(
-                        "No se pudo eliminar el archivo:",
-                        errorStorage
-                    );
+.notificacion-icono {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    flex-shrink: 0;
+}
 
-                }
+.notificacion-contenido {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
 
-            }
+.notificacion-titulo {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1e293b;
+}
 
+.notificacion-mensaje {
+    font-size: 13px;
+    color: #64748b;
+}
 
-            // ------------------------------------------
-            // ELIMINAR CLIENTE
-            // ------------------------------------------
+.notificacion-exito .notificacion-icono {
+    background: #dcfce7;
+    color: #16a34a;
+}
 
-            const {
-                error
-            } =
-                await supabaseClient
-                    .from("Clientes")
-                    .delete()
-                    .eq(
-                        "id",
-                        clienteEliminar.id
-                    );
+.notificacion-error .notificacion-icono {
+    background: #fee2e2;
+    color: #dc2626;
+}
 
-
-            if (error) {
-
-                console.error(
-                    error
-                );
-
-
-                mostrarNotificacion(
-                    "No se pudo eliminar",
-                    "No fue posible eliminar el cliente.",
-                    "error"
-                );
-
-
-                confirmarEliminar.disabled =
-                    false;
-
-                return;
-
-            }
-
-
-            const nombreClienteEliminado =
-                clienteEliminar.nombre ||
-                "El cliente";
-
-
-            cerrarModalEliminar();
-
-
-            mostrarNotificacion(
-                "Cliente eliminado",
-                `${nombreClienteEliminado} fue eliminado correctamente.`
-            );
-
-
-            await cargarClientes();
-
-
-        } catch (error) {
-
-            console.error(
-                error
-            );
-
-
-            mostrarNotificacion(
-                "Ocurrió un error",
-                "No se pudo completar la eliminación.",
-                "error"
-            );
-
-        }
-
-
-        confirmarEliminar.disabled =
-            false;
-
+@keyframes aparecerNotificacion {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
     }
-);
 
-
-// ======================================================
-// ESTADÍSTICAS
-// ======================================================
-
-function actualizarEstadisticas() {
-
-    const total =
-        clientes.length;
-
-
-    const activos =
-        clientes.filter(
-            cliente =>
-                cliente.estado === "Activo"
-        ).length;
-
-
-    const ingresos =
-        clientes
-            .filter(
-                cliente =>
-                    cliente.estado === "Activo"
-            )
-            .reduce(
-                (
-                    total,
-                    cliente
-                ) =>
-                    total +
-                    Number(
-                        cliente.precio || 0
-                    ),
-                0
-            );
-
-
-    totalClientes.textContent =
-        total;
-
-
-    clientesActivos.textContent =
-        activos;
-
-
-    ingresosMes.textContent =
-        formatearMoneda(
-            ingresos
-        );
-
-
-    pagosPendientes.textContent =
-        "$0";
-
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
+@keyframes desaparecerNotificacion {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
 
-// ======================================================
-// FORMATO MONEDA
-// ======================================================
-
-function formatearMoneda(
-    valor
-) {
-
-    return new Intl.NumberFormat(
-        "es-CO",
-        {
-            style: "currency",
-            currency: "COP",
-            maximumFractionDigits: 0
-        }
-    ).format(
-        Number(valor) || 0
-    );
-
+    to {
+        opacity: 0;
+        transform: translateY(15px);
+    }
 }
 
+.notificacion-saliendo {
+    animation: desaparecerNotificacion 0.25s ease forwards;
+}
 
-// ======================================================
-// CERRAR MODALES AL HACER CLICK AFUERA
-// ======================================================
-
-window.addEventListener(
-    "click",
-    function (event) {
-
-        if (
-            event.target === modalCliente
-        ) {
-
-            cerrarModalCliente();
-
-        }
-
-
-        if (
-            event.target === modalEliminar
-        ) {
-
-            cerrarModalEliminar();
-
-        }
-
-
-        if (
-            event.target === modalVerCliente
-        ) {
-
-            modalVerCliente.classList.remove(
-                "activo"
-            );
-
-            modalVerCliente.style.display =
-                "none";
-
-        }
-
+/* Celular */
+@media (max-width: 600px) {
+    .notificacion-sistecfiber {
+        left: 15px;
+        right: 15px;
+        bottom: 15px;
+        min-width: auto;
+        max-width: none;
     }
-);
+}
 
+/* ===== ARREGLO DEFINITIVO DOCUMENTOS ===== */
 
-// ======================================================
-// ESCAPE PARA CERRAR MODALES
-// ======================================================
+.documentos-cliente {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 18px !important;
+    width: 100% !important;
+}
 
-document.addEventListener(
-    "keydown",
-    function (event) {
+.documento-item {
+    display: block !important;
+    width: 100% !important;
+}
 
-        if (
-            event.key === "Escape"
-        ) {
+.documento-item > .subir-archivo {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    width: 100% !important;
+    min-height: 70px !important;
+    padding: 14px !important;
+    gap: 12px !important;
+}
 
-            cerrarModalCliente();
+.documento-item > .subir-archivo > .archivo-icon {
+    display: flex !important;
+    flex-shrink: 0 !important;
+    width: 40px !important;
+    height: 40px !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
 
-            cerrarModalEliminar();
+.documento-item > .subir-archivo > span:last-child {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+}
 
-            modalVerCliente.classList.remove(
-                "activo"
-            );
+.documento-item > .subir-archivo strong {
+    display: block !important;
+    font-size: 13px !important;
+}
 
-            modalVerCliente.style.display =
-                "none";
+.documento-item > .subir-archivo small {
+    display: block !important;
+    font-size: 11px !important;
+}
 
-        }
+.documento-item .archivo-seleccionado {
+    display: block !important;
+    width: 100% !important;
+    margin-top: 7px !important;
+}
 
-    }
-);
-
-
-// ======================================================
-// INICIAR
-// ======================================================
-
-mostrarSeccion("inicio");
-
-comprobarSesion();
-
+.documento-item .archivo-actual {
+    display: block !important;
+    width: 100% !important;
+    padding: 8px 10px !important;
+    box-sizing: border-box !important;
+    border-radius: 7px !important;
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    font-size: 12px !important;
+    color: #64748b !important;
+}
