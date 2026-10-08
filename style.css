@@ -2429,3 +2429,59 @@ select {
     font-size: 12px !important;
     color: #64748b !important;
 }
+
+/* =========================================
+   CORRECCIÓN DE VISIBILIDAD DE SECCIONES
+   SISTECFIBER TELECOMUNICACIONES
+========================================= */
+
+/* Las secciones adicionales se ocultan por defecto */
+.vista-menu-extra {
+    display: none;
+    width: 100%;
+    min-width: 0;
+}
+
+/* Mostrar la sección seleccionada por JavaScript */
+.vista-menu-extra.mostrar {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Evitar que el contenido de Datos quede comprimido */
+#seccionDatos {
+    width: 100%;
+    min-width: 0;
+}
+
+/* Asegurar que el buscador y la lista ocupen el espacio disponible */
+#seccionDatos .buscador,
+#seccionDatos #buscarDatos,
+#seccionDatos #listaDatos {
+    max-width: 100%;
+}
+
+/* Evitar que las tarjetas desaparezcan por falta de espacio */
+#seccionDatos .clientes-grid,
+#seccionDatos .menu-extra-grid {
+    width: 100%;
+    min-width: 0;
+}
+
+/* Adaptación para celulares */
+@media (max-width: 600px) {
+    #seccionDatos {
+        width: 100%;
+        overflow: visible;
+    }
+
+    #seccionDatos .buscador {
+        width: 100%;
+    }
+
+    #seccionDatos .clientes-grid,
+    #seccionDatos .menu-extra-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
