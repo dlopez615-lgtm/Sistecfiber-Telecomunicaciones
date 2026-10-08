@@ -6,6 +6,11 @@ let clientes = [];
 let clienteEditando = null;
 let clienteAEliminar = null;
 
+
+/* ==================================================
+   ELEMENTOS PRINCIPALES
+================================================== */
+
 const modalCliente = document.getElementById("modalCliente");
 const modalEliminar = document.getElementById("modalEliminar");
 const modalVerCliente = document.getElementById("modalVerCliente");
@@ -64,14 +69,18 @@ if (campoPuerto) {
    SUPABASE
 ================================================== */
 
-const SUPABASE_URL = "https://pmbcvhkyfoppvyrnuztn.supabase.co";
+const SUPABASE_URL =
+    "https://pmbcvhkyfoppvyrnuztn.supabase.co";
+
 const SUPABASE_PUBLISHABLE_KEY =
     "sb_publishable_yrZYYb4J2qqZmKTq05T35Q_2DBWRDMY";
 
 let supabaseDB = null;
 let usuarioActual = null;
 
+
 function supabaseConfigurado() {
+
     return (
         SUPABASE_URL &&
         SUPABASE_PUBLISHABLE_KEY &&
@@ -133,6 +142,16 @@ function mostrarMensajeAcceso(mensaje, error = true) {
 
 
 function configurarModoAcceso() {
+
+    if (
+        !tituloAcceso ||
+        !textoAcceso ||
+        !btnAcceso ||
+        !btnCambiarAcceso ||
+        !accesoPassword
+    ) {
+        return;
+    }
 
     if (modoRegistro) {
 
@@ -226,6 +245,30 @@ async function iniciarSesion() {
         return;
     }
 
+    if (!supabaseDB) {
+
+        mostrarMensajeAcceso(
+            "Supabase todavía no está listo. Recarga la página."
+        );
+
+        return;
+    }
+
+    const correo =
+        accesoCorreo?.value.trim();
+
+    const password =
+        accesoPassword?.value;
+
+    if (!correo || !password) {
+
+        mostrarMensajeAcceso(
+            "Ingresa tu correo y contraseña."
+        );
+
+        return;
+    }
+
     btnAcceso.disabled = true;
 
     mostrarMensajeAcceso(
@@ -233,38 +276,60 @@ async function iniciarSesion() {
         false
     );
 
-    const { data, error } =
-        await supabaseDB.auth.signInWithPassword({
+    try {
 
-            email:
-                accesoCorreo.value.trim(),
+        const { data, error } =
+            await supabaseDB.auth.signInWithPassword({
+                email: correo,
+                password: password
+            });
 
-            password:
-                accesoPassword.value
+        if (error) {
 
-        });
+            console.error(error);
 
-    btnAcceso.disabled = false;
+            if (
+                error.message &&
+                error.message.toLowerCase().includes(
+                    "email not confirmed"
+                )
+            ) {
 
-    if (error) {
+                mostrarMensajeAcceso(
+                    "Tu correo todavía no está confirmado. Revisa tu correo electrónico."
+                );
 
-        mostrarMensajeAcceso(
-            "No se pudo iniciar sesión. Revisa el correo y la contraseña."
-        );
+            } else {
+
+                mostrarMensajeAcceso(
+                    "No se pudo iniciar sesión. Revisa el correo y la contraseña."
+                );
+            }
+
+            return;
+        }
+
+        usuarioActual =
+            data.user;
+
+        formLogin?.reset();
+
+        mostrarAplicacion();
+
+        await cargarClientes();
+
+    } catch (error) {
 
         console.error(error);
 
-        return;
+        mostrarMensajeAcceso(
+            "Ocurrió un error al iniciar sesión."
+        );
+
+    } finally {
+
+        btnAcceso.disabled = false;
     }
-
-    usuarioActual =
-        data.user;
-
-    formLogin.reset();
-
-    mostrarAplicacion();
-
-    await cargarClientes();
 }
 
 
@@ -283,6 +348,48 @@ async function crearCuenta() {
         return;
     }
 
+    if (!supabaseDB) {
+
+        mostrarMensajeAcceso(
+            "Supabase todavía no está listo. Recarga la página."
+        );
+
+        return;
+    }
+
+    const correo =
+        accesoCorreo?.value.trim();
+
+    const password =
+        accesoPassword?.value;
+
+    if (!correo || !password) {
+
+        mostrarMensajeAcceso(
+            "Ingresa un correo y una contraseña."
+        );
+
+        return;
+    }
+
+    if (!correoValido(correo)) {
+
+        mostrarMensajeAcceso(
+            "Ingresa un correo electrónico válido."
+        );
+
+        return;
+    }
+
+    if (password.length < 6) {
+
+        mostrarMensajeAcceso(
+            "La contraseña debe tener mínimo 6 caracteres."
+        );
+
+        return;
+    }
+
     btnAcceso.disabled = true;
 
     mostrarMensajeAcceso(
@@ -290,50 +397,79 @@ async function crearCuenta() {
         false
     );
 
-    const { data, error } =
-        await supabaseDB.auth.signUp({
+    try {
 
-            email:
-                accesoCorreo.value.trim(),
+        const { data, error } =
+            await supabaseDB.auth.signUp({
 
-            password:
-                accesoPassword.value
+                email: correo,
 
-        });
+                password: password
 
-    btnAcceso.disabled = false;
+            });
 
-    if (error) {
+        if (error) {
+
+            console.error(error);
+
+            mostrarMensajeAcceso(
+                error.message
+            );
+
+            return;
+        }
+
+        /*
+           Si Supabase devuelve una sesión,
+           la cuenta puede entrar inmediatamente.
+        */
+
+        if (
+            data.session &&
+            data.user
+        ) {
+
+            usuarioActual =
+                data.user;
+
+            formLogin?.reset();
+
+            mostrarAplicacion();
+
+            await cargarClientes();
+
+            return;
+        }
+
+        /*
+           Si no hay sesión, normalmente
+           Supabase está esperando confirmación
+           del correo.
+        */
 
         mostrarMensajeAcceso(
-            error.message
+            "Cuenta creada. Revisa tu correo para confirmar la cuenta.",
+            false
         );
 
-        return;
+        formLogin?.reset();
+
+        modoRegistro = false;
+
+        configurarModoAcceso();
+
+    } catch (error) {
+
+        console.error(error);
+
+        mostrarMensajeAcceso(
+            "Ocurrió un error al crear la cuenta."
+        );
+
+    } finally {
+
+        btnAcceso.disabled = false;
     }
-
-    if (data.session && data.user) {
-
-        usuarioActual =
-            data.user;
-
-        formLogin.reset();
-
-        mostrarAplicacion();
-
-        await cargarClientes();
-
-        return;
-    }
-
-    mostrarMensajeAcceso(
-        "Cuenta creada. Revisa tu correo para confirmar la cuenta.",
-        false
-    );
-
-    modoRegistro = false;
-
-    configurarModoAcceso();
 }
 
 
@@ -341,61 +477,73 @@ async function crearCuenta() {
    EVENTOS DE ACCESO
 ================================================== */
 
-formLogin.addEventListener(
-    "submit",
-    async function (event) {
+if (formLogin) {
 
-        event.preventDefault();
+    formLogin.addEventListener(
+        "submit",
+        async function (event) {
 
-        if (modoRegistro) {
+            event.preventDefault();
 
-            await crearCuenta();
+            if (modoRegistro) {
 
-        } else {
+                await crearCuenta();
 
-            await iniciarSesion();
+            } else {
 
+                await iniciarSesion();
+            }
         }
-
-    }
-);
-
-
-btnCambiarAcceso.addEventListener(
-    "click",
-    function () {
-
-        modoRegistro =
-            !modoRegistro;
-
-        configurarModoAcceso();
-
-    }
-);
+    );
+}
 
 
-btnCerrarSesion.addEventListener(
-    "click",
-    async function () {
+if (btnCambiarAcceso) {
 
-        if (!supabaseDB) {
-            return;
+    btnCambiarAcceso.addEventListener(
+        "click",
+        function (event) {
+
+            event.preventDefault();
+
+            modoRegistro =
+                !modoRegistro;
+
+            configurarModoAcceso();
         }
+    );
+}
 
-        await supabaseDB.auth.signOut();
 
-        usuarioActual = null;
+if (btnCerrarSesion) {
 
-        clientes = [];
+    btnCerrarSesion.addEventListener(
+        "click",
+        async function () {
 
-        renderizarClientes();
+            if (!supabaseDB) {
+                return;
+            }
 
-        actualizarEstadisticas();
+            const { error } =
+                await supabaseDB.auth.signOut();
 
-        bloquearAplicacion();
+            if (error) {
+                console.error(error);
+            }
 
-    }
-);
+            usuarioActual = null;
+
+            clientes = [];
+
+            renderizarClientes();
+
+            actualizarEstadisticas();
+
+            bloquearAplicacion();
+        }
+    );
+}
 
 
 /* ==================================================
@@ -417,56 +565,126 @@ async function iniciarSistema() {
         return;
     }
 
-    const { createClient } =
-        window.supabase;
+    try {
 
-    supabaseDB =
-        createClient(
-            SUPABASE_URL,
-            SUPABASE_PUBLISHABLE_KEY,
-            {
-                auth: {
-                    persistSession: true,
-                    autoRefreshToken: true,
-                    detectSessionInUrl: true
+        /*
+           Supabase debe estar cargado desde
+           index.html antes de script.js.
+        */
+
+        if (
+            !window.supabase ||
+            typeof window.supabase.createClient !==
+                "function"
+        ) {
+
+            mostrarMensajeAcceso(
+                "No se pudo cargar Supabase. Revisa el script de Supabase en index.html."
+            );
+
+            console.error(
+                "Supabase JS no está disponible."
+            );
+
+            return;
+        }
+
+        const { createClient } =
+            window.supabase;
+
+        supabaseDB =
+            createClient(
+                SUPABASE_URL,
+                SUPABASE_PUBLISHABLE_KEY,
+                {
+                    auth: {
+                        persistSession: true,
+                        autoRefreshToken: true,
+                        detectSessionInUrl: true
+                    }
+                }
+            );
+
+        const {
+            data,
+            error
+        } =
+            await supabaseDB.auth.getUser();
+
+        if (error) {
+
+            console.warn(
+                "No hay usuario activo:",
+                error.message
+            );
+
+        }
+
+        const user =
+            data?.user;
+
+        if (user) {
+
+            usuarioActual =
+                user;
+
+            mostrarAplicacion();
+
+            await cargarClientes();
+        }
+
+        supabaseDB.auth.onAuthStateChange(
+            async function (event, session) {
+
+                if (session?.user) {
+
+                    usuarioActual =
+                        session.user;
+
+                    mostrarAplicacion();
+
+                    /*
+                       No volvemos a cargar clientes
+                       innecesariamente durante todos
+                       los eventos de autenticación.
+                    */
+
+                    if (
+                        event === "SIGNED_IN" ||
+                        event === "INITIAL_SESSION"
+                    ) {
+
+                        await cargarClientes();
+                    }
+
+                } else if (
+                    event === "SIGNED_OUT"
+                ) {
+
+                    usuarioActual = null;
+
+                    clientes = [];
+
+                    bloquearAplicacion();
+
+                    renderizarClientes();
+
+                    actualizarEstadisticas();
                 }
             }
         );
 
-    const {
-        data: { user }
-    } =
-        await supabaseDB.auth.getUser();
+    } catch (error) {
 
-    if (user) {
+        console.error(
+            "Error iniciando Supabase:",
+            error
+        );
 
-        usuarioActual =
-            user;
-
-        mostrarAplicacion();
-
-        await cargarClientes();
+        mostrarMensajeAcceso(
+            "No se pudo iniciar el sistema. Recarga la página."
+        );
     }
-
-    supabaseDB.auth.onAuthStateChange(
-        async function (event, session) {
-
-            if (session?.user) {
-
-                usuarioActual =
-                    session.user;
-
-                mostrarAplicacion();
-
-            } else if (event === "SIGNED_OUT") {
-
-                usuarioActual = null;
-
-                bloquearAplicacion();
-            }
-
-        }
-    );
 }
 
 
@@ -710,8 +928,8 @@ async function eliminarClienteDB(
         cliente.contrato.ruta
     ) {
 
-        const { error:
-            errorStorage
+        const {
+            error: errorStorage
         } =
             await supabaseDB
                 .storage
@@ -871,6 +1089,8 @@ async function verContrato(
         }
     }
 }
+
+
 /* ==================================================
    ESTADÍSTICAS
 ================================================== */
@@ -937,13 +1157,6 @@ function actualizarEstadisticas() {
     }
 
 
-    /*
-       Los pagos pendientes se mantienen
-       en 0 porque todavía no existe
-       una tabla de pagos independiente
-       en Supabase.
-    */
-
     if (pagosPendientes) {
 
         pagosPendientes.textContent =
@@ -957,12 +1170,6 @@ function actualizarEstadisticas() {
 ================================================== */
 
 function alertar(mensaje) {
-
-    /*
-       Si el proyecto original tiene
-       una función de alerta personalizada,
-       se puede utilizar aquí.
-    */
 
     alert(mensaje);
 }
@@ -1001,10 +1208,6 @@ function abrirModalCliente(
     formCliente.reset();
 
 
-    /*
-       Limpiar archivo seleccionado
-    */
-
     if (archivoSeleccionado) {
 
         archivoSeleccionado.textContent =
@@ -1013,10 +1216,6 @@ function abrirModalCliente(
 
 
     if (cliente) {
-
-        /*
-           MODO EDITAR
-        */
 
         const nombre =
             document.getElementById("nombre");
@@ -1134,10 +1333,6 @@ function abrirModalCliente(
         }
 
     } else {
-
-        /*
-           MODO NUEVO
-        */
 
         const titulo =
             document.querySelector(
@@ -1299,143 +1494,131 @@ function obtenerDatosFormulario() {
    GUARDAR DESDE FORMULARIO
 ================================================== */
 
-formCliente.addEventListener(
-    "submit",
-    async function (event) {
+if (formCliente) {
 
-        event.preventDefault();
+    formCliente.addEventListener(
+        "submit",
+        async function (event) {
 
-
-        if (!usuarioActual) {
-
-            alertar(
-                "Debes iniciar sesión primero."
-            );
-
-            return;
-        }
+            event.preventDefault();
 
 
-        const botonGuardar =
-            formCliente.querySelector(
-                'button[type="submit"]'
-            );
+            if (!usuarioActual) {
 
-
-        if (botonGuardar) {
-
-            botonGuardar.disabled =
-                true;
-
-            botonGuardar.textContent =
-                "Guardando...";
-        }
-
-
-        try {
-
-            const cliente =
-                obtenerDatosFormulario();
-
-
-            /*
-               Archivo nuevo
-            */
-
-            const archivo =
-                archivoInput?.files?.[0];
-
-
-            if (archivo) {
-
-                /*
-                   Si estamos editando y ya tenía
-                   un archivo anterior, primero
-                   guardamos el nuevo.
-                */
-
-                const contratoNuevo =
-                    await subirContrato(
-                        archivo,
-                        cliente.id
-                    );
-
-                cliente.contrato =
-                    contratoNuevo;
-            }
-
-
-            const guardado =
-                await guardarCliente(
-                    cliente
+                alertar(
+                    "Debes iniciar sesión primero."
                 );
-
-
-            if (!guardado) {
 
                 return;
             }
 
 
-            /*
-               Actualizar el cliente localmente
-            */
-
-            const indice =
-                clientes.findIndex(
-                    c =>
-                        c.id ===
-                        cliente.id
+            const botonGuardar =
+                formCliente.querySelector(
+                    'button[type="submit"]'
                 );
 
-
-            if (indice >= 0) {
-
-                clientes[indice] =
-                    cliente;
-
-            } else {
-
-                clientes.unshift(
-                    cliente
-                );
-            }
-
-
-            renderizarClientes();
-
-            actualizarEstadisticas();
-
-            cerrarModalCliente();
-
-
-            alertar(
-                "Cliente guardado correctamente."
-            );
-
-
-        } catch (error) {
-
-            console.error(error);
-
-            alertar(
-                error.message ||
-                "Ocurrió un error al guardar el cliente."
-            );
-
-        } finally {
 
             if (botonGuardar) {
 
                 botonGuardar.disabled =
-                    false;
+                    true;
 
                 botonGuardar.textContent =
-                    "Guardar cliente";
+                    "Guardando...";
+            }
+
+
+            try {
+
+                const cliente =
+                    obtenerDatosFormulario();
+
+
+                const archivo =
+                    archivoInput?.files?.[0];
+
+
+                if (archivo) {
+
+                    const contratoNuevo =
+                        await subirContrato(
+                            archivo,
+                            cliente.id
+                        );
+
+                    cliente.contrato =
+                        contratoNuevo;
+                }
+
+
+                const guardado =
+                    await guardarCliente(
+                        cliente
+                    );
+
+
+                if (!guardado) {
+                    return;
+                }
+
+
+                const indice =
+                    clientes.findIndex(
+                        c =>
+                            c.id ===
+                            cliente.id
+                    );
+
+
+                if (indice >= 0) {
+
+                    clientes[indice] =
+                        cliente;
+
+                } else {
+
+                    clientes.unshift(
+                        cliente
+                    );
+                }
+
+
+                renderizarClientes();
+
+                actualizarEstadisticas();
+
+                cerrarModalCliente();
+
+
+                alertar(
+                    "Cliente guardado correctamente."
+                );
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                alertar(
+                    error.message ||
+                    "Ocurrió un error al guardar el cliente."
+                );
+
+            } finally {
+
+                if (botonGuardar) {
+
+                    botonGuardar.disabled =
+                        false;
+
+                    botonGuardar.textContent =
+                        "Guardar cliente";
+                }
             }
         }
-    }
-);
+    );
+}
 
 
 /* ==================================================
@@ -1631,10 +1814,6 @@ function renderizarClientes(
         }
     );
 
-
-    /*
-       Eventos de los botones
-    */
 
     listaClientes
         .querySelectorAll(
@@ -1923,10 +2102,6 @@ function verCliente(
             "No registrada";
     }
 
-
-    /*
-       Botón para abrir contrato
-    */
 
     const botonContrato =
         document.getElementById(
@@ -2245,6 +2420,7 @@ document.addEventListener(
         cerrarModalVerCliente();
     }
 );
+
 
 /* ==================================================
    NAVEGACIÓN PRINCIPAL
@@ -2687,11 +2863,9 @@ function correoValido(
         return true;
     }
 
-
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        .test(
-            correo
-        );
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+        correo
+    );
 }
 
 
