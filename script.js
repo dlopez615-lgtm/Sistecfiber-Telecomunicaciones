@@ -1,2431 +1,1759 @@
-/* ==================================================
-   CONFIGURACIÓN GENERAL
-================================================== */
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-html {
-    width: 100%;
-    min-height: 100%;
-}
-
-body {
-    font-family: Arial, Helvetica, sans-serif;
-    background: #f4f7fb;
-    color: #172033;
-    min-height: 100vh;
-}
-
-button,
-input,
-select {
-    font-family: inherit;
-}
-
 
-/* ==================================================
-   PANTALLA DE INICIO DE SESIÓN
-================================================== */
+ // ======================================================
+ // CONFIGURACIÓN DE SUPABASE
+ // ======================================================
 
-.pantalla-acceso {
-    position: fixed;
-    inset: 0;
-
-    width: 100%;
-    min-height: 100vh;
-
-    background: #f4f7fb;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 20px;
-
-    z-index: 20000;
-}
-
-.pantalla-acceso.oculta {
-    display: none !important;
-}
+const SUPABASE_URL = "https://pmbcvhkyfoppvyrnuztn.supabase.co";
 
-.acceso-box {
-    width: 100%;
-    max-width: 410px;
+const SUPABASE_ANON_KEY =
+    "sb_publishable_yrZYYb4J2qqZmKTq05T35Q_2DBWRDMY";
 
-    background: white;
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+);
 
-    border-radius: 18px;
 
-    padding: 35px;
+// ======================================================
+// VARIABLES
+// ======================================================
 
-    box-shadow:
-        0 15px 50px rgba(15, 23, 42, 0.10);
+let clientes = [];
+let clienteEditando = null;
+let clienteEliminar = null;
 
-    text-align: center;
-}
 
-.acceso-logo {
-    display: flex;
-    justify-content: center;
+// ======================================================
+// ELEMENTOS DE ACCESO
+// ======================================================
 
-    margin-bottom: 18px;
-}
+const pantallaAcceso = document.getElementById("pantallaAcceso");
+const aplicacion = document.getElementById("aplicacion");
+const formLogin = document.getElementById("formLogin");
+const accesoCorreo = document.getElementById("accesoCorreo");
+const accesoPassword = document.getElementById("accesoPassword");
+const btnAcceso = document.getElementById("btnAcceso");
+const mensajeAcceso = document.getElementById("mensajeAcceso");
+const btnCambiarAcceso = document.getElementById("btnCambiarAcceso");
+const btnCerrarSesion = document.getElementById("btnCerrarSesion");
+const nombreUsuario = document.getElementById("nombreUsuario");
+const avatarUsuario = document.getElementById("avatarUsuario");
 
-.acceso-logo .logo-icon {
-    width: 58px;
-    height: 58px;
 
-    border-radius: 14px;
+// ======================================================
+// MODAL CLIENTE
+// ======================================================
 
-    background: #2563eb;
+const modalCliente = document.getElementById("modalCliente");
+const formCliente = document.getElementById("formCliente");
+const tituloModal = document.getElementById("tituloModal");
+const cerrarModal = document.getElementById("cerrarModal");
+const cancelarCliente = document.getElementById("cancelarCliente");
+const btnNuevoCliente = document.getElementById("btnNuevoCliente");
 
-    color: white;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+// ======================================================
+// CAMPOS DEL CLIENTE
+// ======================================================
 
-    font-size: 28px;
-    font-weight: bold;
+const nombre = document.getElementById("nombre");
+const cedula = document.getElementById("cedula");
+const telefono = document.getElementById("telefono");
+const correo = document.getElementById("correo");
+const direccion = document.getElementById("direccion");
+const mac = document.getElementById("mac");
+const cto = document.getElementById("cto");
+const puerto = document.getElementById("puerto");
+const plan = document.getElementById("plan");
+const precio = document.getElementById("precio");
+const fecha = document.getElementById("fecha");
+const estado = document.getElementById("estado");
 
-    box-shadow:
-        0 8px 20px rgba(37, 99, 235, 0.22);
-}
 
-.acceso-box h1 {
-    font-size: 25px;
+// ======================================================
+// ARCHIVOS
+// ======================================================
 
-    margin-bottom: 7px;
+const cedulaArchivo = document.getElementById("cedulaArchivo");
+const contrato = document.getElementById("contrato");
+const reciboPublico = document.getElementById("reciboPublico");
 
-    color: #172033;
-}
 
-.acceso-box > p {
-    color: #7b8495;
+// ======================================================
+// ESPACIOS DE ARCHIVOS
+// ======================================================
 
-    font-size: 13px;
+const detalleCedula = document.getElementById("detalleCedula");
+const detalleContrato = document.getElementById("detalleContrato");
+const detalleRecibo = document.getElementById("detalleRecibo");
 
-    margin-bottom: 25px;
-}
 
-.acceso-box form {
-    text-align: left;
-}
+// ======================================================
+// CLIENTES
+// ======================================================
 
-.acceso-box .campo {
-    margin-bottom: 15px;
-}
+const listaClientes = document.getElementById("listaClientes");
+const buscarCliente = document.getElementById("buscarCliente");
 
-.acceso-box .btn-primary {
-    width: 100%;
 
-    min-height: 44px;
+// ======================================================
+// DATOS
+// ======================================================
+
+const listaDatos = document.getElementById("listaDatos");
+const buscarDatos = document.getElementById("buscarDatos");
 
-    margin-top: 5px;
-}
 
-.mensaje-acceso {
-    min-height: 20px;
+// ======================================================
+// MODAL ELIMINAR
+// ======================================================
 
-    margin-top: 12px;
+const modalEliminar = document.getElementById("modalEliminar");
+const nombreEliminar = document.getElementById("nombreEliminar");
+const cancelarEliminar = document.getElementById("cancelarEliminar");
+const confirmarEliminar = document.getElementById("confirmarEliminar");
 
-    text-align: center;
 
-    font-size: 12px;
+// ======================================================
+// MODAL VER CLIENTE
+// ======================================================
 
-    color: #dc2626;
-}
+const modalVerCliente = document.getElementById("modalVerCliente");
+const cerrarVerCliente = document.getElementById("cerrarVerCliente");
+const verNombre = document.getElementById("verNombre");
+const verTelefono = document.getElementById("verTelefono");
+const verCedula = document.getElementById("verCedula");
+const verCorreo = document.getElementById("verCorreo");
+const verDireccion = document.getElementById("verDireccion");
+const verMac = document.getElementById("verMac");
+const verCto = document.getElementById("verCto");
+const verPuerto = document.getElementById("verPuerto");
+const verPlan = document.getElementById("verPlan");
+const verPrecio = document.getElementById("verPrecio");
+const verEstado = document.getElementById("verEstado");
+const verFecha = document.getElementById("verFecha");
+const verCedulaArchivo = document.getElementById("verCedulaArchivo");
+const verContrato = document.getElementById("verContrato");
+const verReciboPublico = document.getElementById("verReciboPublico");
 
-.btn-cambiar-acceso {
-    margin-top: 18px;
 
-    border: none;
+// ======================================================
+// ESTADÍSTICAS
+// ======================================================
 
-    background: transparent;
+const totalClientes = document.getElementById("totalClientes");
+const clientesActivos = document.getElementById("clientesActivos");
+const ingresosMes = document.getElementById("ingresosMes");
+const pagosPendientes = document.getElementById("pagosPendientes");
 
-    color: #2563eb;
 
-    cursor: pointer;
+// ======================================================
+// NAVEGACIÓN
+// ======================================================
 
-    font-size: 12px;
+const botonesMenu = document.querySelectorAll(".menu-item");
 
-    font-weight: 600;
-}
+const seccionesMenu = {
+    inicio: document.getElementById("seccionInicio"),
+    clientes: document.getElementById("seccionClientes"),
+    pagos: document.getElementById("seccionPagos"),
+    datos: document.getElementById("seccionDatos"),
+    equipos: document.getElementById("seccionEquipos"),
+    soporte: document.getElementById("seccionSoporte")
+};
 
-.btn-cambiar-acceso:hover {
-    text-decoration: underline;
-}
 
+// ======================================================
+// OBTENER ÚLTIMA SECCIÓN GUARDADA
+// ======================================================
 
-/* ==================================================
-   ESTRUCTURA
-================================================== */
+function obtenerSeccionGuardada() {
+    try {
+        const guardada = localStorage.getItem("sistecfiber_seccion");
 
-.app {
-    display: flex;
-    min-height: 100vh;
-}
+        if (
+            guardada &&
+            Object.prototype.hasOwnProperty.call(seccionesMenu, guardada) &&
+            seccionesMenu[guardada]
+        ) {
+            return guardada;
+        }
+    } catch (error) {
+        console.warn("No se pudo recuperar la sección guardada.", error);
+    }
 
-.app.oculta {
-    display: none !important;
+    return "inicio";
 }
-
-
-/* ==================================================
-   SIDEBAR
-================================================== */
-
-.sidebar {
-    width: 240px;
-    min-height: 100vh;
 
-    background: #111827;
 
-    color: white;
+// ======================================================
+// MOSTRAR SECCIÓN
+// ======================================================
 
-    display: flex;
-    flex-direction: column;
+function mostrarSeccion(nombreSeccion) {
 
-    padding: 20px 15px;
-
-    position: fixed;
-
-    left: 0;
-    top: 0;
-    bottom: 0;
+    if (
+        !Object.prototype.hasOwnProperty.call(
+            seccionesMenu,
+            nombreSeccion
+        ) ||
+        !seccionesMenu[nombreSeccion]
+    ) {
+        nombreSeccion = "inicio";
+    }
 
-    z-index: 1000;
-}
+    Object.values(seccionesMenu).forEach(function (seccion) {
+        if (!seccion) return;
 
+        seccion.style.display = "none";
+        seccion.classList.remove("mostrar");
+    });
 
-/* LOGO */
+    botonesMenu.forEach(function (boton) {
+        boton.classList.remove("activo");
+        boton.classList.remove("seleccionado");
+    });
 
-.logo {
-    display: flex;
-    align-items: center;
+    const seccion = seccionesMenu[nombreSeccion];
 
-    gap: 12px;
+    if (!seccion) return;
 
-    padding: 5px 10px 30px;
-}
+    seccion.style.display = "block";
+    seccion.classList.add("mostrar");
 
-.logo-icon {
-    width: 44px;
-    height: 44px;
+    const botonActivo = document.querySelector(
+        '.menu-item[data-seccion="' + nombreSeccion + '"]'
+    );
 
-    background: #2563eb;
+    if (botonActivo) {
+        botonActivo.classList.add("activo");
+        botonActivo.classList.add("seleccionado");
+    }
 
-    border-radius: 10px;
+    // Guardar la sección seleccionada para la próxima recarga
+    try {
+        localStorage.setItem("sistecfiber_seccion", nombreSeccion);
+    } catch (error) {
+        console.warn("No se pudo guardar la sección.", error);
+    }
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    if (nombreSeccion === "inicio") {
+        actualizarEstadisticas();
+    }
 
-    font-size: 22px;
-    font-weight: bold;
+    if (nombreSeccion === "clientes") {
+        mostrarClientes(clientes);
+    }
 
-    flex-shrink: 0;
+    if (nombreSeccion === "datos") {
+        mostrarDatos();
+    }
 }
 
-.logo-text {
-    display: flex;
-    flex-direction: column;
-}
 
-.logo-text strong {
-    font-size: 20px;
-}
+// ======================================================
+// EVENTOS DEL MENÚ
+// ======================================================
 
-.logo-text span {
-    font-size: 12px;
-    color: #9ca3af;
-}
+botonesMenu.forEach(function (boton) {
+    boton.addEventListener("click", function (event) {
+        event.preventDefault();
 
+        const seccion = this.dataset.seccion;
 
-/* MENÚ */
+        mostrarSeccion(seccion);
+    });
+});
 
-.menu {
-    display: flex;
-    flex-direction: column;
 
-    gap: 7px;
+// ======================================================
+// MOSTRAR APLICACIÓN
+// ======================================================
 
-    border: none;
+function mostrarAplicacion() {
+    if (pantallaAcceso) {
+        pantallaAcceso.style.display = "none";
+    }
 
-    background: transparent;
+    if (aplicacion) {
+        aplicacion.style.display = "flex";
+    }
 }
-
-.menu-item {
-    width: 100%;
 
-    padding: 13px 14px;
 
-    border: none;
+// ======================================================
+// MOSTRAR LOGIN
+// ======================================================
 
-    background: transparent;
-
-    color: #d1d5db;
-
-    border-radius: 9px;
-
-    display: flex;
-    align-items: center;
-
-    gap: 13px;
-
-    text-align: left;
-
-    cursor: pointer;
-
-    font-size: 14px;
-
-    transition: 0.2s;
-}
-
-.menu-item span {
-    width: 20px;
+function mostrarLogin() {
+    if (pantallaAcceso) {
+        pantallaAcceso.style.display = "flex";
+    }
 
-    text-align: center;
+    if (aplicacion) {
+        aplicacion.style.display = "none";
+    }
 }
 
-.menu-item:hover {
-    background: #1f2937;
 
-    color: white;
-}
+// ======================================================
+// MENSAJE LOGIN
+// ======================================================
 
-.menu-item.activo,
-.menu-item.seleccionado {
-    background: #2563eb;
+function mostrarMensajeAcceso(mensaje, tipo) {
+    if (!mensajeAcceso) return;
 
-    color: white;
+    mensajeAcceso.textContent = mensaje;
+    mensajeAcceso.className = "mensaje-acceso " + (tipo || "");
 }
-
-
-/* ==================================================
-   BOTÓN CERRAR SESIÓN
-================================================== */
-
-.btn-cerrar-sesion {
-    margin-top: auto;
 
-    width: 100%;
 
-    padding: 12px 10px;
+// ======================================================
+// REGISTRO
+// ======================================================
 
-    border: 1px solid #374151;
+let modoRegistro = false;
 
-    border-radius: 9px;
+function crearCampoNombreRegistro() {
+    let campoNombre = document.getElementById("nombreRegistro");
 
-    background: transparent;
+    if (campoNombre) return campoNombre;
 
-    color: #d1d5db;
+    const contenedor = document.createElement("div");
+    contenedor.id = "contenedorNombreRegistro";
+    contenedor.style.marginBottom = "12px";
 
-    cursor: pointer;
+    campoNombre = document.createElement("input");
+    campoNombre.type = "text";
+    campoNombre.id = "nombreRegistro";
+    campoNombre.name = "nombreRegistro";
+    campoNombre.placeholder = "Nombre completo";
+    campoNombre.style.width = "100%";
+    campoNombre.style.boxSizing = "border-box";
 
-    font-size: 13px;
+    if (accesoCorreo && accesoCorreo.parentNode) {
+        accesoCorreo.parentNode.insertBefore(contenedor, accesoCorreo);
+        contenedor.appendChild(campoNombre);
+    }
 
-    transition: 0.2s;
+    return campoNombre;
 }
 
-.btn-cerrar-sesion:hover {
-    background: #1f2937;
+function eliminarCampoNombreRegistro() {
+    const contenedor = document.getElementById("contenedorNombreRegistro");
 
-    color: white;
+    if (contenedor) {
+        contenedor.remove();
+    }
 }
-
-
-/* ==================================================
-   FOOTER SIDEBAR
-================================================== */
 
-.sidebar-footer {
-    margin-top: auto;
+if (btnCambiarAcceso) {
+    btnCambiarAcceso.addEventListener("click", function () {
+        modoRegistro = !modoRegistro;
 
-    border-top: 1px solid #293241;
+        const titulo = document.getElementById("tituloAcceso");
+        const texto = document.getElementById("textoAcceso");
 
-    padding: 18px 10px 5px;
+        if (modoRegistro) {
+            if (titulo) titulo.textContent = "Crear cuenta";
+            if (texto) texto.textContent = "Crea tu cuenta para ingresar al panel";
 
-    display: flex;
-    flex-direction: column;
+            btnAcceso.textContent = "Crear cuenta";
+            btnCambiarAcceso.textContent = "Ya tengo una cuenta";
 
-    gap: 4px;
-}
+            crearCampoNombreRegistro();
+        } else {
+            if (titulo) titulo.textContent = "Sistecfiber";
+            if (texto) texto.textContent = "Inicia sesión para ingresar al panel";
 
-.sidebar-footer span {
-    color: #9ca3af;
+            btnAcceso.textContent = "Iniciar sesión";
+            btnCambiarAcceso.textContent = "Crear una cuenta";
 
-    font-size: 11px;
-}
+            eliminarCampoNombreRegistro();
+        }
 
-.sidebar-footer strong {
-    font-size: 13px;
+        mostrarMensajeAcceso("");
+    });
 }
-
-
-/* ==================================================
-   CONTENIDO
-================================================== */
 
-.main {
-    margin-left: 240px;
 
-    width: calc(100% - 240px);
+// ======================================================
+// LOGIN
+// ======================================================
 
-    min-height: 100vh;
+if (formLogin) {
+    formLogin.addEventListener("submit", async function (event) {
+        event.preventDefault();
 
-    padding: 30px;
-}
+        const email = accesoCorreo.value.trim();
+        const password = accesoPassword.value;
 
+        if (!email || !password) {
+            mostrarMensajeAcceso("Completa todos los campos.", "error");
+            return;
+        }
 
-/* ==================================================
-   SECCIONES DE LA APLICACIÓN
-================================================== */
+        btnAcceso.disabled = true;
 
-.seccion-app {
-    width: 100%;
-}
+        try {
+            if (modoRegistro) {
+                const campoNombre = document.getElementById("nombreRegistro");
+                const nombrePersona = campoNombre ? campoNombre.value.trim() : "";
 
-.vista-menu-extra {
-    display: none;
+                if (!nombrePersona) {
+                    mostrarMensajeAcceso("Escribe tu nombre completo.", "error");
+                    btnAcceso.disabled = false;
+                    return;
+                }
 
-    width: 100%;
-}
+                const resultado = await supabaseClient.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: {
+                            nombre: nombrePersona
+                        }
+                    }
+                });
 
-.vista-menu-extra.mostrar {
-    display: block;
-}
+                if (resultado.error) {
+                    throw resultado.error;
+                }
 
+                mostrarMensajeAcceso("Cuenta creada correctamente.", "exito");
+                return;
+            }
 
-/* ==================================================
-   TOPBAR
-================================================== */
+            mostrarMensajeAcceso("Iniciando sesión...");
 
-.topbar {
-    display: flex;
+            const resultado = await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
 
-    justify-content: space-between;
+            if (resultado.error) {
+                throw resultado.error;
+            }
 
-    align-items: center;
+            mostrarMensajeAcceso("Sesión iniciada correctamente.", "exito");
 
-    margin-bottom: 28px;
-}
+        } catch (error) {
+            console.error(error);
 
-.topbar h1 {
-    font-size: 30px;
+            mostrarMensajeAcceso(
+                error.message || "No se pudo iniciar sesión.",
+                "error"
+            );
+        }
 
-    margin-bottom: 5px;
+        btnAcceso.disabled = false;
+    });
 }
-
-.topbar p {
-    color: #718096;
 
-    font-size: 14px;
-}
 
+// ======================================================
+// CERRAR SESIÓN
+// ======================================================
 
-/* USUARIO */
+if (btnCerrarSesion) {
+    btnCerrarSesion.addEventListener("click", async function () {
+        await supabaseClient.auth.signOut();
 
-.usuario {
-    display: flex;
+        clientes = [];
 
-    align-items: center;
+        try {
+            localStorage.removeItem("sistecfiber_seccion");
+        } catch (error) {
+            console.warn(error);
+        }
 
-    gap: 10px;
+        mostrarLogin();
+    });
 }
-
-.usuario .avatar {
-    width: 42px;
-    height: 42px;
 
-    border-radius: 50%;
 
-    background: #dbeafe;
+// ======================================================
+// SESIÓN
+// ======================================================
 
-    color: #2563eb;
+supabaseClient.auth.onAuthStateChange(async function (event, session) {
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    if (session) {
+        mostrarAplicacion();
 
-    font-weight: bold;
+        actualizarUsuario(session.user);
 
-    flex-shrink: 0;
-}
-
-.usuario div:last-child {
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 3px;
-}
+        await cargarClientes();
 
-.usuario span {
-    color: #8a94a6;
+        // Recuperar la última sección después de iniciar sesión
+        mostrarSeccion(obtenerSeccionGuardada());
 
-    font-size: 12px;
-}
+    } else {
+        mostrarLogin();
+    }
+});
 
 
-/* ==================================================
-   ESTADÍSTICAS
-================================================== */
+// ======================================================
+// USUARIO
+// ======================================================
 
-.estadisticas {
-    display: grid;
+function actualizarUsuario(usuario) {
+    if (!usuario) return;
 
-    grid-template-columns:
-        repeat(4, 1fr);
+    const nombrePersona = usuario.user_metadata?.nombre || "Administrador";
 
-    gap: 18px;
+    if (nombreUsuario) {
+        nombreUsuario.textContent = nombrePersona;
+    }
 
-    margin-bottom: 25px;
+    if (avatarUsuario) {
+        avatarUsuario.textContent = nombrePersona.charAt(0).toUpperCase();
+    }
 }
-
-.estadistica {
-    background: white;
-
-    border-radius: 14px;
-
-    padding: 20px;
 
-    display: flex;
-    align-items: center;
 
-    gap: 15px;
+// ======================================================
+// COMPROBAR SESIÓN
+// ======================================================
 
-    box-shadow:
-        0 4px 15px rgba(15, 23, 42, 0.05);
-}
+async function comprobarSesion() {
+    const resultado = await supabaseClient.auth.getSession();
 
-.estadistica-icon {
-    width: 48px;
-    height: 48px;
+    if (resultado.error || !resultado.data.session) {
+        mostrarLogin();
+        return;
+    }
 
-    border-radius: 11px;
+    mostrarAplicacion();
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    actualizarUsuario(resultado.data.session.user);
 
-    font-size: 21px;
+    await cargarClientes();
 
-    flex-shrink: 0;
+    // Recuperar la sección guardada en lugar de regresar siempre a Inicio
+    mostrarSeccion(obtenerSeccionGuardada());
 }
 
-.estadistica-icon.azul {
-    background: #dbeafe;
-}
 
-.estadistica-icon.verde {
-    background: #dcfce7;
-}
+// ======================================================
+// CARGAR CLIENTES
+// ======================================================
 
-.estadistica-icon.amarillo {
-    background: #fef3c7;
-}
+async function cargarClientes() {
+    if (!listaClientes) return;
 
-.estadistica-icon.rojo {
-    background: #fee2e2;
-}
+    listaClientes.innerHTML = "<p>Cargando clientes...</p>";
 
-.estadistica span {
-    display: block;
+    const resultado = await supabaseClient
+        .from("Clientes")
+        .select("*")
+        .order("id", { ascending: false });
 
-    color: #7b8495;
+    if (resultado.error) {
+        console.error(resultado.error);
 
-    font-size: 12px;
+        listaClientes.innerHTML = "<p>No se pudieron cargar los clientes.</p>";
+        return;
+    }
 
-    margin-bottom: 5px;
-}
+    clientes = resultado.data || [];
 
-.estadistica strong {
-    font-size: 23px;
+    mostrarClientes(clientes);
+    mostrarDatos();
+    actualizarEstadisticas();
 }
 
 
-/* ==================================================
-   PANEL
-================================================== */
+// ======================================================
+// MOSTRAR CLIENTES
+// ======================================================
 
-.panel {
-    background: white;
+function mostrarClientes(lista) {
+    if (!listaClientes) return;
 
-    border-radius: 16px;
+    listaClientes.innerHTML = "";
 
-    padding: 25px;
+    if (!lista || lista.length === 0) {
+        listaClientes.innerHTML = `
+            <div class="menu-extra-vacio">
+                <h3>No hay clientes</h3>
+                <p>Todavía no has registrado ningún cliente.</p>
+            </div>
+        `;
+        return;
+    }
 
-    box-shadow:
-        0 4px 15px rgba(15, 23, 42, 0.05);
-}
+    lista.forEach(function (cliente) {
+        const card = document.createElement("div");
+        card.className = "cliente-card";
 
-.panel-header {
-    display: flex;
+        const estadoCliente = cliente.estado || "Activo";
+        const claseEstado = estadoCliente.toLowerCase().replaceAll(" ", "-");
 
-    justify-content: space-between;
+        card.innerHTML = `
+            <div class="cliente-top">
+                <div>
+                    <h3>${escaparHTML(cliente.nombre || "Sin nombre")}</h3>
+                    <span class="estado ${claseEstado}">
+                        ${escaparHTML(estadoCliente)}
+                    </span>
+                </div>
+            </div>
 
-    align-items: center;
+            <div class="cliente-datos">
+                <p>
+                    <strong>Teléfono:</strong>
+                    ${escaparHTML(cliente.telefono || "No registrado")}
+                </p>
+                <p>
+                    <strong>Dirección:</strong>
+                    ${escaparHTML(cliente.direccion || "No registrada")}
+                </p>
+                <p>
+                    <strong>Plan:</strong>
+                    ${escaparHTML(cliente.plan || "No registrado")}
+                </p>
+            </div>
 
-    margin-bottom: 22px;
-}
+            <div class="cliente-botones">
+                <button type="button" class="btn-secondary btn-ver-cliente">Ver</button>
+                <button type="button" class="btn-primary btn-editar-cliente">Editar</button>
+                <button type="button" class="btn-danger btn-eliminar-cliente">Eliminar</button>
+            </div>
+        `;
 
-.panel-header h2 {
-    font-size: 22px;
+        card.querySelector(".btn-ver-cliente").addEventListener("click", function () {
+            abrirModalVerCliente(cliente);
+        });
 
-    margin-bottom: 5px;
-}
+        card.querySelector(".btn-editar-cliente").addEventListener("click", function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            abrirModalEditar(cliente);
+        });
 
-.panel-header p {
-    color: #7b8495;
+        card.querySelector(".btn-eliminar-cliente").addEventListener("click", function () {
+            abrirModalEliminar(cliente);
+        });
 
-    font-size: 13px;
+        listaClientes.appendChild(card);
+    });
 }
-
-
-/* ==================================================
-   BOTONES
-================================================== */
-
-.btn-primary {
-    border: none;
-
-    background: #2563eb;
-
-    color: white;
-
-    padding: 11px 18px;
-
-    border-radius: 8px;
-
-    cursor: pointer;
 
-    font-weight: 600;
 
-    transition: 0.2s;
-}
+// ======================================================
+// MOSTRAR DATOS
+// ======================================================
 
-.btn-primary:hover {
-    background: #1d4ed8;
+function mostrarDatos() {
+    if (!listaDatos) return;
 
-    transform: translateY(-1px);
-}
+    listaDatos.innerHTML = "";
 
-.btn-primary:disabled {
-    opacity: 0.6;
+    const textoBusqueda = buscarDatos
+        ? buscarDatos.value.trim().toLowerCase()
+        : "";
 
-    cursor: not-allowed;
+    const clientesFiltrados = clientes.filter(function (cliente) {
+        if (!textoBusqueda) return true;
 
-    transform: none;
-}
+        return String(cliente.nombre || "")
+            .toLowerCase()
+            .includes(textoBusqueda);
+    });
 
-.btn-secondary {
-    border: 1px solid #d8dee8;
+    if (!clientes || clientes.length === 0) {
+        listaDatos.innerHTML = `
+            <div class="menu-extra-vacio">
+                <h3>No hay clientes</h3>
+                <p>Cuando registres clientes, sus documentos aparecerán aquí.</p>
+            </div>
+        `;
+        return;
+    }
 
-    background: white;
+    if (clientesFiltrados.length === 0) {
+        listaDatos.innerHTML = `
+            <div class="menu-extra-vacio">
+                <h3>No se encontró ningún cliente</h3>
+                <p>Prueba buscando con otro nombre.</p>
+            </div>
+        `;
+        return;
+    }
 
-    color: #4b5563;
+    clientesFiltrados.forEach(function (cliente) {
+        const tarjeta = document.createElement("div");
+        tarjeta.className = "datos-cliente";
 
-    padding: 11px 18px;
+        tarjeta.innerHTML = `
+            <div class="datos-cliente-cabecera">
+                <div class="datos-cliente-icono">👤</div>
+                <div class="datos-cliente-nombre">
+                    ${escaparHTML(cliente.nombre || "Sin nombre")}
+                </div>
+            </div>
 
-    border-radius: 8px;
+            <div class="datos-documentos">
+                ${crearDocumentoDatos(
+                    cliente.cedula_ruta,
+                    cliente.cedula_nombre,
+                    "🪪",
+                    "Cédula"
+                )}
 
-    cursor: pointer;
+                ${crearDocumentoDatos(
+                    cliente.contrato_ruta,
+                    cliente.contrato_nombre,
+                    "📄",
+                    "Contrato"
+                )}
 
-    font-weight: 600;
+                ${crearDocumentoDatos(
+                    cliente.recibo_ruta,
+                    cliente.recibo_nombre,
+                    "🧾",
+                    "Recibo de servicio público"
+                )}
+            </div>
+        `;
 
-    transition: 0.2s;
-}
+        tarjeta.querySelectorAll(".btn-abrir-dato").forEach(function (boton) {
+            boton.addEventListener("click", function () {
+                abrirDocumento(boton.dataset.ruta);
+            });
+        });
 
-.btn-secondary:hover {
-    background: #f3f4f6;
+        listaDatos.appendChild(tarjeta);
+    });
 }
-
-.btn-danger {
-    border: none;
-
-    background: #ef4444;
 
-    color: white;
 
-    padding: 11px 18px;
+// ======================================================
+// BUSCADOR DE DATOS
+// ======================================================
 
-    border-radius: 8px;
-
-    cursor: pointer;
-
-    font-weight: 600;
-
-    transition: 0.2s;
-}
-
-.btn-danger:hover {
-    background: #dc2626;
+if (buscarDatos) {
+    buscarDatos.addEventListener("input", function () {
+        mostrarDatos();
+    });
 }
-
-
-/* ==================================================
-   BUSCADOR
-================================================== */
-
-.buscador {
-    width: 100%;
 
-    height: 46px;
 
-    border: 1px solid #e1e6ef;
+// ======================================================
+// CREAR DOCUMENTO EN DATOS
+// ======================================================
 
-    border-radius: 9px;
+function crearDocumentoDatos(ruta, nombreArchivo, icono, nombreDocumento) {
 
-    display: flex;
+    if (!ruta) {
+        return `
+            <div class="datos-documento datos-documento-vacio">
+                <div class="datos-documento-info">
+                    <span class="datos-documento-icono">${icono}</span>
+                    <div>
+                        <strong>${escaparHTML(nombreDocumento)}</strong>
+                        <span class="datos-no-cargado">No cargado</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
 
-    align-items: center;
+    return `
+        <div class="datos-documento">
+            <div class="datos-documento-info">
+                <span class="datos-documento-icono">${icono}</span>
+                <div>
+                    <strong>${escaparHTML(nombreDocumento)}</strong>
+                    <span class="datos-documento-nombre">
+                        ${escaparHTML(nombreArchivo || "Documento")}
+                    </span>
+                </div>
+            </div>
 
-    padding: 0 14px;
+            <button
+                type="button"
+                class="btn-secondary btn-abrir-dato"
+                data-ruta="${escaparHTML(ruta)}">
+                Abrir
+            </button>
+        </div>
+    `;
+}
 
-    gap: 10px;
 
-    margin-bottom: 20px;
+// ======================================================
+// ESCAPAR HTML
+// ======================================================
 
-    background: #fafbfd;
+function escaparHTML(texto) {
+    return String(texto)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
 }
 
-.buscador span {
-    font-size: 22px;
-
-    color: #7d8798;
-}
 
-.buscador input {
-    width: 100%;
+// ======================================================
+// BUSCAR CLIENTES
+// ======================================================
 
-    border: none;
+if (buscarCliente) {
+    buscarCliente.addEventListener("input", function () {
+        const texto = this.value.trim().toLowerCase();
 
-    outline: none;
+        if (!texto) {
+            mostrarClientes(clientes);
+            return;
+        }
 
-    background: transparent;
+        const filtrados = clientes.filter(function (cliente) {
+            return (
+                String(cliente.nombre || "").toLowerCase().includes(texto) ||
+                String(cliente.identificacion || "").toLowerCase().includes(texto) ||
+                String(cliente.telefono || "").toLowerCase().includes(texto) ||
+                String(cliente.correo || "").toLowerCase().includes(texto) ||
+                String(cliente.cto || "").toLowerCase().includes(texto)
+            );
+        });
 
-    font-size: 14px;
+        mostrarClientes(filtrados);
+    });
 }
 
 
-/* ==================================================
-   CLIENTES
-================================================== */
+// ======================================================
+// ABRIR MODAL NUEVO CLIENTE
+// ======================================================
 
-.clientes-grid {
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-
-    gap: 16px;
+if (btnNuevoCliente) {
+    btnNuevoCliente.addEventListener("click", abrirModalCliente);
 }
-
-.cliente-card {
-    border: 1px solid #e1e6ef;
-
-    border-radius: 13px;
 
-    padding: 18px;
+function abrirModalCliente() {
+    clienteEditando = null;
 
-    transition: 0.2s;
+    tituloModal.textContent = "Nuevo cliente";
 
-    background: white;
-
-    min-height: auto;
-}
+    if (formCliente) {
+        formCliente.reset();
+    }
 
-.cliente-card:hover {
-    border-color: #b9c9e8;
+    limpiarArchivosSeleccionados();
 
-    box-shadow:
-        0 5px 18px rgba(15, 23, 42, 0.06);
+    if (modalCliente) {
+        modalCliente.classList.add("activo");
+        modalCliente.style.display = "flex";
+    }
 }
 
 
-/* CABECERA CARD */
+// ======================================================
+// ABRIR MODAL EDITAR
+// ======================================================
 
-.cliente-top {
-    display: flex;
+function abrirModalEditar(cliente) {
+    clienteEditando = cliente;
 
-    justify-content: space-between;
+    tituloModal.textContent = "Editar cliente";
 
-    align-items: center;
+    nombre.value = cliente.nombre || "";
+    cedula.value = cliente.identificacion || "";
+    telefono.value = cliente.telefono || "";
+    correo.value = cliente.correo || "";
+    direccion.value = cliente.direccion || "";
+    mac.value = cliente.mac || "";
+    cto.value = cliente.cto || "";
+    puerto.value = cliente.puerto || "";
+    plan.value = cliente.plan || "";
+    precio.value = cliente.precio ?? "";
+    fecha.value = cliente.fecha || "";
+    estado.value = cliente.estado || "Activo";
 
-    padding-bottom: 15px;
+    if (cedulaArchivo) cedulaArchivo.value = "";
+    if (contrato) contrato.value = "";
+    if (reciboPublico) reciboPublico.value = "";
 
-    border-bottom: 1px solid #edf0f5;
+    mostrarArchivoActual(
+        detalleCedula,
+        cliente.cedula_nombre,
+        "Cédula actual",
+        cliente.cedula_ruta
+    );
 
-    margin-bottom: 0;
-}
-
-.cliente-identidad {
-    display: flex;
+    mostrarArchivoActual(
+        detalleContrato,
+        cliente.contrato_nombre,
+        "Contrato actual",
+        cliente.contrato_ruta
+    );
 
-    align-items: center;
+    mostrarArchivoActual(
+        detalleRecibo,
+        cliente.recibo_nombre,
+        "Recibo actual",
+        cliente.recibo_ruta
+    );
 
-    gap: 11px;
-
-    min-width: 0;
+    if (modalCliente) {
+        modalCliente.classList.add("activo");
+        modalCliente.style.display = "flex";
+    }
 }
 
-.cliente-avatar {
-    width: 42px;
-    height: 42px;
 
-    border-radius: 50%;
+// ======================================================
+// MOSTRAR ARCHIVO ACTUAL
+// ======================================================
 
-    background: #dbeafe;
+function mostrarArchivoActual(contenedor, nombreArchivo, texto, rutaArchivo) {
+    if (!contenedor) return;
 
-    color: #2563eb;
+    contenedor.innerHTML = "";
 
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    font-weight: bold;
-
-    font-size: 17px;
-
-    flex-shrink: 0;
-}
+    if (!nombreArchivo) {
+        contenedor.innerHTML = `
+            <span class="archivo-vacio">No hay documento cargado.</span>
+        `;
+        return;
+    }
 
-.cliente-identidad h3 {
-    font-size: 15px;
+    contenedor.innerHTML = `
+        <div class="archivo-actual">
+            <div class="archivo-actual-info">
+                <span class="archivo-actual-titulo">
+                    ✓ ${escaparHTML(texto)}
+                </span>
+                <span class="archivo-actual-nombre">
+                    ${escaparHTML(nombreArchivo)}
+                </span>
+            </div>
 
-    margin-bottom: 3px;
-}
+            ${
+                rutaArchivo
+                    ? `<button type="button" class="btn-secondary btn-abrir-archivo">Abrir</button>`
+                    : ""
+            }
+        </div>
+    `;
 
-.cliente-id {
-    font-size: 11px;
+    const boton = contenedor.querySelector(".btn-abrir-archivo");
 
-    color: #8993a5;
+    if (boton) {
+        boton.addEventListener("click", function () {
+            abrirDocumento(rutaArchivo);
+        });
+    }
 }
 
 
-/* ESTADO */
+// ======================================================
+// CERRAR MODAL CLIENTE
+// ======================================================
 
-.estado {
-    padding: 5px 9px;
+function cerrarModalCliente() {
+    if (!modalCliente) return;
 
-    border-radius: 20px;
+    modalCliente.classList.remove("activo");
+    modalCliente.style.display = "none";
 
-    font-size: 11px;
+    clienteEditando = null;
 
-    font-weight: 600;
-
-    flex-shrink: 0;
-}
-
-.estado.activo {
-    color: #15803d;
-
-    background: #dcfce7;
+    limpiarArchivosSeleccionados();
 }
-
-.estado.suspendido {
-    color: #b45309;
-
-    background: #fef3c7;
-}
-
-.estado.retirado {
-    color: #b91c1c;
 
-    background: #fee2e2;
+if (cerrarModal) {
+    cerrarModal.addEventListener("click", cerrarModalCliente);
 }
 
-
-/* DATOS */
-
-.cliente-datos {
-    display: none;
-
-    grid-template-columns:
-        1fr 1fr;
-
-    gap: 15px;
-
-    padding: 16px 0;
+if (cancelarCliente) {
+    cancelarCliente.addEventListener("click", cerrarModalCliente);
 }
 
-.dato span {
-    display: block;
 
-    color: #929baa;
+// ======================================================
+// LIMPIAR ARCHIVOS
+// ======================================================
 
-    font-size: 10px;
+function limpiarArchivosSeleccionados() {
+    if (detalleCedula) detalleCedula.innerHTML = "";
+    if (detalleContrato) detalleContrato.innerHTML = "";
+    if (detalleRecibo) detalleRecibo.innerHTML = "";
 
-    margin-bottom: 5px;
+    if (cedulaArchivo) cedulaArchivo.value = "";
+    if (contrato) contrato.value = "";
+    if (reciboPublico) reciboPublico.value = "";
 }
 
-.dato strong {
-    font-size: 13px;
 
-    word-break: break-word;
-}
+// ======================================================
+// MOSTRAR ARCHIVO SELECCIONADO
+// ======================================================
 
+function mostrarArchivoSeleccionado(input, contenedor, tipoArchivo) {
+    if (!input || !contenedor) return;
 
-/* BOTONES CARD */
+    if (!input.files || input.files.length === 0) return;
 
-.cliente-botones {
-    display: flex;
+    const archivo = input.files[0];
 
-    gap: 7px;
+    contenedor.innerHTML = `
+        <div class="archivo-seleccionado">
+            <span class="archivo-seleccionado-titulo">
+                ✓ Nuevo ${escaparHTML(tipoArchivo)} seleccionado
+            </span>
+            <span class="archivo-seleccionado-nombre">
+                ${escaparHTML(archivo.name)}
+            </span>
+        </div>
+    `;
 
-    margin-top: 14px;
+    contenedor.style.display = "block";
 }
-
-.btn-card {
-    border: none;
-
-    padding: 8px 11px;
 
-    border-radius: 7px;
 
-    cursor: pointer;
+// ======================================================
+// SELECCIONAR CÉDULA
+// ======================================================
 
-    font-size: 11px;
-
-    font-weight: 600;
+if (cedulaArchivo) {
+    cedulaArchivo.addEventListener("change", function () {
+        mostrarArchivoSeleccionado(cedulaArchivo, detalleCedula, "cédula");
+    });
 }
-
-.btn-ver {
-    background: #eff6ff;
 
-    color: #2563eb;
-}
 
-.btn-editar {
-    background: #f1f5f9;
+// ======================================================
+// SELECCIONAR CONTRATO
+// ======================================================
 
-    color: #475569;
+if (contrato) {
+    contrato.addEventListener("change", function () {
+        mostrarArchivoSeleccionado(contrato, detalleContrato, "contrato");
+    });
 }
-
-.btn-eliminar {
-    background: #fef2f2;
 
-    color: #dc2626;
-}
 
-.btn-contrato {
-    background: #f0fdf4;
+// ======================================================
+// SELECCIONAR RECIBO
+// ======================================================
 
-    color: #15803d;
+if (reciboPublico) {
+    reciboPublico.addEventListener("change", function () {
+        mostrarArchivoSeleccionado(reciboPublico, detalleRecibo, "recibo");
+    });
 }
-
-
-/* SIN CLIENTES */
-
-.sin-clientes {
-    grid-column: 1 / -1;
 
-    text-align: center;
 
-    padding: 55px 20px;
+// ======================================================
+// VALIDAR ARCHIVO
+// ======================================================
 
-    color: #7b8495;
-}
-
-.sin-clientes .sin-icono {
-    width: 60px;
-    height: 60px;
-
-    margin: 0 auto 12px;
+function validarArchivo(archivo) {
+    if (!archivo) {
+        return { valido: true };
+    }
 
-    border-radius: 50%;
+    const maximo = 10 * 1024 * 1024;
 
-    background: #f1f5f9;
+    if (archivo.size > maximo) {
+        return {
+            valido: false,
+            mensaje: "El archivo supera el límite de 10 MB."
+        };
+    }
 
-    display: flex;
+    const extensionesPermitidas = [
+        ".pdf",
+        ".jpg",
+        ".jpeg",
+        ".png",
+        ".webp"
+    ];
 
-    align-items: center;
-    justify-content: center;
+    const nombreArchivo = archivo.name.toLowerCase();
 
-    font-size: 25px;
-}
+    const permitido = extensionesPermitidas.some(function (extension) {
+        return nombreArchivo.endsWith(extension);
+    });
 
-.sin-clientes h3 {
-    color: #374151;
+    if (!permitido) {
+        return {
+            valido: false,
+            mensaje: "Solo se permiten archivos PDF, JPG, JPEG, PNG o WEBP."
+        };
+    }
 
-    margin-bottom: 5px;
+    return { valido: true };
 }
-
 
-/* ==================================================
-   MODALES
-================================================== */
 
-.modal {
-    position: fixed;
+// ======================================================
+// CREAR NOMBRE DE ARCHIVO
+// ======================================================
 
-    inset: 0;
-
-    background: rgba(15, 23, 42, 0.55);
-
-    backdrop-filter: blur(5px);
-
-    display: none;
-
-    align-items: center;
-
-    justify-content: center;
-
-    padding: 20px;
-
-    z-index: 9999;
-}
+function crearNombreArchivo(archivo) {
+    const nombreLimpio = archivo.name
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-zA-Z0-9._-]/g, "_");
 
-.modal.mostrar,
-.modal.activo {
-    display: flex;
+    return (
+        Date.now() +
+        "_" +
+        Math.random().toString(36).substring(2, 8) +
+        "_" +
+        nombreLimpio
+    );
 }
 
-.modal-box {
-    width: 650px;
 
-    max-width: 100%;
+// ======================================================
+// OBTENER USUARIO
+// ======================================================
 
-    max-height: 90vh;
+async function obtenerUsuarioActual() {
+    const resultado = await supabaseClient.auth.getUser();
 
-    overflow-y: auto;
-
-    background: white;
-
-    border-radius: 17px;
-
-    padding: 27px;
-
-    box-shadow:
-        0 25px 70px rgba(0, 0, 0, 0.18);
+    if (resultado.error) {
+        return null;
+    }
 
-    animation: aparecer 0.2s ease;
+    return resultado.data.user || null;
 }
 
-@keyframes aparecer {
 
-    from {
-        opacity: 0;
+// ======================================================
+// SUBIR DOCUMENTO
+// ======================================================
 
-        transform:
-            translateY(12px)
-            scale(0.97);
+async function subirDocumento(archivo, carpeta, userId) {
+    if (!archivo) {
+        return {
+            ruta: null,
+            nombre: null
+        };
     }
 
-    to {
-        opacity: 1;
+    const validacion = validarArchivo(archivo);
 
-        transform:
-            translateY(0)
-            scale(1);
+    if (!validacion.valido) {
+        throw new Error(validacion.mensaje);
     }
-
-}
-
 
-/* HEADER MODAL */
+    const nombreArchivo = crearNombreArchivo(archivo);
 
-.modal-header {
-    display: flex;
+    const ruta = userId + "/" + carpeta + "/" + nombreArchivo;
 
-    justify-content: space-between;
+    const resultado = await supabaseClient
+        .storage
+        .from("documentos")
+        .upload(ruta, archivo, {
+            cacheControl: "3600",
+            contentType: archivo.type || "application/octet-stream",
+            upsert: false
+        });
 
-    align-items: flex-start;
-
-    margin-bottom: 25px;
-}
-
-.modal-header h2 {
-    font-size: 21px;
-
-    margin-bottom: 5px;
-}
-
-.modal-header p {
-    color: #7b8495;
+    if (resultado.error) {
+        throw new Error(
+            resultado.error.message || "No se pudo subir el archivo."
+        );
+    }
 
-    font-size: 13px;
+    return {
+        ruta: resultado.data.path || ruta,
+        nombre: archivo.name
+    };
 }
-
-.btn-cerrar {
-    width: 35px;
-    height: 35px;
 
-    border: none;
 
-    background: #f1f5f9;
+// ======================================================
+// ELIMINAR ARCHIVO ANTERIOR
+// ======================================================
 
-    color: #64748b;
+async function eliminarArchivoAnterior(rutaAnterior, rutaNueva) {
+    if (!rutaAnterior) return;
 
-    border-radius: 8px;
+    if (rutaNueva && rutaAnterior === rutaNueva) return;
 
-    font-size: 23px;
+    const resultado = await supabaseClient
+        .storage
+        .from("documentos")
+        .remove([rutaAnterior]);
 
-    cursor: pointer;
-
-    flex-shrink: 0;
+    if (resultado.error) {
+        console.warn(
+            "No se pudo eliminar el archivo anterior:",
+            resultado.error
+        );
+    }
 }
 
-.btn-cerrar:hover {
-    background: #e2e8f0;
-}
 
+// ======================================================
+// GUARDAR CLIENTE
+// ======================================================
 
-/* ==================================================
-   FORMULARIO
-================================================== */
+if (formCliente) {
+    formCliente.addEventListener("submit", async function (event) {
+        event.preventDefault();
 
-.form-grid {
-    display: grid;
+        const botonGuardar = formCliente.querySelector(
+            'button[type="submit"]'
+        );
 
-    grid-template-columns:
-        1fr 1fr;
+        if (botonGuardar) {
+            botonGuardar.disabled = true;
+            botonGuardar.textContent = "Guardando...";
+        }
 
-    gap: 17px;
-}
+        try {
+            const user = await obtenerUsuarioActual();
 
-.campo {
-    display: flex;
+            if (!user) {
+                throw new Error("No hay una sesión iniciada.");
+            }
 
-    flex-direction: column;
+            const nuevoCedula = cedulaArchivo?.files?.[0] || null;
+            const nuevoContrato = contrato?.files?.[0] || null;
+            const nuevoRecibo = reciboPublico?.files?.[0] || null;
 
-    gap: 7px;
-}
+            const archivos = [
+                nuevoCedula,
+                nuevoContrato,
+                nuevoRecibo
+            ];
 
-.campo-completo {
-    grid-column: 1 / -1;
-}
+            archivos.forEach(function (archivo) {
+                if (!archivo) return;
 
-.campo label {
-    font-size: 12px;
+                const validacion = validarArchivo(archivo);
 
-    font-weight: 600;
+                if (!validacion.valido) {
+                    throw new Error(validacion.mensaje);
+                }
+            });
 
-    color: #374151;
-}
+            let cedulaRuta = clienteEditando?.cedula_ruta || null;
+            let cedulaNombre = clienteEditando?.cedula_nombre || null;
 
-.campo input,
-.campo select {
-    width: 100%;
+            let contratoRuta = clienteEditando?.contrato_ruta || null;
+            let contratoNombre = clienteEditando?.contrato_nombre || null;
 
-    height: 43px;
+            let reciboRuta = clienteEditando?.recibo_ruta || null;
+            let reciboNombre = clienteEditando?.recibo_nombre || null;
 
-    border: 1px solid #dce2eb;
+            const cedulaRutaAnterior = cedulaRuta;
+            const contratoRutaAnterior = contratoRuta;
+            const reciboRutaAnterior = reciboRuta;
 
-    border-radius: 8px;
+            if (nuevoCedula) {
+                const resultado = await subirDocumento(
+                    nuevoCedula,
+                    "cedulas",
+                    user.id
+                );
 
-    padding: 0 12px;
+                cedulaRuta = resultado.ruta;
+                cedulaNombre = resultado.nombre;
+            }
 
-    outline: none;
+            if (nuevoContrato) {
+                const resultado = await subirDocumento(
+                    nuevoContrato,
+                    "contratos",
+                    user.id
+                );
 
-    background: #fff;
+                contratoRuta = resultado.ruta;
+                contratoNombre = resultado.nombre;
+            }
 
-    color: #1f2937;
+            if (nuevoRecibo) {
+                const resultado = await subirDocumento(
+                    nuevoRecibo,
+                    "recibos",
+                    user.id
+                );
 
-    font-size: 13px;
+                reciboRuta = resultado.ruta;
+                reciboNombre = resultado.nombre;
+            }
 
-    transition: 0.2s;
-}
+            const datosCliente = {
+                nombre: nombre.value.trim(),
+                identificacion: cedula.value.trim(),
+                telefono: telefono.value.trim(),
+                correo: correo.value.trim(),
+                direccion: direccion.value.trim(),
+                mac: mac.value.trim(),
+                cto: cto.value.trim(),
+                puerto: puerto.value.trim(),
+                plan: plan.value,
+                precio: Number(precio.value) || 0,
+                fecha: fecha.value || null,
+                estado: estado.value,
+                cedula_ruta: cedulaRuta,
+                cedula_nombre: cedulaNombre,
+                contrato_ruta: contratoRuta,
+                contrato_nombre: contratoNombre,
+                recibo_ruta: reciboRuta,
+                recibo_nombre: reciboNombre
+            };
 
-.campo input:focus,
-.campo select:focus {
-    border-color: #2563eb;
+            if (clienteEditando) {
+                const resultado = await supabaseClient
+                    .from("Clientes")
+                    .update(datosCliente)
+                    .eq("id", clienteEditando.id);
 
-    box-shadow:
-        0 0 0 3px rgba(37, 99, 235, 0.1);
-}
+                if (resultado.error) {
+                    throw resultado.error;
+                }
 
-.campo input::placeholder {
-    color: #a0a8b6;
-}
+                if (nuevoCedula && cedulaRutaAnterior) {
+                    await eliminarArchivoAnterior(
+                        cedulaRutaAnterior,
+                        cedulaRuta
+                    );
+                }
 
+                if (nuevoContrato && contratoRutaAnterior) {
+                    await eliminarArchivoAnterior(
+                        contratoRutaAnterior,
+                        contratoRuta
+                    );
+                }
 
-/* ==================================================
-   SUBIR ARCHIVO
-================================================== */
+                if (nuevoRecibo && reciboRutaAnterior) {
+                    await eliminarArchivoAnterior(
+                        reciboRutaAnterior,
+                        reciboRuta
+                    );
+                }
 
-.subir-archivo {
-    border: 1.5px dashed #cbd5e1;
+                mostrarNotificacion(
+                    "Cliente actualizado",
+                    "Los datos se actualizaron correctamente.",
+                    "exito"
+                );
 
-    border-radius: 10px;
+            } else {
+                const resultado = await supabaseClient
+                    .from("Clientes")
+                    .insert(datosCliente);
 
-    padding: 17px;
+                if (resultado.error) {
+                    throw resultado.error;
+                }
 
-    display: flex;
+                mostrarNotificacion(
+                    "Cliente guardado",
+                    "El cliente se guardó correctamente.",
+                    "exito"
+                );
+            }
 
-    align-items: center;
+            cerrarModalCliente();
 
-    gap: 13px;
+            await cargarClientes();
 
-    cursor: pointer;
+        } catch (error) {
+            console.error("ERROR:", error);
 
-    background: #f8fafc;
+            mostrarNotificacion(
+                "Error",
+                error.message || "No se pudo guardar el cliente.",
+                "error"
+            );
+        }
 
-    transition: 0.2s;
+        if (botonGuardar) {
+            botonGuardar.disabled = false;
+            botonGuardar.textContent = "Guardar cliente";
+        }
+    });
 }
 
-.subir-archivo:hover {
-    border-color: #2563eb;
-
-    background: #eff6ff;
-}
 
-.archivo-icon {
-    width: 40px;
-    height: 40px;
+// ======================================================
+// VER CLIENTE
+// ======================================================
 
-    border-radius: 8px;
+function abrirModalVerCliente(cliente) {
+    verNombre.textContent = cliente.nombre || "Cliente";
+    verTelefono.textContent = cliente.telefono || "No registrado";
+    verCedula.textContent = cliente.identificacion || "No registrada";
+    verCorreo.textContent = cliente.correo || "No registrado";
+    verDireccion.textContent = cliente.direccion || "No registrada";
+    verMac.textContent = cliente.mac || "No registrada";
+    verCto.textContent = cliente.cto || "No registrado";
+    verPuerto.textContent = cliente.puerto || "No registrado";
+    verPlan.textContent = cliente.plan || "No registrado";
+    verPrecio.textContent = formatearMoneda(cliente.precio);
+    verEstado.textContent = cliente.estado || "No registrado";
+    verFecha.textContent = cliente.fecha || "No registrada";
 
-    background: #dbeafe;
+    mostrarDocumento(
+        verCedulaArchivo,
+        cliente.cedula_ruta,
+        cliente.cedula_nombre,
+        "🪪",
+        "Cédula"
+    );
 
-    display: flex;
+    mostrarDocumento(
+        verContrato,
+        cliente.contrato_ruta,
+        cliente.contrato_nombre,
+        "📄",
+        "Contrato"
+    );
 
-    align-items: center;
-    justify-content: center;
+    mostrarDocumento(
+        verReciboPublico,
+        cliente.recibo_ruta,
+        cliente.recibo_nombre,
+        "🧾",
+        "Recibo"
+    );
 
-    flex-shrink: 0;
+    if (modalVerCliente) {
+        modalVerCliente.classList.add("activo");
+        modalVerCliente.style.display = "flex";
+    }
 }
 
-.subir-archivo span:last-child {
-    display: flex;
 
-    flex-direction: column;
+// ======================================================
+// MOSTRAR DOCUMENTO
+// ======================================================
 
-    gap: 3px;
+function mostrarDocumento(
+    contenedor,
+    ruta,
+    nombreArchivo,
+    icono,
+    nombreDocumento
+) {
+    if (!contenedor) return;
 
-    min-width: 0;
-}
+    contenedor.innerHTML = "";
 
-.subir-archivo strong {
-    font-size: 12px;
-}
+    if (!ruta) {
+        contenedor.innerHTML = `
+            <div class="documento-sin-archivo">
+                ${icono}
+                No hay ${escaparHTML(nombreDocumento)} cargado.
+            </div>
+        `;
+        return;
+    }
 
-.subir-archivo small {
-    color: #8a94a6;
+    const documento = document.createElement("div");
+    documento.className = "documento-archivo";
 
-    font-size: 10px;
-}
+    documento.innerHTML = `
+        <div class="documento-info">
+            <span class="documento-icono">${icono}</span>
+            <div class="documento-nombre">
+                <strong>${escaparHTML(nombreDocumento)}</strong>
+                <span>${escaparHTML(nombreArchivo || "Documento")}</span>
+            </div>
+        </div>
 
-.archivo-seleccionado {
-    margin-top: 7px;
+        <button
+            type="button"
+            class="btn-primary btn-abrir-documento">
+            Abrir
+        </button>
+    `;
 
-    font-size: 12px;
+    const boton = documento.querySelector(".btn-abrir-documento");
 
-    color: #2563eb;
+    boton.addEventListener("click", function () {
+        abrirDocumento(ruta);
+    });
 
-    word-break: break-word;
+    contenedor.appendChild(documento);
 }
 
 
-/* ==================================================
-   FOOTER MODAL
-================================================== */
+// ======================================================
+// ABRIR DOCUMENTO
+// ======================================================
 
-.modal-footer {
-    display: flex;
+async function abrirDocumento(ruta) {
+    if (!ruta) return;
 
-    justify-content: flex-end;
+    try {
+        const resultado = await supabaseClient
+            .storage
+            .from("documentos")
+            .createSignedUrl(ruta, 3600);
 
-    gap: 10px;
+        if (resultado.error) {
+            throw resultado.error;
+        }
 
-    margin-top: 25px;
+        window.open(resultado.data.signedUrl, "_blank");
 
-    padding-top: 20px;
+    } catch (error) {
+        console.error(error);
 
-    border-top: 1px solid #edf0f5;
+        mostrarNotificacion(
+            "No se pudo abrir",
+            "No fue posible abrir el documento.",
+            "error"
+        );
+    }
 }
 
 
-/* ==================================================
-   MODAL ELIMINAR
-================================================== */
+// ======================================================
+// CERRAR MODAL VER
+// ======================================================
 
-.eliminar-box {
-    width: 420px;
-
-    text-align: center;
+if (cerrarVerCliente) {
+    cerrarVerCliente.addEventListener("click", function () {
+        modalVerCliente.classList.remove("activo");
+        modalVerCliente.style.display = "none";
+    });
 }
-
-.eliminar-icon {
-    width: 65px;
-    height: 65px;
 
-    border-radius: 50%;
 
-    background: #fee2e2;
+// ======================================================
+// ELIMINAR CLIENTE
+// ======================================================
 
-    margin: 0 auto 18px;
+function abrirModalEliminar(cliente) {
+    clienteEliminar = cliente;
 
-    display: flex;
+    nombreEliminar.textContent = cliente.nombre || "este cliente";
 
-    align-items: center;
-    justify-content: center;
-
-    font-size: 27px;
+    modalEliminar.classList.add("activo");
+    modalEliminar.style.display = "flex";
 }
+
+function cerrarModalEliminar() {
+    if (!modalEliminar) return;
 
-.eliminar-box h2 {
-    margin-bottom: 10px;
+    modalEliminar.classList.remove("activo");
+    modalEliminar.style.display = "none";
 
-    font-size: 21px;
+    clienteEliminar = null;
 }
 
-.eliminar-box p {
-    color: #64748b;
+if (cancelarEliminar) {
+    cancelarEliminar.addEventListener("click", cerrarModalEliminar);
+}
 
-    font-size: 13px;
 
-    line-height: 1.5;
-}
+// ======================================================
+// ELIMINAR ARCHIVO
+// ======================================================
 
-.eliminar-box .texto-pequeno {
-    margin-top: 5px;
+async function eliminarArchivoStorage(ruta) {
+    if (!ruta) return;
 
-    font-size: 11px;
-}
+    const resultado = await supabaseClient
+        .storage
+        .from("documentos")
+        .remove([ruta]);
 
-.eliminar-box .modal-footer {
-    justify-content: center;
+    if (resultado.error) {
+        console.warn(resultado.error);
+    }
 }
 
 
-/* ==================================================
-   DETALLES CLIENTE
-================================================== */
+// ======================================================
+// CONFIRMAR ELIMINAR
+// ======================================================
 
-.detalle-cliente {
-    display: grid;
+if (confirmarEliminar) {
+    confirmarEliminar.addEventListener("click", async function () {
+        if (!clienteEliminar) return;
 
-    grid-template-columns:
-        1fr 1fr;
-
-    gap: 14px;
-}
+        confirmarEliminar.disabled = true;
 
-.detalle {
-    padding: 13px;
+        try {
+            await eliminarArchivoStorage(clienteEliminar.cedula_ruta);
+            await eliminarArchivoStorage(clienteEliminar.contrato_ruta);
+            await eliminarArchivoStorage(clienteEliminar.recibo_ruta);
 
-    background: #f8fafc;
+            const resultado = await supabaseClient
+                .from("Clientes")
+                .delete()
+                .eq("id", clienteEliminar.id);
 
-    border-radius: 9px;
-}
+            if (resultado.error) {
+                throw resultado.error;
+            }
 
-.detalle span {
-    display: block;
+            cerrarModalEliminar();
 
-    color: #8993a5;
+            mostrarNotificacion(
+                "Cliente eliminado",
+                "El cliente fue eliminado correctamente.",
+                "exito"
+            );
 
-    font-size: 10px;
+            await cargarClientes();
 
-    margin-bottom: 5px;
-}
+        } catch (error) {
+            console.error(error);
 
-.detalle strong {
-    font-size: 13px;
+            mostrarNotificacion(
+                "Error",
+                error.message || "No se pudo eliminar el cliente.",
+                "error"
+            );
+        }
 
-    word-break: break-word;
+        confirmarEliminar.disabled = false;
+    });
 }
 
 
-/* ==================================================
-   CONTRATO
-================================================== */
+// ======================================================
+// ESTADÍSTICAS
+// ======================================================
 
-.contrato-ver {
-    margin-top: 20px;
+function actualizarEstadisticas() {
+    const total = clientes.length;
 
-    padding: 15px;
+    const activos = clientes.filter(function (cliente) {
+        return cliente.estado === "Activo";
+    }).length;
 
-    border-radius: 10px;
+    const ingresos = clientes
+        .filter(function (cliente) {
+            return cliente.estado === "Activo";
+        })
+        .reduce(function (acumulado, cliente) {
+            return acumulado + Number(cliente.precio || 0);
+        }, 0);
 
-    background: #eff6ff;
+    if (totalClientes) {
+        totalClientes.textContent = total;
+    }
 
-    color: #1d4ed8;
+    if (clientesActivos) {
+        clientesActivos.textContent = activos;
+    }
 
-    font-size: 13px;
+    if (ingresosMes) {
+        ingresosMes.textContent = formatearMoneda(ingresos);
+    }
 
-    word-break: break-word;
+    if (pagosPendientes) {
+        pagosPendientes.textContent = "$0";
+    }
 }
 
-.contrato-ver a {
-    color: #1d4ed8;
 
-    font-weight: 600;
-
-    text-decoration: none;
-}
+// ======================================================
+// MONEDA
+// ======================================================
 
-.contrato-ver a:hover {
-    text-decoration: underline;
+function formatearMoneda(valor) {
+    return new Intl.NumberFormat("es-CO", {
+        style: "currency",
+        currency: "COP",
+        maximumFractionDigits: 0
+    }).format(Number(valor) || 0);
 }
 
 
-/* ==================================================
-   MENÚ EXTRA
-================================================== */
+// ======================================================
+// NOTIFICACIÓN
+// ======================================================
 
-.menu-extra-grid {
-    display: grid;
+function mostrarNotificacion(titulo, mensaje, tipo) {
+    const anterior = document.querySelector(".notificacion-sistecfiber");
 
-    grid-template-columns:
-        repeat(auto-fit, minmax(240px, 1fr));
-
-    gap: 15px;
+    if (anterior) {
+        anterior.remove();
+    }
 
-    margin-top: 20px;
-}
+    const notificacion = document.createElement("div");
 
-.menu-extra-card {
-    border: 1px solid #e2e8f0;
+    notificacion.className =
+        "notificacion-sistecfiber notificacion-" + (tipo || "exito");
 
-    border-radius: 12px;
+    notificacion.innerHTML = `
+        <div class="notificacion-icono">
+            ${tipo === "error" ? "✕" : "✓"}
+        </div>
 
-    padding: 18px;
+        <div class="notificacion-contenido">
+            <div class="notificacion-titulo">
+                ${escaparHTML(titulo)}
+            </div>
+            <div class="notificacion-mensaje">
+                ${escaparHTML(mensaje)}
+            </div>
+        </div>
+    `;
 
-    background: #fff;
-}
+    document.body.appendChild(notificacion);
 
-.menu-extra-card h3 {
-    margin: 0 0 8px;
-}
+    setTimeout(function () {
+        notificacion.classList.add("notificacion-saliendo");
 
-.menu-extra-card p {
-    margin: 5px 0;
+        setTimeout(function () {
+            notificacion.remove();
+        }, 300);
+    }, 3000);
 }
 
-.menu-extra-vacio {
-    padding: 30px;
 
-    text-align: center;
+// ======================================================
+// CERRAR MODALES AL HACER CLICK AFUERA
+// ======================================================
 
-    border: 1px dashed #cbd5e1;
+window.addEventListener("click", function (event) {
+    if (modalCliente && event.target === modalCliente) {
+        cerrarModalCliente();
+    }
 
-    border-radius: 12px;
+    if (modalEliminar && event.target === modalEliminar) {
+        cerrarModalEliminar();
+    }
 
-    margin-top: 20px;
-}
+    if (modalVerCliente && event.target === modalVerCliente) {
+        modalVerCliente.classList.remove("activo");
+        modalVerCliente.style.display = "none";
+    }
+});
 
-.menu-extra-tabla {
-    width: 100%;
 
-    border-collapse: collapse;
+// ======================================================
+// ESCAPE
+// ======================================================
 
-    margin-top: 20px;
-}
+document.addEventListener("keydown", function (event) {
+    if (event.key !== "Escape") return;
 
-.menu-extra-tabla th,
-.menu-extra-tabla td {
-    padding: 12px;
+    cerrarModalCliente();
+    cerrarModalEliminar();
 
-    text-align: left;
+    if (modalVerCliente) {
+        modalVerCliente.classList.remove("activo");
+        modalVerCliente.style.display = "none";
+    }
+});
 
-    border-bottom: 1px solid #e5e7eb;
-}
 
-.menu-extra-tabla th {
-    font-weight: 600;
-}
+// ======================================================
+// INICIAR
+// ======================================================
 
-.estado-pendiente {
-    color: #b45309;
-
-    font-weight: 600;
-}
-
-.estado-disponible {
-    color: #15803d;
-
-    font-weight: 600;
-}
-
-
-/* ==================================================
-   RESPONSIVE - TABLET
-================================================== */
-
-@media (max-width: 1000px) {
-
-    .estadisticas {
-        grid-template-columns:
-            1fr 1fr;
-    }
-
-    .clientes-grid {
-        grid-template-columns:
-            1fr;
-    }
-
-}
-
-
-/* ==================================================
-   TABLETS
-================================================== */
-
-@media (max-width: 900px) {
-
-    .main {
-        padding: 20px;
-    }
-
-    .estadisticas {
-        grid-template-columns:
-            1fr 1fr;
-    }
-
-    .clientes-grid {
-        grid-template-columns:
-            1fr;
-    }
-
-    .panel {
-        padding: 20px;
-    }
-
-}
-
-
-/* ==================================================
-   CELULARES
-================================================== */
-
-@media (max-width: 700px) {
-
-    .form-grid {
-        grid-template-columns:
-            1fr;
-    }
-
-    .campo-completo {
-        grid-column: auto;
-    }
-
-    .detalle-cliente {
-        grid-template-columns:
-            1fr;
-    }
-
-}
-
-
-@media (max-width: 600px) {
-
-    /* ----------------------------------------------
-       ESTRUCTURA GENERAL
-    ---------------------------------------------- */
-
-    body {
-        overflow-x: hidden;
-    }
-
-    .app {
-        width: 100%;
-
-        min-height: 100vh;
-    }
-
-
-    /* ----------------------------------------------
-       LOGIN
-    ---------------------------------------------- */
-
-    .pantalla-acceso {
-        padding: 15px;
-    }
-
-    .acceso-box {
-        max-width: 100%;
-
-        padding: 25px 20px;
-
-        border-radius: 15px;
-    }
-
-    .acceso-box h1 {
-        font-size: 22px;
-    }
-
-    .acceso-box > p {
-        font-size: 12px;
-    }
-
-
-    /* ----------------------------------------------
-       BARRA LATERAL
-    ---------------------------------------------- */
-
-    .sidebar {
-        width: 62px;
-
-        padding: 15px 7px;
-
-        overflow: hidden;
-    }
-
-    .logo {
-        justify-content: center;
-
-        padding: 5px 0 25px;
-    }
-
-    .logo-icon {
-        width: 42px;
-        height: 42px;
-
-        flex-shrink: 0;
-    }
-
-    .logo-text {
-        display: none;
-    }
-
-    .menu {
-        width: 100%;
-    }
-
-    .menu-item {
-        width: 100%;
-
-        min-height: 46px;
-
-        padding: 10px 5px;
-
-        justify-content: center;
-
-        gap: 0;
-    }
-
-    .menu-item span {
-        width: auto;
-
-        font-size: 19px;
-    }
-
-    .menu-item {
-        font-size: 0;
-    }
-
-    .menu-item span {
-        font-size: 19px;
-    }
-
-    .btn-cerrar-sesion {
-        font-size: 0;
-
-        padding: 10px 5px;
-
-        min-height: 44px;
-    }
-
-    .btn-cerrar-sesion::before {
-        content: "↪";
-
-        font-size: 19px;
-    }
-
-
-    /* ----------------------------------------------
-       CONTENIDO PRINCIPAL
-    ---------------------------------------------- */
-
-    .main {
-        margin-left: 62px;
-
-        width: calc(100% - 62px);
-
-        padding: 15px;
-
-        min-width: 0;
-    }
-
-
-    /* ----------------------------------------------
-       TOPBAR
-    ---------------------------------------------- */
-
-    .topbar {
-        display: flex;
-
-        align-items: center;
-
-        gap: 10px;
-
-        margin-bottom: 18px;
-    }
-
-    .topbar > div:first-child {
-        min-width: 0;
-    }
-
-    .topbar h1 {
-        font-size: 22px;
-
-        white-space: nowrap;
-
-        overflow: hidden;
-
-        text-overflow: ellipsis;
-    }
-
-    .topbar p {
-        font-size: 12px;
-    }
-
-    .usuario {
-        flex-shrink: 0;
-    }
-
-    .usuario .avatar {
-        width: 36px;
-        height: 36px;
-    }
-
-    .usuario div:last-child {
-        display: none;
-    }
-
-
-    /* ----------------------------------------------
-       ESTADÍSTICAS
-    ---------------------------------------------- */
-
-    .estadisticas {
-        grid-template-columns:
-            1fr 1fr;
-
-        gap: 10px;
-
-        margin-bottom: 15px;
-    }
-
-    .estadistica {
-        padding: 13px;
-
-        gap: 9px;
-
-        min-width: 0;
-    }
-
-    .estadistica-icon {
-        width: 38px;
-        height: 38px;
-
-        min-width: 38px;
-
-        font-size: 17px;
-    }
-
-    .estadistica span {
-        font-size: 10px;
-    }
-
-    .estadistica strong {
-        font-size: 17px;
-    }
-
-
-    /* ----------------------------------------------
-       PANEL
-    ---------------------------------------------- */
-
-    .panel {
-        padding: 15px;
-
-        border-radius: 12px;
-    }
-
-    .panel-header {
-        display: flex;
-
-        flex-direction: column;
-
-        align-items: stretch;
-
-        gap: 12px;
-
-        margin-bottom: 15px;
-    }
-
-    .panel-header h2 {
-        font-size: 19px;
-    }
-
-    .panel-header p {
-        font-size: 12px;
-    }
-
-    .panel-header .btn-primary {
-        width: 100%;
-    }
-
-
-    /* ----------------------------------------------
-       BUSCADOR
-    ---------------------------------------------- */
-
-    .buscador {
-        height: 44px;
-
-        margin-bottom: 15px;
-    }
-
-    .buscador input {
-        font-size: 13px;
-    }
-
-
-    /* ----------------------------------------------
-       TARJETAS CLIENTES
-    ---------------------------------------------- */
-
-    .clientes-grid {
-        grid-template-columns:
-            1fr;
-
-        gap: 10px;
-    }
-
-    .cliente-card {
-        width: 100%;
-
-        padding: 13px;
-
-        border-radius: 11px;
-    }
-
-    .cliente-top {
-        padding-bottom: 11px;
-    }
-
-    .cliente-identidad {
-        min-width: 0;
-    }
-
-    .cliente-identidad h3 {
-        font-size: 14px;
-
-        max-width: 145px;
-
-        overflow: hidden;
-
-        white-space: nowrap;
-
-        text-overflow: ellipsis;
-    }
-
-    .cliente-avatar {
-        width: 38px;
-        height: 38px;
-
-        min-width: 38px;
-
-        font-size: 15px;
-    }
-
-    .estado {
-        font-size: 10px;
-
-        padding: 4px 7px;
-
-        flex-shrink: 0;
-    }
-
-
-    /* ----------------------------------------------
-       BOTONES CLIENTE
-    ---------------------------------------------- */
-
-    .cliente-botones {
-        display: grid;
-
-        grid-template-columns:
-            repeat(2, 1fr);
-
-        gap: 7px;
-
-        margin-top: 11px;
-    }
-
-    .btn-card {
-        width: 100%;
-
-        min-height: 38px;
-
-        padding: 8px 5px;
-
-        font-size: 11px;
-    }
-
-
-    /* ----------------------------------------------
-       MODALES
-    ---------------------------------------------- */
-
-    .modal {
-        padding: 10px;
-    }
-
-    .modal-box {
-        width: 100%;
-
-        max-width: 100%;
-
-        max-height: 94vh;
-
-        padding: 18px;
-
-        border-radius: 14px;
-    }
-
-    .modal-header {
-        margin-bottom: 18px;
-    }
-
-    .modal-header h2 {
-        font-size: 18px;
-    }
-
-    .modal-header p {
-        font-size: 11px;
-    }
-
-    .btn-cerrar {
-        width: 34px;
-        height: 34px;
-
-        flex-shrink: 0;
-    }
-
-
-    /* ----------------------------------------------
-       FORMULARIOS
-    ---------------------------------------------- */
-
-    .form-grid {
-        grid-template-columns:
-            1fr;
-
-        gap: 13px;
-    }
-
-    .campo-completo {
-        grid-column: auto;
-    }
-
-    .campo input,
-    .campo select {
-        height: 44px;
-
-        font-size: 14px;
-    }
-
-    .campo label {
-        font-size: 11px;
-    }
-
-
-    /* ----------------------------------------------
-       ARCHIVOS
-    ---------------------------------------------- */
-
-    .subir-archivo {
-        padding: 13px;
-
-        gap: 10px;
-    }
-
-    .archivo-icon {
-        width: 36px;
-        height: 36px;
-
-        min-width: 36px;
-    }
-
-    .subir-archivo strong {
-        font-size: 11px;
-    }
-
-    .subir-archivo small {
-        font-size: 9px;
-    }
-
-
-    /* ----------------------------------------------
-       FOOTER MODAL
-    ---------------------------------------------- */
-
-    .modal-footer {
-        flex-direction: column-reverse;
-
-        gap: 8px;
-
-        margin-top: 18px;
-
-        padding-top: 15px;
-    }
-
-    .modal-footer button {
-        width: 100%;
-
-        min-height: 43px;
-    }
-
-
-    /* ----------------------------------------------
-       DETALLES CLIENTE
-    ---------------------------------------------- */
-
-    .detalle-cliente {
-        grid-template-columns:
-            1fr;
-
-        gap: 9px;
-    }
-
-    .detalle {
-        padding: 11px;
-    }
-
-    .detalle strong {
-        font-size: 12px;
-
-        word-break: break-word;
-    }
-
-
-    /* ----------------------------------------------
-       CONTRATO
-    ---------------------------------------------- */
-
-    .contrato-ver {
-        padding: 12px;
-
-        font-size: 12px;
-
-        word-break: break-word;
-    }
-
-
-    /* ----------------------------------------------
-       ELIMINAR CLIENTE
-    ---------------------------------------------- */
-
-    .eliminar-box {
-        width: 100%;
-    }
-
-    .eliminar-box h2 {
-        font-size: 19px;
-    }
-
-    .eliminar-box p {
-        font-size: 12px;
-    }
-
-
-    /* ----------------------------------------------
-       TABLAS
-    ---------------------------------------------- */
-
-    .menu-extra-tabla {
-        display: block;
-
-        width: 100%;
-
-        overflow-x: auto;
-
-        white-space: nowrap;
-    }
-
-    .menu-extra-tabla th,
-    .menu-extra-tabla td {
-        padding: 10px;
-
-        font-size: 11px;
-    }
-
-
-    /* ----------------------------------------------
-       TARJETAS EXTRA
-    ---------------------------------------------- */
-
-    .menu-extra-grid {
-        grid-template-columns:
-            1fr;
-
-        gap: 10px;
-    }
-
-    .menu-extra-card {
-        padding: 14px;
-    }
-
-    .menu-extra-card h3 {
-        font-size: 15px;
-    }
-
-    .menu-extra-card p {
-        font-size: 12px;
-
-        word-break: break-word;
-    }
-
-    .menu-extra-card button {
-        width: 100%;
-
-        min-height: 40px;
-    }
-
-
-    /* ----------------------------------------------
-       MENÚ EXTRA
-    ---------------------------------------------- */
-
-    .vista-menu-extra {
-        width: 100%;
-
-        min-width: 0;
-
-        overflow: hidden;
-    }
-
-
-    /* ----------------------------------------------
-       BOTONES
-    ---------------------------------------------- */
-
-    .btn-primary,
-    .btn-secondary,
-    .btn-danger {
-        min-height: 42px;
-
-        font-size: 12px;
-    }
-
-}
-
-
-/* ==================================================
-   CELULARES MUY PEQUEÑOS
-================================================== */
-
-@media (max-width: 380px) {
-
-    .sidebar {
-        width: 55px;
-
-        padding-left: 5px;
-        padding-right: 5px;
-    }
-
-    .main {
-        margin-left: 55px;
-
-        width: calc(100% - 55px);
-
-        padding: 10px;
-    }
-
-    .estadisticas {
-        grid-template-columns:
-            1fr;
-    }
-
-    .panel {
-        padding: 12px;
-    }
-
-    .cliente-botones {
-        grid-template-columns:
-            1fr 1fr;
-    }
-
-    .topbar h1 {
-        font-size: 19px;
-    }
-
-    .topbar p {
-        font-size: 10px;
-    }
-
-    .modal {
-        padding: 5px;
-    }
-
-    .modal-box {
-        padding: 14px;
-    }
-
-    .acceso-box {
-        padding: 22px 16px;
-    }
-
-}
-
-/* =========================================
-   AJUSTE SUAVE DE COLORES Y BOTONES
-========================================= */
-
-/* Botones generales un poco más pequeños */
-.btn-primary,
-.btn-secondary,
-.btn-danger {
-    padding: 9px 15px !important;
-    font-size: 13px !important;
-    border-radius: 8px !important;
-}
-
-
-/* Botones de las tarjetas de clientes */
-.cliente-botones {
-    display: flex;
-    gap: 7px;
-    flex-wrap: wrap;
-}
-
-.cliente-botones button {
-    padding: 6px 11px !important;
-    font-size: 12px !important;
-    min-width: auto !important;
-    width: auto !important;
-    border-radius: 7px !important;
-}
-
-
-/* Azul más suave */
-.btn-primary {
-    background: #3b82f6 !important;
-}
-
-
-/* Azul al pasar el mouse */
-.btn-primary:hover {
-    background: #2563eb !important;
-}
-
-
-/* Botón secundario más discreto */
-.btn-secondary {
-    background: #f1f5f9 !important;
-    color: #475569 !important;
-    border: 1px solid #e2e8f0 !important;
-}
-
-
-/* Botón eliminar menos intenso */
-.btn-danger {
-    background: #ef4444 !important;
-}
-
-
-/* Estados más suaves */
-.estado-activo {
-    background: #dcfce7 !important;
-    color: #166534 !important;
-}
-
-.estado-suspendido {
-    background: #fef3c7 !important;
-    color: #92400e !important;
-}
-
-.estado-retirado {
-    background: #fee2e2 !important;
-    color: #991b1b !important;
-}
-
-
-/* Iconos de estadísticas un poco menos fuertes */
-.estadistica-icon.azul {
-    background: #dbeafe !important;
-    color: #2563eb !important;
-}
-
-.estadistica-icon.verde {
-    background: #dcfce7 !important;
-    color: #16a34a !important;
-}
-
-.estadistica-icon.amarillo {
-    background: #fef3c7 !important;
-    color: #d97706 !important;
-}
-
-.estadistica-icon.rojo {
-    background: #fee2e2 !important;
-    color: #dc2626 !important;
-}
-
-/* =========================================
-   NOTIFICACIONES BONITAS
-   ========================================= */
-
-.notificacion-sistecfiber {
-    position: fixed;
-    right: 24px;
-    bottom: 24px;
-    min-width: 280px;
-    max-width: 380px;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
-    z-index: 99999;
-    animation: aparecerNotificacion 0.25s ease;
-}
-
-.notificacion-icono {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    font-weight: bold;
-    flex-shrink: 0;
-}
-
-.notificacion-contenido {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.notificacion-titulo {
-    font-size: 14px;
-    font-weight: 700;
-    color: #1e293b;
-}
-
-.notificacion-mensaje {
-    font-size: 13px;
-    color: #64748b;
-}
-
-.notificacion-exito .notificacion-icono {
-    background: #dcfce7;
-    color: #16a34a;
-}
-
-.notificacion-error .notificacion-icono {
-    background: #fee2e2;
-    color: #dc2626;
-}
-
-@keyframes aparecerNotificacion {
-    from {
-        opacity: 0;
-        transform: translateY(15px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes desaparecerNotificacion {
-    from {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    to {
-        opacity: 0;
-        transform: translateY(15px);
-    }
-}
-
-.notificacion-saliendo {
-    animation: desaparecerNotificacion 0.25s ease forwards;
-}
-
-/* Celular */
-@media (max-width: 600px) {
-    .notificacion-sistecfiber {
-        left: 15px;
-        right: 15px;
-        bottom: 15px;
-        min-width: auto;
-        max-width: none;
-    }
-}
-
-/* ===== ARREGLO DEFINITIVO DOCUMENTOS ===== */
-
-.documentos-cliente {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 18px !important;
-    width: 100% !important;
-}
-
-.documento-item {
-    display: block !important;
-    width: 100% !important;
-}
-
-.documento-item > .subir-archivo {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    width: 100% !important;
-    min-height: 70px !important;
-    padding: 14px !important;
-    gap: 12px !important;
-}
-
-.documento-item > .subir-archivo > .archivo-icon {
-    display: flex !important;
-    flex-shrink: 0 !important;
-    width: 40px !important;
-    height: 40px !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
-
-.documento-item > .subir-archivo > span:last-child {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 4px !important;
-}
-
-.documento-item > .subir-archivo strong {
-    display: block !important;
-    font-size: 13px !important;
-}
-
-.documento-item > .subir-archivo small {
-    display: block !important;
-    font-size: 11px !important;
-}
-
-.documento-item .archivo-seleccionado {
-    display: block !important;
-    width: 100% !important;
-    margin-top: 7px !important;
-}
-
-.documento-item .archivo-actual {
-    display: block !important;
-    width: 100% !important;
-    padding: 8px 10px !important;
-    box-sizing: border-box !important;
-    border-radius: 7px !important;
-    background: #f8fafc !important;
-    border: 1px solid #e2e8f0 !important;
-    font-size: 12px !important;
-    color: #64748b !important;
-}
+// No forzar Inicio aquí.
+// La función comprobarSesion recuperará la última sección guardada.
+comprobarSesion();
