@@ -21,6 +21,7 @@ const supabaseClient = window.supabase.createClient(
 let clientes = [];
 let clienteEditando = null;
 let clienteEliminar = null;
+let cargandoClientes = false;
 
 
 // ======================================================
@@ -164,7 +165,7 @@ const seccionesMenu = {
 
 
 // ======================================================
-// OBTENER ÚLTIMA SECCIÓN GUARDADA
+// RECUPERAR LA ÚLTIMA SECCIÓN VISITADA
 // ======================================================
 
 function obtenerSeccionGuardada() {
@@ -187,21 +188,25 @@ function obtenerSeccionGuardada() {
 
 
 // ======================================================
-// MOSTRAR SECCIÓN
+// MOSTRAR SECCIÓN Y GUARDARLA
 // ======================================================
 
 function mostrarSeccion(nombreSeccion) {
-
     if (
-        !Object.prototype.hasOwnProperty.call(
-            seccionesMenu,
-            nombreSeccion
-        ) ||
+        !Object.prototype.hasOwnProperty.call(seccionesMenu, nombreSeccion) ||
         !seccionesMenu[nombreSeccion]
     ) {
         nombreSeccion = "inicio";
     }
 
+    // Guardar la sección antes de cambiar la pantalla
+    try {
+        localStorage.setItem("sistecfiber_seccion", nombreSeccion);
+    } catch (error) {
+        console.warn("No se pudo guardar la sección.", error);
+    }
+
+    // Ocultar todas las secciones
     Object.values(seccionesMenu).forEach(function (seccion) {
         if (!seccion) return;
 
@@ -209,40 +214,48 @@ function mostrarSeccion(nombreSeccion) {
         seccion.classList.remove("mostrar");
     });
 
+    // Quitar la selección de los botones
     botonesMenu.forEach(function (boton) {
-        boton.classList.remove("activo");
-        boton.classList.remove("seleccionado");
+        boton.classList.remove("activo", "seleccionado");
     });
 
-    const seccion = seccionesMenu[nombreSeccion];
+    const seccionActual = seccionesMenu[nombreSeccion];
 
-    if (!seccion) return;
+    if (!seccionActual) return;
 
-    seccion.style.display = "block";
-    seccion.classList.add("mostrar");
+    // Mostrar la sección seleccionada
+    seccionActual.style.display = "block";
 
+    // Mantener las clases que necesitan las secciones adicionales
+    if (
+        nombreSeccion === "pagos" ||
+        nombreSeccion === "datos" ||
+        nombreSeccion === "equipos" ||
+        nombreSeccion === "soporte"
+    ) {
+        seccionActual.classList.add("mostrar");
+    }
+
+    // Marcar el botón correspondiente
     const botonActivo = document.querySelector(
         '.menu-item[data-seccion="' + nombreSeccion + '"]'
     );
 
     if (botonActivo) {
-        botonActivo.classList.add("activo");
-        botonActivo.classList.add("seleccionado");
+        botonActivo.classList.add("activo", "seleccionado");
     }
 
-    // Guardar la sección seleccionada para la próxima recarga
-    try {
-        localStorage.setItem("sistecfiber_seccion", nombreSeccion);
-    } catch (error) {
-        console.warn("No se pudo guardar la sección.", error);
-    }
-
+    // Actualizar el contenido de la sección
     if (nombreSeccion === "inicio") {
         actualizarEstadisticas();
     }
 
     if (nombreSeccion === "clientes") {
-        mostrarClientes(clientes);
+        if (buscarCliente && buscarCliente.value.trim()) {
+            mostrarClientesFiltrados(buscarCliente.value);
+        } else {
+            mostrarClientes(clientes);
+        }
     }
 
     if (nombreSeccion === "datos") {
@@ -358,7 +371,7 @@ if (btnCambiarAcceso) {
             if (titulo) titulo.textContent = "Crear cuenta";
             if (texto) texto.textContent = "Crea tu cuenta para ingresar al panel";
 
-            btnAcceso.textContent = "Crear cuenta";
+            if (btnAcceso) btnAcceso.textContent = "Crear cuenta";
             btnCambiarAcceso.textContent = "Ya tengo una cuenta";
 
             crearCampoNombreRegistro();
@@ -366,7 +379,7 @@ if (btnCambiarAcceso) {
             if (titulo) titulo.textContent = "Sistecfiber";
             if (texto) texto.textContent = "Inicia sesión para ingresar al panel";
 
-            btnAcceso.textContent = "Iniciar sesión";
+            if (btnAcceso) btnAcceso.textContent = "Iniciar sesión";
             btnCambiarAcceso.textContent = "Crear una cuenta";
 
             eliminarCampoNombreRegistro();
@@ -393,16 +406,22 @@ if (formLogin) {
             return;
         }
 
-        btnAcceso.disabled = true;
+        if (btnAcceso) {
+            btnAcceso.disabled = true;
+        }
 
         try {
             if (modoRegistro) {
                 const campoNombre = document.getElementById("nombreRegistro");
-                const nombrePersona = campoNombre ? campoNombre.value.trim() : "";
+                const nombrePersona = campoNombre
+                    ? campoNombre.value.trim()
+                    : "";
 
                 if (!nombrePersona) {
-                    mostrarMensajeAcceso("Escribe tu nombre completo.", "error");
-                    btnAcceso.disabled = false;
+                    mostrarMensajeAcceso(
+                        "Escribe tu nombre completo.",
+                        "error"
+                    );
                     return;
                 }
 
@@ -420,7 +439,11 @@ if (formLogin) {
                     throw resultado.error;
                 }
 
-                mostrarMensajeAcceso("Cuenta creada correctamente.", "exito");
+                mostrarMensajeAcceso(
+                    "Cuenta creada correctamente. Si se solicita, confirma tu correo.",
+                    "exito"
+                );
+
                 return;
             }
 
@@ -444,9 +467,11 @@ if (formLogin) {
                 error.message || "No se pudo iniciar sesión.",
                 "error"
             );
+        } finally {
+            if (btnAcceso) {
+                btnAcceso.disabled = false;
+            }
         }
-
-        btnAcceso.disabled = false;
     });
 }
 
@@ -457,40 +482,60 @@ if (formLogin) {
 
 if (btnCerrarSesion) {
     btnCerrarSesion.addEventListener("click", async function () {
-        await supabaseClient.auth.signOut();
-
-        clientes = [];
-
         try {
-            localStorage.removeItem("sistecfiber_seccion");
-        } catch (error) {
-            console.warn(error);
-        }
+            const resultado = await supabaseClient.auth.signOut();
 
-        mostrarLogin();
+            if (resultado.error) {
+                throw resultado.error;
+            }
+
+            clientes = [];
+
+            try {
+                localStorage.removeItem("sistecfiber_seccion");
+            } catch (error) {
+                console.warn(error);
+            }
+
+            mostrarLogin();
+
+        } catch (error) {
+            console.error("No se pudo cerrar la sesión:", error);
+
+            mostrarNotificacion(
+                "Error",
+                "No se pudo cerrar la sesión correctamente.",
+                "error"
+            );
+        }
     });
 }
 
 
 // ======================================================
-// SESIÓN
+// CONTROLAR CAMBIOS DE SESIÓN
 // ======================================================
 
-supabaseClient.auth.onAuthStateChange(async function (event, session) {
-
-    if (session) {
-        mostrarAplicacion();
-
-        actualizarUsuario(session.user);
-
-        await cargarClientes();
-
-        // Recuperar la última sección después de iniciar sesión
-        mostrarSeccion(obtenerSeccionGuardada());
-
-    } else {
-        mostrarLogin();
+supabaseClient.auth.onAuthStateChange(function (evento, session) {
+    // La sesión inicial se comprueba en comprobarSesion().
+    // Así evitamos cargar los clientes dos veces al abrir la página.
+    if (evento === "INITIAL_SESSION") {
+        return;
     }
+
+    // Ejecutar fuera del callback de autenticación
+    setTimeout(async function () {
+        if (session) {
+            mostrarAplicacion();
+            actualizarUsuario(session.user);
+
+            await cargarClientes();
+
+            mostrarSeccion(obtenerSeccionGuardada());
+        } else {
+            mostrarLogin();
+        }
+    }, 0);
 });
 
 
@@ -514,25 +559,32 @@ function actualizarUsuario(usuario) {
 
 
 // ======================================================
-// COMPROBAR SESIÓN
+// COMPROBAR SESIÓN AL ABRIR LA PÁGINA
 // ======================================================
 
 async function comprobarSesion() {
-    const resultado = await supabaseClient.auth.getSession();
+    try {
+        const resultado = await supabaseClient.auth.getSession();
 
-    if (resultado.error || !resultado.data.session) {
+        if (resultado.error || !resultado.data.session) {
+            mostrarLogin();
+            return;
+        }
+
+        const session = resultado.data.session;
+
+        mostrarAplicacion();
+        actualizarUsuario(session.user);
+
+        await cargarClientes();
+
+        // Recuperar la última sección visitada
+        mostrarSeccion(obtenerSeccionGuardada());
+
+    } catch (error) {
+        console.error("Error al comprobar la sesión:", error);
         mostrarLogin();
-        return;
     }
-
-    mostrarAplicacion();
-
-    actualizarUsuario(resultado.data.session.user);
-
-    await cargarClientes();
-
-    // Recuperar la sección guardada en lugar de regresar siempre a Inicio
-    mostrarSeccion(obtenerSeccionGuardada());
 }
 
 
@@ -541,27 +593,52 @@ async function comprobarSesion() {
 // ======================================================
 
 async function cargarClientes() {
-    if (!listaClientes) return;
+    if (cargandoClientes) return;
 
-    listaClientes.innerHTML = "<p>Cargando clientes...</p>";
+    cargandoClientes = true;
 
-    const resultado = await supabaseClient
-        .from("Clientes")
-        .select("*")
-        .order("id", { ascending: false });
-
-    if (resultado.error) {
-        console.error(resultado.error);
-
-        listaClientes.innerHTML = "<p>No se pudieron cargar los clientes.</p>";
-        return;
+    if (listaClientes) {
+        listaClientes.innerHTML = "<p>Cargando clientes...</p>";
     }
 
-    clientes = resultado.data || [];
+    try {
+        const resultado = await supabaseClient
+            .from("Clientes")
+            .select("*")
+            .order("id", { ascending: false });
 
-    mostrarClientes(clientes);
-    mostrarDatos();
-    actualizarEstadisticas();
+        if (resultado.error) {
+            throw resultado.error;
+        }
+
+        clientes = resultado.data || [];
+
+        mostrarClientesFiltrados(
+            buscarCliente ? buscarCliente.value : ""
+        );
+
+        mostrarDatos();
+        actualizarEstadisticas();
+
+    } catch (error) {
+        console.error("Error al cargar clientes:", error);
+
+        if (listaClientes) {
+            listaClientes.innerHTML =
+                "<p>No se pudieron cargar los clientes.</p>";
+        }
+
+        if (listaDatos) {
+            listaDatos.innerHTML = `
+                <div class="menu-extra-vacio">
+                    <h3>No se pudieron cargar los datos</h3>
+                    <p>Comprueba la conexión e inténtalo de nuevo.</p>
+                </div>
+            `;
+        }
+    } finally {
+        cargandoClientes = false;
+    }
 }
 
 
@@ -595,7 +672,7 @@ function mostrarClientes(lista) {
             <div class="cliente-top">
                 <div>
                     <h3>${escaparHTML(cliente.nombre || "Sin nombre")}</h3>
-                    <span class="estado ${claseEstado}">
+                    <span class="estado ${escaparHTML(claseEstado)}">
                         ${escaparHTML(estadoCliente)}
                     </span>
                 </div>
@@ -617,9 +694,15 @@ function mostrarClientes(lista) {
             </div>
 
             <div class="cliente-botones">
-                <button type="button" class="btn-secondary btn-ver-cliente">Ver</button>
-                <button type="button" class="btn-primary btn-editar-cliente">Editar</button>
-                <button type="button" class="btn-danger btn-eliminar-cliente">Eliminar</button>
+                <button type="button" class="btn-secondary btn-ver-cliente">
+                    Ver
+                </button>
+                <button type="button" class="btn-primary btn-editar-cliente">
+                    Editar
+                </button>
+                <button type="button" class="btn-danger btn-eliminar-cliente">
+                    Eliminar
+                </button>
             </div>
         `;
 
@@ -643,27 +726,105 @@ function mostrarClientes(lista) {
 
 
 // ======================================================
-// MOSTRAR DATOS
+// BUSCADOR DE CLIENTES
+// ======================================================
+
+function normalizarBusqueda(valor) {
+    return String(valor || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
+}
+
+function mostrarClientesFiltrados(texto) {
+    const busqueda = normalizarBusqueda(texto);
+
+    if (!busqueda) {
+        mostrarClientes(clientes);
+        return;
+    }
+
+    const filtrados = clientes.filter(function (cliente) {
+        const campos = [
+            cliente.nombre,
+            cliente.identificacion,
+            cliente.telefono,
+            cliente.correo,
+            cliente.direccion,
+            cliente.cto,
+            cliente.puerto,
+            cliente.plan,
+            cliente.mac
+        ];
+
+        return normalizarBusqueda(campos.filter(Boolean).join(" "))
+            .includes(busqueda);
+    });
+
+    if (filtrados.length === 0) {
+        if (listaClientes) {
+            listaClientes.innerHTML = `
+                <div class="menu-extra-vacio">
+                    <h3>No se encontraron clientes</h3>
+                    <p>Prueba con otro nombre o dato.</p>
+                </div>
+            `;
+        }
+
+        return;
+    }
+
+    mostrarClientes(filtrados);
+}
+
+if (buscarCliente) {
+    buscarCliente.addEventListener("input", function () {
+        mostrarClientesFiltrados(this.value);
+    });
+
+    buscarCliente.addEventListener("search", function () {
+        mostrarClientesFiltrados(this.value);
+    });
+}
+
+
+// ======================================================
+// MOSTRAR DATOS Y FILTRAR DOCUMENTOS
 // ======================================================
 
 function mostrarDatos() {
     if (!listaDatos) return;
 
-    listaDatos.innerHTML = "";
-
-    const textoBusqueda = buscarDatos
-        ? buscarDatos.value.trim().toLowerCase()
-        : "";
+    const textoBusqueda = normalizarBusqueda(
+        buscarDatos ? buscarDatos.value : ""
+    );
 
     const clientesFiltrados = clientes.filter(function (cliente) {
-        if (!textoBusqueda) return true;
+        const campos = [
+            cliente.nombre,
+            cliente.identificacion,
+            cliente.telefono,
+            cliente.correo,
+            cliente.direccion,
+            cliente.cto,
+            cliente.plan,
+            cliente.mac,
+            cliente.cedula_nombre,
+            cliente.contrato_nombre,
+            cliente.recibo_nombre
+        ];
 
-        return String(cliente.nombre || "")
-            .toLowerCase()
-            .includes(textoBusqueda);
+        const textoCliente = normalizarBusqueda(
+            campos.filter(Boolean).join(" ")
+        );
+
+        return textoCliente.includes(textoBusqueda);
     });
 
-    if (!clientes || clientes.length === 0) {
+    listaDatos.innerHTML = "";
+
+    if (clientes.length === 0) {
         listaDatos.innerHTML = `
             <div class="menu-extra-vacio">
                 <h3>No hay clientes</h3>
@@ -676,8 +837,8 @@ function mostrarDatos() {
     if (clientesFiltrados.length === 0) {
         listaDatos.innerHTML = `
             <div class="menu-extra-vacio">
-                <h3>No se encontró ningún cliente</h3>
-                <p>Prueba buscando con otro nombre.</p>
+                <h3>No se encontraron resultados</h3>
+                <p>Prueba con otro nombre, teléfono o número de identificación.</p>
             </div>
         `;
         return;
@@ -738,6 +899,10 @@ if (buscarDatos) {
     buscarDatos.addEventListener("input", function () {
         mostrarDatos();
     });
+
+    buscarDatos.addEventListener("search", function () {
+        mostrarDatos();
+    });
 }
 
 
@@ -746,7 +911,6 @@ if (buscarDatos) {
 // ======================================================
 
 function crearDocumentoDatos(ruta, nombreArchivo, icono, nombreDocumento) {
-
     if (!ruta) {
         return `
             <div class="datos-documento datos-documento-vacio">
@@ -799,34 +963,6 @@ function escaparHTML(texto) {
 
 
 // ======================================================
-// BUSCAR CLIENTES
-// ======================================================
-
-if (buscarCliente) {
-    buscarCliente.addEventListener("input", function () {
-        const texto = this.value.trim().toLowerCase();
-
-        if (!texto) {
-            mostrarClientes(clientes);
-            return;
-        }
-
-        const filtrados = clientes.filter(function (cliente) {
-            return (
-                String(cliente.nombre || "").toLowerCase().includes(texto) ||
-                String(cliente.identificacion || "").toLowerCase().includes(texto) ||
-                String(cliente.telefono || "").toLowerCase().includes(texto) ||
-                String(cliente.correo || "").toLowerCase().includes(texto) ||
-                String(cliente.cto || "").toLowerCase().includes(texto)
-            );
-        });
-
-        mostrarClientes(filtrados);
-    });
-}
-
-
-// ======================================================
 // ABRIR MODAL NUEVO CLIENTE
 // ======================================================
 
@@ -837,7 +973,9 @@ if (btnNuevoCliente) {
 function abrirModalCliente() {
     clienteEditando = null;
 
-    tituloModal.textContent = "Nuevo cliente";
+    if (tituloModal) {
+        tituloModal.textContent = "Nuevo cliente";
+    }
 
     if (formCliente) {
         formCliente.reset();
@@ -859,7 +997,9 @@ function abrirModalCliente() {
 function abrirModalEditar(cliente) {
     clienteEditando = cliente;
 
-    tituloModal.textContent = "Editar cliente";
+    if (tituloModal) {
+        tituloModal.textContent = "Editar cliente";
+    }
 
     nombre.value = cliente.nombre || "";
     cedula.value = cliente.identificacion || "";
@@ -935,7 +1075,7 @@ function mostrarArchivoActual(contenedor, nombreArchivo, texto, rutaArchivo) {
 
             ${
                 rutaArchivo
-                    ? `<button type="button" class="btn-secondary btn-abrir-archivo">Abrir</button>`
+                    ? '<button type="button" class="btn-secondary btn-abrir-archivo">Abrir</button>'
                     : ""
             }
         </div>
@@ -1146,7 +1286,6 @@ async function subirDocumento(archivo, carpeta, userId) {
     }
 
     const nombreArchivo = crearNombreArchivo(archivo);
-
     const ruta = userId + "/" + carpeta + "/" + nombreArchivo;
 
     const resultado = await supabaseClient
@@ -1177,7 +1316,6 @@ async function subirDocumento(archivo, carpeta, userId) {
 
 async function eliminarArchivoAnterior(rutaAnterior, rutaNueva) {
     if (!rutaAnterior) return;
-
     if (rutaNueva && rutaAnterior === rutaNueva) return;
 
     const resultado = await supabaseClient
@@ -1370,11 +1508,12 @@ if (formCliente) {
                 error.message || "No se pudo guardar el cliente.",
                 "error"
             );
-        }
 
-        if (botonGuardar) {
-            botonGuardar.disabled = false;
-            botonGuardar.textContent = "Guardar cliente";
+        } finally {
+            if (botonGuardar) {
+                botonGuardar.disabled = false;
+                botonGuardar.textContent = "Guardar cliente";
+            }
         }
     });
 }
@@ -1466,9 +1605,7 @@ function mostrarDocumento(
             </div>
         </div>
 
-        <button
-            type="button"
-            class="btn-primary btn-abrir-documento">
+        <button type="button" class="btn-primary btn-abrir-documento">
             Abrir
         </button>
     `;
@@ -1520,6 +1657,8 @@ async function abrirDocumento(ruta) {
 
 if (cerrarVerCliente) {
     cerrarVerCliente.addEventListener("click", function () {
+        if (!modalVerCliente) return;
+
         modalVerCliente.classList.remove("activo");
         modalVerCliente.style.display = "none";
     });
@@ -1533,10 +1672,14 @@ if (cerrarVerCliente) {
 function abrirModalEliminar(cliente) {
     clienteEliminar = cliente;
 
-    nombreEliminar.textContent = cliente.nombre || "este cliente";
+    if (nombreEliminar) {
+        nombreEliminar.textContent = cliente.nombre || "este cliente";
+    }
 
-    modalEliminar.classList.add("activo");
-    modalEliminar.style.display = "flex";
+    if (modalEliminar) {
+        modalEliminar.classList.add("activo");
+        modalEliminar.style.display = "flex";
+    }
 }
 
 function cerrarModalEliminar() {
@@ -1582,18 +1725,21 @@ if (confirmarEliminar) {
         confirmarEliminar.disabled = true;
 
         try {
-            await eliminarArchivoStorage(clienteEliminar.cedula_ruta);
-            await eliminarArchivoStorage(clienteEliminar.contrato_ruta);
-            await eliminarArchivoStorage(clienteEliminar.recibo_ruta);
+            const cliente = clienteEliminar;
 
             const resultado = await supabaseClient
                 .from("Clientes")
                 .delete()
-                .eq("id", clienteEliminar.id);
+                .eq("id", cliente.id);
 
             if (resultado.error) {
                 throw resultado.error;
             }
+
+            // Eliminar los archivos después de borrar el registro
+            await eliminarArchivoStorage(cliente.cedula_ruta);
+            await eliminarArchivoStorage(cliente.contrato_ruta);
+            await eliminarArchivoStorage(cliente.recibo_ruta);
 
             cerrarModalEliminar();
 
@@ -1613,9 +1759,10 @@ if (confirmarEliminar) {
                 error.message || "No se pudo eliminar el cliente.",
                 "error"
             );
-        }
 
-        confirmarEliminar.disabled = false;
+        } finally {
+            confirmarEliminar.disabled = false;
+        }
     });
 }
 
@@ -1714,7 +1861,7 @@ function mostrarNotificacion(titulo, mensaje, tipo) {
 
 
 // ======================================================
-// CERRAR MODALES AL HACER CLICK AFUERA
+// CERRAR MODALES AL HACER CLIC AFUERA
 // ======================================================
 
 window.addEventListener("click", function (event) {
@@ -1751,9 +1898,9 @@ document.addEventListener("keydown", function (event) {
 
 
 // ======================================================
-// INICIAR
+// INICIAR APLICACIÓN
 // ======================================================
 
-// No forzar Inicio aquí.
-// La función comprobarSesion recuperará la última sección guardada.
+// No llamar mostrarSeccion("inicio") aquí.
+// Se recuperará la última sección guardada.
 comprobarSesion();
