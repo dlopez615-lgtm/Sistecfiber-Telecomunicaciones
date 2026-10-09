@@ -63,6 +63,7 @@ const telefono = document.getElementById("telefono");
 const correo = document.getElementById("correo");
 const direccion = document.getElementById("direccion");
 const mac = document.getElementById("mac");
+const marcaOnu = document.getElementById("marcaOnu");
 const cto = document.getElementById("cto");
 const puerto = document.getElementById("puerto");
 const plan = document.getElementById("plan");
@@ -228,13 +229,21 @@ function mostrarSeccion(nombreSeccion) {
 
     // Mantener las clases que necesitan las secciones adicionales
     if (
-        nombreSeccion === "pagos" ||
-        nombreSeccion === "datos" ||
-        nombreSeccion === "equipos" ||
-        nombreSeccion === "soporte"
-    ) {
-        seccionActual.classList.add("mostrar");
-    }
+    nombreSeccion === "pagos" ||
+    nombreSeccion === "datos" ||
+    nombreSeccion === "equipos" ||
+    nombreSeccion === "soporte"
+) {
+    seccionActual.classList.add("mostrar");
+}
+
+if (nombreSeccion === "datos") {
+    mostrarDatos();
+}
+
+if (nombreSeccion === "equipos") {
+    mostrarEquipos();
+}
 
     // Marcar el botón correspondiente
     const botonActivo = document.querySelector(
@@ -1007,6 +1016,9 @@ function abrirModalEditar(cliente) {
     correo.value = cliente.correo || "";
     direccion.value = cliente.direccion || "";
     mac.value = cliente.mac || "";
+    if (marcaOnu) {
+    marcaOnu.value = cliente.marca_onu || "";
+    }
     cto.value = cliente.cto || "";
     puerto.value = cliente.puerto || "";
     plan.value = cliente.plan || "";
@@ -1429,6 +1441,7 @@ if (formCliente) {
                 correo: correo.value.trim(),
                 direccion: direccion.value.trim(),
                 mac: mac.value.trim(),
+                marca_onu: marcaOnu ? marcaOnu.value : "",
                 cto: cto.value.trim(),
                 puerto: puerto.value.trim(),
                 plan: plan.value,
@@ -1896,6 +1909,141 @@ document.addEventListener("keydown", function (event) {
     }
 });
 
+// ======================================================
+// EQUIPOS: CONSULTA DE MAC Y MARCA DE ONU
+// ======================================================
+
+function mostrarEquipos() {
+    const seccion = document.getElementById("seccionEquipos");
+
+    if (!seccion) return;
+
+    const panel = seccion.querySelector(".panel");
+
+    if (!panel) return;
+
+    panel.innerHTML = `
+        <div class="panel-header">
+            <div>
+                <h2>Equipos</h2>
+                <p>Consulta la MAC y la marca de ONU de cada cliente</p>
+            </div>
+        </div>
+
+        <div class="buscador" style="margin: 20px 0;">
+            <span>⌕</span>
+            <input
+                type="search"
+                id="buscarEquipos"
+                placeholder="Buscar cliente, MAC o marca de ONU..."
+                autocomplete="off">
+        </div>
+
+        <div id="listaEquipos" class="menu-extra-grid"></div>
+    `;
+
+    const buscador = document.getElementById("buscarEquipos");
+
+    if (buscador) {
+        buscador.addEventListener("input", function () {
+            renderizarEquipos(this.value);
+        });
+    }
+
+    renderizarEquipos("");
+}
+
+function renderizarEquipos(texto = "") {
+    const lista = document.getElementById("listaEquipos");
+
+    if (!lista) return;
+
+    const busqueda = normalizarBusqueda(texto);
+
+    const filtrados = clientes.filter(function (cliente) {
+        const campos = [
+            cliente.nombre,
+            cliente.mac,
+            cliente.marca_onu
+        ];
+
+        return normalizarBusqueda(
+            campos.filter(Boolean).join(" ")
+        ).includes(busqueda);
+    });
+
+    lista.innerHTML = "";
+
+    if (filtrados.length === 0) {
+        lista.innerHTML = `
+            <div class="menu-extra-vacio">
+                <h3>No se encontraron equipos</h3>
+                <p>Registra un cliente o prueba con otra búsqueda.</p>
+            </div>
+        `;
+        return;
+    }
+
+    filtrados.forEach(function (cliente) {
+        const tarjeta = document.createElement("div");
+
+        tarjeta.className = "menu-extra-card";
+
+        tarjeta.innerHTML = `
+            <h3>${escaparHTML(cliente.nombre || "Sin nombre")}</h3>
+
+            <p>
+                <strong>Estado:</strong>
+                ${escaparHTML(cliente.estado || "No registrado")}
+            </p>
+
+            <button
+                type="button"
+                class="btn-secondary"
+                style="margin-top: 12px;">
+                Ver equipos
+            </button>
+
+            <div
+                class="detalle-equipos"
+                style="display:none; margin-top:14px; overflow-wrap:anywhere;">
+
+                <p>
+                    <strong>MAC:</strong>
+                    ${escaparHTML(cliente.mac || "No registrada")}
+                </p>
+
+                <p>
+                    <strong>Marca de ONU:</strong>
+                    ${escaparHTML(cliente.marca_onu || "No registrada")}
+                </p>
+
+                <p>
+                    <strong>CTO:</strong>
+                    ${escaparHTML(cliente.cto || "No registrada")}
+                </p>
+
+                <p>
+                    <strong>Puerto:</strong>
+                    ${escaparHTML(cliente.puerto || "No registrado")}
+                </p>
+
+            </div>
+        `;
+
+        const boton = tarjeta.querySelector("button");
+        const detalles = tarjeta.querySelector(".detalle-equipos");
+
+        boton.addEventListener("click", function () {
+            const estaVisible = detalles.style.display !== "none";
+
+            detalles.style.display = estaVisible ? "none" : "block";
+            boton.textContent = estaVisible ? "Ver equipos" : "Ocultar equipos";
+        });
+
+        lista.appendChild(tarjeta);
+    });
+}
 
 // ======================================================
 // INICIAR APLICACIÓN
@@ -1904,3 +2052,317 @@ document.addEventListener("keydown", function (event) {
 // No llamar mostrarSeccion("inicio") aquí.
 // Se recuperará la última sección guardada.
 comprobarSesion();
+
+
+/* ======================================================
+   PERFIL DEL USUARIO: EDITAR NOMBRE Y CORREO
+====================================================== */
+
+function crearModalPerfil() {
+    let modal = document.getElementById("modalPerfilUsuario");
+
+    if (modal) return modal;
+
+    modal = document.createElement("div");
+    modal.id = "modalPerfilUsuario";
+
+    modal.style.cssText = `
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background: rgba(15, 23, 42, 0.65);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    `;
+
+    modal.innerHTML = `
+        <div style="
+            background: white;
+            color: #1f2937;
+            width: 100%;
+            max-width: 430px;
+            border-radius: 18px;
+            padding: 25px;
+            box-sizing: border-box;
+            box-shadow: 0 20px 60px rgba(0,0,0,.2);
+        ">
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                gap:12px;
+                margin-bottom:20px;
+            ">
+                <div>
+                    <h2 style="margin:0 0 5px;">Mi perfil</h2>
+                    <p style="margin:0;color:#64748b;font-size:14px;">
+                        Actualiza los datos de tu cuenta
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    id="cerrarPerfil"
+                    aria-label="Cerrar"
+                    style="
+                        border:0;
+                        background:#f1f5f9;
+                        border-radius:10px;
+                        width:36px;
+                        height:36px;
+                        cursor:pointer;
+                        font-size:20px;
+                    ">×</button>
+            </div>
+
+            <form id="formPerfilUsuario">
+                <label for="perfilNombre"
+                    style="display:block;font-weight:600;margin-bottom:7px;">
+                    Nombre
+                </label>
+
+                <input
+                    id="perfilNombre"
+                    type="text"
+                    maxlength="100"
+                    required
+                    placeholder="Tu nombre completo"
+                    style="
+                        width:100%;
+                        box-sizing:border-box;
+                        padding:12px;
+                        border:1px solid #cbd5e1;
+                        border-radius:10px;
+                        margin-bottom:17px;
+                    ">
+
+                <label for="perfilCorreo"
+                    style="display:block;font-weight:600;margin-bottom:7px;">
+                    Correo electrónico
+                </label>
+
+                <input
+                    id="perfilCorreo"
+                    type="email"
+                    maxlength="254"
+                    required
+                    placeholder="correo@ejemplo.com"
+                    style="
+                        width:100%;
+                        box-sizing:border-box;
+                        padding:12px;
+                        border:1px solid #cbd5e1;
+                        border-radius:10px;
+                        margin-bottom:10px;
+                    ">
+
+                <p style="
+                    font-size:12px;
+                    color:#64748b;
+                    margin:0 0 18px;
+                    line-height:1.5;
+                ">
+                    Si cambias el correo, Supabase podría pedirte confirmar
+                    el cambio desde tu correo electrónico.
+                </p>
+
+                <p id="mensajePerfil"
+                    role="status"
+                    style="font-size:13px;margin-bottom:15px;"></p>
+
+                <div style="display:flex;gap:10px;">
+                    <button
+                        type="button"
+                        id="cancelarPerfil"
+                        style="
+                            flex:1;
+                            padding:12px;
+                            border:1px solid #cbd5e1;
+                            border-radius:10px;
+                            background:white;
+                            cursor:pointer;
+                        ">
+                        Cancelar
+                    </button>
+
+                    <button
+                        type="submit"
+                        id="guardarPerfil"
+                        style="
+                            flex:1;
+                            padding:12px;
+                            border:0;
+                            border-radius:10px;
+                            background:#2563eb;
+                            color:white;
+                            font-weight:600;
+                            cursor:pointer;
+                        ">
+                        Guardar cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    const cerrar = () => {
+        modal.style.display = "none";
+    };
+
+    modal.querySelector("#cerrarPerfil").addEventListener("click", cerrar);
+    modal.querySelector("#cancelarPerfil").addEventListener("click", cerrar);
+
+    modal.addEventListener("click", function (event) {
+        if (event.target === modal) cerrar();
+    });
+
+    return modal;
+}
+
+
+// Abrir el perfil y cargar los datos actuales de Supabase
+async function abrirPerfilUsuario() {
+    const modal = crearModalPerfil();
+    const inputNombre = modal.querySelector("#perfilNombre");
+    const inputCorreo = modal.querySelector("#perfilCorreo");
+    const mensaje = modal.querySelector("#mensajePerfil");
+    const botonGuardar = modal.querySelector("#guardarPerfil");
+
+    mensaje.textContent = "Cargando perfil...";
+    mensaje.style.color = "#64748b";
+    botonGuardar.disabled = true;
+    modal.style.display = "flex";
+
+    try {
+        const resultado = await supabaseClient.auth.getUser();
+
+        if (resultado.error) throw resultado.error;
+
+        const usuario = resultado.data.user;
+
+        if (!usuario) {
+            throw new Error("No se encontró una sesión activa.");
+        }
+
+        inputNombre.value = usuario.user_metadata?.nombre || "";
+        inputCorreo.value = usuario.email || "";
+
+        mensaje.textContent = "";
+        inputNombre.focus();
+    } catch (error) {
+        mensaje.textContent = error.message || "No se pudo cargar el perfil.";
+        mensaje.style.color = "#dc2626";
+    } finally {
+        botonGuardar.disabled = false;
+    }
+}
+
+
+// Hacer clic en el nombre o el avatar para abrir el perfil
+function activarEdicionPerfil() {
+    [nombreUsuario, avatarUsuario].forEach(function (elemento) {
+        if (!elemento) return;
+
+        elemento.style.cursor = "pointer";
+        elemento.title = "Haz clic para editar tu perfil";
+
+        elemento.addEventListener("click", abrirPerfilUsuario);
+
+        elemento.setAttribute("role", "button");
+        elemento.setAttribute("tabindex", "0");
+
+        elemento.addEventListener("keydown", function (event) {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                abrirPerfilUsuario();
+            }
+        });
+    });
+}
+
+
+// Guardar los cambios en la cuenta de Supabase
+function activarGuardadoPerfil() {
+    const modal = crearModalPerfil();
+    const formulario = modal.querySelector("#formPerfilUsuario");
+    const inputNombre = modal.querySelector("#perfilNombre");
+    const inputCorreo = modal.querySelector("#perfilCorreo");
+    const mensaje = modal.querySelector("#mensajePerfil");
+    const botonGuardar = modal.querySelector("#guardarPerfil");
+
+    formulario.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const nuevoNombre = inputNombre.value.trim();
+        const nuevoCorreo = inputCorreo.value.trim();
+        const correoActual = (
+            await supabaseClient.auth.getUser()
+        ).data?.user?.email || "";
+
+        if (!nuevoNombre || !nuevoCorreo) {
+            mensaje.textContent = "Completa el nombre y el correo.";
+            mensaje.style.color = "#dc2626";
+            return;
+        }
+
+        botonGuardar.disabled = true;
+        botonGuardar.textContent = "Guardando...";
+        mensaje.textContent = "";
+
+        try {
+            const cambios = {
+                data: {
+                    nombre: nuevoNombre
+                }
+            };
+
+            if (nuevoCorreo.toLowerCase() !== correoActual.toLowerCase()) {
+                cambios.email = nuevoCorreo;
+            }
+
+            const resultado = await supabaseClient.auth.updateUser(cambios);
+
+            if (resultado.error) throw resultado.error;
+
+            const usuarioActualizado = resultado.data.user;
+
+            if (nombreUsuario) {
+                nombreUsuario.textContent = nuevoNombre;
+            }
+
+            if (avatarUsuario) {
+                avatarUsuario.textContent =
+                    nuevoNombre.charAt(0).toUpperCase();
+            }
+
+            if (usuarioActualizado?.email !== correoActual) {
+                mensaje.textContent =
+                    "Nombre actualizado. Revisa tu correo para confirmar el cambio de email si Supabase lo solicita.";
+            } else {
+                mensaje.textContent = "Perfil actualizado correctamente.";
+            }
+
+            mensaje.style.color = "#15803d";
+
+        } catch (error) {
+            console.error("Error al actualizar el perfil:", error);
+
+            mensaje.textContent =
+                error.message || "No se pudieron guardar los cambios.";
+
+            mensaje.style.color = "#dc2626";
+        } finally {
+            botonGuardar.disabled = false;
+            botonGuardar.textContent = "Guardar cambios";
+        }
+    });
+}
+
+
+// Iniciar las funciones del perfil
+activarEdicionPerfil();
+activarGuardadoPerfil();
