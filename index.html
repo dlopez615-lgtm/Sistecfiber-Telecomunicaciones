@@ -740,31 +740,94 @@
             </section>
 
 
-            <!-- PAGOS -->
+            <!-- =====================================================
+                PAGOS SISTECFIBER
+            ===================================================== -->
 
-            <section
-                id="seccionPagos"
-                class="vista-menu-extra">
+            <section id="seccionPagos" class="vista-menu-extra">
 
-                <div class="panel">
+                <div class="panel pagos-panel">
 
-                    <div class="panel-header">
-
+                    <div class="panel-header pagos-encabezado">
                         <div>
-                            <h2>Pagos</h2>
-                            <p>Administración de pagos de los clientes</p>
+                            <h2>Pagos y mensualidades</h2>
+                            <p>Control de recaudos y vencimientos de clientes</p>
                         </div>
 
+                        <button
+                            type="button"
+                            id="btnRegistrarPago"
+                            class="btn-primary">
+                            + Registrar pago
+                        </button>
                     </div>
 
-                    <div class="menu-extra-vacio">
+                    <!-- AVISO DE VENCIMIENTOS -->
+                    <div id="pagosAvisoVencimiento" class="pagos-aviso-vencimiento" hidden></div>
 
-                        <h3>Pagos</h3>
+                    <!-- RESUMEN DE PAGOS -->
+                    <div class="pagos-estadisticas">
+                        <div class="pagos-estadistica">
+                            <span>Total recaudado</span>
+                            <strong id="pagosTotalRecaudado">$0</strong>
+                        </div>
+                        <div class="pagos-estadistica">
+                            <span>Total pendiente</span>
+                            <strong id="pagosTotalPendiente">$0</strong>
+                        </div>
+                        <div class="pagos-estadistica">
+                            <span>Clientes vencidos</span>
+                            <strong id="pagosClientesVencidos">0</strong>
+                        </div>
+                        <div class="pagos-estadistica">
+                            <span>Pagos registrados</span>
+                            <strong id="pagosCantidadPagados">0</strong>
+                        </div>
+                    </div>
 
-                        <p>
-                            Aquí podremos administrar los pagos de los clientes.
-                        </p>
+                    <!-- BUSCADOR Y FILTROS -->
+                    <div class="pagos-filtros">
+                        <div class="pagos-buscador">
+                            <span aria-hidden="true">⌕</span>
+                            <input
+                                type="search"
+                                id="pagosBuscar"
+                                placeholder="Buscar por nombre o teléfono..."
+                                autocomplete="off">
+                        </div>
 
+                        <select id="pagosFiltroEstado" aria-label="Filtrar por estado">
+                            <option value="todos">Todos los clientes</option>
+                            <option value="pagado">Pagados</option>
+                            <option value="pendiente">Pendientes</option>
+                            <option value="vencido">Vencidos</option>
+                        </select>
+
+                        <input
+                            type="month"
+                            id="pagosPeriodo"
+                            aria-label="Seleccionar mes">
+                    </div>
+
+                    <!-- TABLA DE PAGOS -->
+                    <div class="pagos-tabla-contenedor">
+                        <table class="menu-extra-tabla pagos-tabla">
+                            <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Teléfono</th>
+                                    <th>Mensualidad</th>
+                                    <th>Estado</th>
+                                    <th>Fecha de pago</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pagosTablaCuerpo">
+                                <tr>
+                                    <td colspan="6">Cargando pagos y clientes...</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
 
                 </div>
@@ -985,22 +1048,23 @@
 
                     </div>
 
+                    
                     <div class="campo">
+                        <label for="marcaOnu">Marca de la ONU</label>
 
-                    <label for="marcaOnu">Marca de la ONU</label>
+                        <select id="marcaOnu" name="cliente_marca_onu">
+                            <option value="">Seleccionar marca</option>
+                            <option value="Huawei">Huawei</option>
+                            <option value="ZTE">ZTE</option>
+                            <option value="FiberHome">FiberHome</option>
+                            <option value="TP-Link">TP-Link</option>
+                            <option value="Nokia">Nokia</option>
+                            <option value="V-SOL">V-SOL</option>
+                            <option value="Ubiquiti">Ubiquiti</option>
+                        </select>
+                    </div>
 
-                    <select id="marcaOnu" name="cliente_marca_onu">
-                        <option value="">Seleccionar marca</option>
-                        <option value="Huawei">Huawei</option>
-                        <option value="ZTE">ZTE</option>
-                        <option value="FiberHome">FiberHome</option>
-                        <option value="TP-Link">TP-Link</option>
-                        <option value="Nokia">Nokia</option>
-                        <option value="V-SOL">V-SOL</option>
-                        <option value="Ubiquiti">Ubiquiti</option>
-                    </select>
 
-                </div>
                     <div class="campo">
 
                         <label for="cto">CTO</label>
@@ -1372,6 +1436,172 @@
                     id="verReciboPublico"
                     class="contrato-ver">
                 </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+   
+    <!-- MODAL PARA REGISTRAR PAGOS -->
+
+    <div id="modalRegistrarPago" class="modal pagos-modal">
+
+        <div class="modal-box">
+
+            <div class="modal-header">
+                <div>
+                    <h2>Registrar pago</h2>
+                    <p>Registra el pago completo de una mensualidad</p>
+                </div>
+
+                <button
+                    type="button"
+                    id="cerrarModalPago"
+                    class="btn-cerrar">
+                    ×
+                </button>
+            </div>
+
+            <form id="formRegistrarPago" autocomplete="off">
+
+                <div class="campo">
+                    <label for="pagoCliente">Cliente</label>
+                    <select id="pagoCliente" required>
+                        <option value="">Seleccionar cliente</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="pagoPeriodo">Mes que está pagando</label>
+                    <input type="month" id="pagoPeriodo" required>
+                </div>
+
+                <div class="campo">
+                    <label for="pagoMonto">Valor completo de la mensualidad</label>
+                    <input
+                        type="number"
+                        id="pagoMonto"
+                        min="1"
+                        step="1"
+                        required
+                        readonly>
+                    <small>Se obtiene de la mensualidad del cliente.</small>
+                </div>
+
+                <div class="campo">
+                    <label for="pagoMetodo">Método de pago</label>
+                    <select id="pagoMetodo" required>
+                        <option value="">Seleccionar método</option>
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="Transferencia">Transferencia</option>
+                        <option value="Nequi">Nequi</option>
+                        <option value="Daviplata">Daviplata</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="pagoFecha">Fecha del pago</label>
+                    <input type="date" id="pagoFecha" required>
+                </div>
+
+                <div
+                    id="pagoMensaje"
+                    class="pagos-mensaje"
+                    role="status">
+                </div>
+
+                <div class="modal-footer">
+                    <button
+                        type="button"
+                        id="cancelarModalPago"
+                        class="btn-secondary">
+                        Cancelar
+                    </button>
+
+                    <button
+                        type="submit"
+                        id="btnGuardarPago"
+                        class="btn-primary">
+                        Confirmar pago
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    
+    <!-- MODAL DE CONFIRMACIÓN PARA ELIMINAR PAGOS -->
+    <div id="modalConfirmarEliminarPago" class="modal-confirmar-pago">
+        <div class="confirmar-pago-contenido">
+            <div class="confirmar-pago-icono">!</div>
+
+            <h2>Eliminar pago</h2>
+
+            <p id="mensajeConfirmarEliminarPago">
+                ¿Deseas eliminar este registro de pago?
+            </p>
+
+            <div class="confirmar-pago-botones">
+                <button
+                    type="button"
+                    id="cancelarEliminarPago"
+                    class="btn-cancelar-eliminar">
+                    Cancelar
+                </button>
+
+                <button
+                    type="button"
+                    id="aceptarEliminarPago"
+                    class="btn-aceptar-eliminar">
+                    Sí, eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    
+    <!-- ==========================================
+        MODAL PARA ELIMINAR UN PAGO
+    ========================================== -->
+
+    <div
+        id="modalConfirmarEliminarPago"
+        class="modal-confirmar-pago"
+        style="display: none;">
+
+        <div class="modal-confirmar-pago-contenido">
+
+            <div class="modal-confirmar-pago-icono">
+                🗑️
+            </div>
+
+            <h2>Eliminar pago</h2>
+
+            <p>
+                ¿Estás seguro de que deseas eliminar el registro
+                de pago de este mes? Esta acción no se puede deshacer.
+            </p>
+
+            <div class="modal-confirmar-pago-botones">
+
+                <button
+                    type="button"
+                    id="cancelarEliminarPago"
+                    class="btn-cancelar-pago">
+                    Cancelar
+                </button>
+
+                <button
+                    type="button"
+                    id="aceptarEliminarPago"
+                    class="btn-aceptar-pago">
+                    Sí, eliminar
+                </button>
 
             </div>
 
