@@ -2475,6 +2475,984 @@ function activarGuardadoPerfil() {
     });
 }
 
+/* =====================================================
+   SISTECFIBER - MÓDULO DE PAGOS MENSUALES
+   Agregar al final del script.js existente
+===================================================== */
+
+// Día de vencimiento mensual. Cambia el 10 si lo necesitas.
+const PAGOS_DIA_VENCIMIENTO = 10;
+
+let pagosRegistros = [];
+let pagosCargando = false;
+
+const pagosElemento = id => document.getElementById(id);
+
+function pagosObtenerConexion() {
+    if (typeof supabaseClient !== "undefined" && supabaseClient) {
+        return supabaseClient;
+    }
+
+    if (typeof supabaseDB !== "undefined" && supabaseDB) {
+        return supabaseDB;
+    }
+
+    return null;
+}
+
+async function pagosObtenerUsuario() {
+    if (typeof usuarioActual !== "undefined" && usuarioActual?.id) {
+        return usuarioActual;
+    }
+
+    const db = pagosObtenerConexion();
+
+    if (!db) {
+        return null;
+    }
+
+    const { data, error } = await db.auth.getUser();
+
+    if (error) {
+        console.error("Error obteniendo usuario:", error);
+        return null;
+    }
+
+    return data?.user || null;
+}
+
+function pagosObtenerClientes() {
+    if (typeof clientes !== "undefined" && Array.isArray(clientes)) {
+        return clientes;
+    }
+
+    return [];
+}
+
+function pagosFechaLocal(fecha = new Date()) {
+    const anio = fecha.getFullYear();
+    const mes = String(fecha.getMonth() + 1).padStart(2, "0");
+    const dia = String(fecha.getDate()).padStart(2, "0");
+
+    return `${anio}-${mes}-${dia}`;
+}
+
+function pagosMesActual() {
+    return pagosFechaLocal().slice(0, 7);
+}
+
+function pagosPrimerDia(mes) {
+    return `${mes}-01`;
+}
+
+function pagosDinero(valor) {
+    return new Intl.NumberFormat("es-CO", {
+        style: "currency",
+        currency: "COP",
+        maximumFractionDigits: 0
+    }).format(Number(valor) || 0);
+}
+
+function pagosEscapar(texto) {
+    const elemento = document.createElement("span");
+    elemento.textContent = String(texto ?? "");
+    return elemento.innerHTML;
+}
+
+function pagosNombreCliente(cliente) {
+    return cliente?.nombre || cliente?.nombre_completo || "Cliente sin nombre";
+}
+
+function pagosValorMensual(cliente) {
+    return Number(cliente?.precio ?? cliente?.mensualidad ?? 0);
+}
+
+function pagosFechaValida(fecha) {
+    return /^\d{4}-\d{2}-\d{2}$/.test(String(fecha || ""));
+}
+
+function pagosMostrarMensaje(texto, error = false) {
+    const elemento = pagosElemento("pagoMensaje");
+
+    if (!elemento) {
+        if (texto) {
+            alert(texto);
+        }
+        return;
+    }
+
+    elemento.textContent = texto;
+    elemento.style.color = error ? "#b91c1c" : "#15803d";
+}
+
+function pagosEstadoMensualidad(mes, pago) {
+    if (pago) {
+        return "pagado";
+    }
+
+    const mesActual = pagosMesActual();
+
+    if (mes < mesActual) {
+        return "vencido";
+    }
+
+    if (mes > mesActual) {
+        return "pendiente";
+    }
+
+    const diaHoy = new Date().getDate();
+
+    return diaHoy >= PAGOS_DIA_VENCIMIENTO
+        ? "vencido"
+        : "pendiente";
+}
+
+function pagosTextoEstado(estado) {
+    if (estado === "pagado") return "Pagado";
+    if (estado === "vencido") return "Vencido";
+
+    return "Pendiente";
+}
+
+function pagosBuscarRegistro(clienteId, mes) {
+    return pagosRegistros.find(pago =>
+        String(pago.cliente_id) === String(clienteId) &&
+        pago.periodo === pagosPrimerDia(mes)
+    );
+}
+
+/* =====================================================
+   CARGAR PAGOS DESDE SUPABASE
+===================================================== */
+
+async function pagosCargarRegistros() {
+    const db = pagosObtenerConexion();
+    const usuario = await pagosObtenerUsuario();
+
+    if (!db || !usuario) {
+        pagosMostrarErrorTabla(
+            "Inicia sesión para consultar las mensualidades."
+        );
+        return;
+    }
+
+    if (pagosCargando) {
+        return;
+    }
+
+    pagosCargando = true;
+
+    const cuerpo = pagosElemento("pagosTablaCuerpo");
+
+    if (cuerpo) {
+        cuerpo.innerHTML = `
+            <tr>
+                <td colspan="6" class="pagos-sin-resultados">
+                    Cargando mensualidades...
+                </td>
+            </tr>
+        `;
+    }
+
+    try {
+        const mes = pagosElemento("pagosPeriodo")?.value || pagosMesActual();
+        const periodo = pagosPrimerDia(mes);
+
+        const { data, error } = await db
+            .from("pagos_mensuales")
+            .select("*")
+            .eq("user_id", usuario.id)
+            .eq("periodo", periodo);
+
+        if (error) {
+            throw error;
+        }
+
+        pagosRegistros = data || [];
+
+        pagosRenderizar();
+    } catch (error) {
+        console.error("Error al cargar pagos:", error);
+
+        pagosMostrarErrorTabla(
+            "No se pudieron cargar los pagos. Verifica la tabla y las políticas RLS de Supabase."
+        );
+    } finally {
+        pagosCargando = false;
+    }
+}
+
+function pagosMostrarErrorTabla(mensaje) {
+    const cuerpo = pagosElemento("pagosTablaCuerpo");
+
+    if (cuerpo) {
+        cuerpo.innerHTML = `
+            <tr>
+                <td colspan="6" class="pagos-sin-resultados">
+                    ${pagosEscapar(mensaje)}
+                </td>
+            </tr>
+        `;
+    }
+}
+
+/* =====================================================
+   DIBUJAR TABLA Y ESTADÍSTICAS
+===================================================== */
+
+function pagosRenderizar() {
+    const mes = pagosElemento("pagosPeriodo")?.value || pagosMesActual();
+    const cuerpo = pagosElemento("pagosTablaCuerpo");
+
+    if (!cuerpo) {
+        return;
+    }
+
+    const clientesDisponibles = pagosObtenerClientes().filter(cliente =>
+        String(cliente.estado || "Activo").toLowerCase() !== "retirado"
+    );
+
+    const filtroEstado =
+        pagosElemento("pagosFiltroEstado")?.value || "todos";
+
+    const busqueda =
+        (pagosElemento("pagosBuscar")?.value || "")
+            .trim()
+            .toLocaleLowerCase("es-CO");
+
+    let totalRecaudado = 0;
+    let totalPendiente = 0;
+    let cantidadPagados = 0;
+    let cantidadVencidos = 0;
+
+    const filas = [];
+
+    clientesDisponibles.forEach(cliente => {
+        const id = String(cliente.id);
+        const nombre = pagosNombreCliente(cliente);
+        const telefono = String(cliente.telefono || "");
+        const mensualidad = pagosValorMensual(cliente);
+        const pago = pagosBuscarRegistro(id, mes);
+        const estado = pagosEstadoMensualidad(mes, pago);
+
+        if (pago) {
+            totalRecaudado += Number(pago.monto) || 0;
+            cantidadPagados++;
+        } else {
+            totalPendiente += mensualidad;
+
+            if (estado === "vencido") {
+                cantidadVencidos++;
+            }
+        }
+
+        if (
+            filtroEstado !== "todos" &&
+            estado !== filtroEstado
+        ) {
+            return;
+        }
+
+        if (
+            busqueda &&
+            !nombre.toLocaleLowerCase("es-CO").includes(busqueda) &&
+            !telefono.toLocaleLowerCase("es-CO").includes(busqueda)
+        ) {
+            return;
+        }
+
+        const fechaPago = pago?.fecha_pago
+            ? pagosEscapar(pago.fecha_pago)
+            : "—";
+
+        const metodoPago = pago?.metodo
+            ? pagosEscapar(pago.metodo)
+            : "—";
+
+        
+        const accion = pago
+            ? `
+                <div class="pagos-acciones">
+                    <span class="pagos-estado pagado">Registrado</span>
+                    <button
+                        type="button"
+                        class="pagos-btn-eliminar"
+                        data-pagos-eliminar="${pagosEscapar(id)}"
+                        title="Eliminar el pago de este mes">
+                        Eliminar pago
+                    </button>
+                </div>
+            `
+            : `
+                <button
+                    type="button"
+                    class="pagos-btn-accion"
+                    data-pagos-registrar="${pagosEscapar(id)}">
+                    Registrar pago
+                </button>
+            `;
+
+        filas.push(`
+            <tr>
+                <td>
+                    <strong>${pagosEscapar(nombre)}</strong>
+                    ${telefono
+                        ? `<br><small>${pagosEscapar(telefono)}</small>`
+                        : ""}
+                </td>
+
+                <td>${pagosDinero(mensualidad)}</td>
+
+                <td>
+                    <span class="pagos-estado ${estado}">
+                        ${pagosTextoEstado(estado)}
+                    </span>
+                </td>
+
+                <td>${fechaPago}</td>
+
+                <td>${metodoPago}</td>
+
+                <td>${accion}</td>
+            </tr>
+        `);
+    });
+
+    cuerpo.innerHTML = filas.length
+        ? filas.join("")
+        : `
+            <tr>
+                <td colspan="6" class="pagos-sin-resultados">
+                    No hay clientes que coincidan con este filtro.
+                </td>
+            </tr>
+        `;
+
+    pagosElemento("pagosTotalRecaudado").textContent =
+        pagosDinero(totalRecaudado);
+
+    pagosElemento("pagosTotalPendiente").textContent =
+        pagosDinero(totalPendiente);
+
+    pagosElemento("pagosClientesVencidos").textContent =
+        String(cantidadVencidos);
+
+    pagosElemento("pagosCantidadPagados").textContent =
+        String(cantidadPagados);
+
+    pagosActualizarAviso(cantidadVencidos, mes);
+}
+
+function pagosActualizarAviso(cantidadVencidos, mes) {
+    const aviso = pagosElemento("pagosAvisoVencimiento");
+
+    if (!aviso) {
+        return;
+    }
+
+    if (cantidadVencidos > 0) {
+        aviso.hidden = false;
+
+        aviso.textContent =
+            `Atención: hay ${cantidadVencidos} mensualidad(es) vencida(s) ` +
+            `para ${mes}. Revisa los clientes marcados como vencidos.`;
+    } else {
+        aviso.hidden = true;
+        aviso.textContent = "";
+    }
+}
+
+/* =====================================================
+   ABRIR MODAL DE PAGO
+===================================================== */
+
+function pagosAbrirModal(clienteId = "") {
+    const modal = pagosElemento("modalRegistrarPago");
+    const formulario = pagosElemento("formRegistrarPago");
+
+    if (!modal || !formulario) {
+        alert("No se encontró el formulario de pagos en el HTML.");
+        return;
+    }
+
+    formulario.reset();
+
+    pagosMostrarMensaje("");
+
+    pagosLlenarSelectClientes();
+
+    pagosElemento("pagoPeriodo").value =
+        pagosElemento("pagosPeriodo")?.value || pagosMesActual();
+
+    pagosElemento("pagoFecha").value = pagosFechaLocal();
+
+    if (clienteId) {
+        pagosElemento("pagoCliente").value = String(clienteId);
+    }
+
+    pagosActualizarMonto();
+
+    modal.classList.add("abierto");
+}
+
+function pagosCerrarModal() {
+    const modal = pagosElemento("modalRegistrarPago");
+
+    if (modal) {
+        modal.classList.remove("abierto");
+    }
+
+    pagosMostrarMensaje("");
+}
+
+function pagosLlenarSelectClientes() {
+    const selector = pagosElemento("pagoCliente");
+
+    if (!selector) {
+        return;
+    }
+
+    const mes = pagosElemento("pagoPeriodo")?.value || pagosMesActual();
+
+    const opciones = pagosObtenerClientes()
+        .filter(cliente =>
+            String(cliente.estado || "Activo").toLowerCase() !== "retirado"
+        )
+        .map(cliente => {
+            const id = String(cliente.id);
+            const nombre = pagosNombreCliente(cliente);
+            const pago = pagosBuscarRegistro(id, mes);
+            const yaPago = Boolean(pago);
+
+            return {
+                id,
+                nombre,
+                yaPago,
+                mensualidad: pagosValorMensual(cliente)
+            };
+        });
+
+    selector.innerHTML = `
+        <option value="">Seleccionar cliente</option>
+        ${opciones.map(cliente => `
+            <option
+                value="${pagosEscapar(cliente.id)}"
+                ${cliente.yaPago ? "disabled" : ""}>
+                ${pagosEscapar(cliente.nombre)}
+                ${cliente.yaPago ? " — ya pagó este mes" : ""}
+            </option>
+        `).join("")}
+    `;
+}
+
+function pagosActualizarMonto() {
+    const selector = pagosElemento("pagoCliente");
+    const monto = pagosElemento("pagoMonto");
+    const mes = pagosElemento("pagoPeriodo")?.value || pagosMesActual();
+
+    if (!selector || !monto) {
+        return;
+    }
+
+    const cliente = pagosObtenerClientes().find(
+        item => String(item.id) === String(selector.value)
+    );
+
+    monto.value = cliente ? pagosValorMensual(cliente) : "";
+
+    if (cliente && pagosBuscarRegistro(String(cliente.id), mes)) {
+        pagosMostrarMensaje(
+            "Este cliente ya tiene un pago registrado para ese mes.",
+            true
+        );
+    } else {
+        pagosMostrarMensaje("");
+    }
+}
+
+/* =====================================================
+   GUARDAR PAGO COMPLETO
+===================================================== */
+
+async function pagosGuardar(event) {
+    event.preventDefault();
+
+    const db = pagosObtenerConexion();
+    const usuario = await pagosObtenerUsuario();
+
+    if (!db || !usuario) {
+        pagosMostrarMensaje(
+            "No hay una sesión activa. Inicia sesión nuevamente.",
+            true
+        );
+        return;
+    }
+
+    const clienteId = pagosElemento("pagoCliente").value;
+    const mes = pagosElemento("pagoPeriodo").value;
+    const metodo = pagosElemento("pagoMetodo").value;
+    const fechaPago = pagosElemento("pagoFecha").value;
+    const boton = pagosElemento("btnGuardarPago");
+
+    const cliente = pagosObtenerClientes().find(
+        item => String(item.id) === String(clienteId)
+    );
+
+    if (!cliente) {
+        pagosMostrarMensaje("Selecciona un cliente válido.", true);
+        return;
+    }
+
+    if (!/^\d{4}-\d{2}$/.test(mes)) {
+        pagosMostrarMensaje("Selecciona el mes que se está pagando.", true);
+        return;
+    }
+
+    if (!pagosFechaValida(fechaPago)) {
+        pagosMostrarMensaje("Selecciona una fecha de pago válida.", true);
+        return;
+    }
+
+    if (!metodo) {
+        pagosMostrarMensaje("Selecciona el método de pago.", true);
+        return;
+    }
+
+    const monto = pagosValorMensual(cliente);
+
+    if (!Number.isFinite(monto) || monto <= 0) {
+        pagosMostrarMensaje(
+            "Este cliente no tiene una mensualidad válida en su ficha.",
+            true
+        );
+        return;
+    }
+
+    const periodo = pagosPrimerDia(mes);
+
+    const pagoExistente = pagosBuscarRegistro(clienteId, mes);
+
+    if (pagoExistente) {
+        pagosMostrarMensaje(
+            "Ya existe un pago registrado para este cliente y mes.",
+            true
+        );
+        return;
+    }
+
+    if (fechaPago > pagosFechaLocal()) {
+        pagosMostrarMensaje(
+            "La fecha de pago no puede ser posterior a hoy.",
+            true
+        );
+        return;
+    }
+
+    boton.disabled = true;
+    boton.textContent = "Guardando...";
+
+    try {
+        const registro = {
+            user_id: usuario.id,
+            cliente_id: String(cliente.id),
+            cliente_nombre: pagosNombreCliente(cliente),
+            periodo,
+            monto,
+            metodo,
+            fecha_pago: fechaPago
+        };
+
+        const { error } = await db
+            .from("pagos_mensuales")
+            .insert(registro);
+
+        if (error) {
+            if (error.code === "23505") {
+                throw new Error(
+                    "Este cliente ya tiene un pago registrado para ese mes."
+                );
+            }
+
+            throw error;
+        }
+
+        pagosCerrarModal();
+
+        await pagosCargarRegistros();
+
+        mostrarNotificacion(
+        "¡Pago registrado correctamente!",
+        `Cliente: ${pagosNombreCliente(cliente)} · ` +
+        `Valor: ${pagosDinero(monto)} · ` +
+        `Mes: ${mes}`,
+        "exito"
+    );
+    } catch (error) {
+        console.error("Error guardando pago:", error);
+
+        pagosMostrarMensaje(
+            error.message ||
+            "No se pudo guardar el pago. Verifica Supabase e inténtalo nuevamente.",
+            true
+        );
+    } finally {
+        boton.disabled = false;
+        boton.textContent = "Confirmar pago";
+    }
+}
+
+
+// =============================================
+// ELIMINAR PAGO MENSUAL
+// =============================================
+
+async function pagosEliminarRegistro(clienteId, mes) {
+    try {
+        const db = pagosObtenerConexion();
+
+        if (!db) {
+            mostrarNotificacion(
+                "Error",
+                "No hay conexión con la base de datos.",
+                "error"
+            );
+            return false;
+        }
+
+        const usuario = await pagosObtenerUsuario();
+
+        if (!usuario || !usuario.id) {
+            mostrarNotificacion(
+                "Error",
+                "Debes iniciar sesión para eliminar un pago.",
+                "error"
+            );
+            return false;
+        }
+
+        const periodo = pagosPrimerDia(mes);
+
+        const { data, error } = await db
+            .from("pagos_mensuales")
+            .delete()
+            .eq("user_id", usuario.id)
+            .eq("cliente_id", String(clienteId))
+            .eq("periodo", periodo)
+            .select("id");
+
+        if (error) {
+            console.error(
+                "Error al eliminar el pago:",
+                error
+            );
+
+            mostrarNotificacion(
+                "Error",
+                "No se pudo eliminar el pago. Verifica los permisos de Supabase.",
+                "error"
+            );
+            return false;
+        }
+
+        if (!data || data.length === 0) {
+            mostrarNotificacion(
+                "Aviso",
+                "No se encontró el pago para eliminar.",
+                "error"
+            );
+            return false;
+        }
+
+        mostrarNotificacion(
+            "Éxito",
+            "El pago se eliminó correctamente.",
+            "exito"
+        );
+
+        await pagosCargarRegistros();
+
+        return true;
+
+    } catch (error) {
+        console.error(
+            "Error inesperado al eliminar el pago:",
+            error
+        );
+
+        mostrarNotificacion(
+            "Error",
+            "Ocurrió un problema al eliminar el pago.",
+            "error"
+        );
+
+        return false;
+    }
+}
+
+/* =====================================================
+   EVENTOS DEL MÓDULO
+===================================================== */
+
+function pagosInicializarEventos() {
+    const botonNuevo = pagosElemento("btnRegistrarPago");
+    const botonCerrar = pagosElemento("cerrarModalPago");
+    const botonCancelar = pagosElemento("cancelarModalPago");
+    const formulario = pagosElemento("formRegistrarPago");
+    const periodo = pagosElemento("pagosPeriodo");
+    const filtro = pagosElemento("pagosFiltroEstado");
+    const buscar = pagosElemento("pagosBuscar");
+    const cliente = pagosElemento("pagoCliente");
+    const periodoModal = pagosElemento("pagoPeriodo");
+    const cuerpo = pagosElemento("pagosTablaCuerpo");
+
+    if (periodo && !periodo.value) {
+        periodo.value = pagosMesActual();
+    }
+
+    if (periodoModal && !periodoModal.value) {
+        periodoModal.value = pagosMesActual();
+    }
+
+    if (botonNuevo) {
+        botonNuevo.addEventListener("click", () => pagosAbrirModal());
+    }
+
+    if (botonCerrar) {
+        botonCerrar.addEventListener("click", pagosCerrarModal);
+    }
+
+    if (botonCancelar) {
+        botonCancelar.addEventListener("click", pagosCerrarModal);
+    }
+
+    if (formulario) {
+        formulario.addEventListener("submit", pagosGuardar);
+    }
+
+    if (periodo) {
+        periodo.addEventListener("change", async () => {
+            await pagosCargarRegistros();
+        });
+    }
+
+    if (filtro) {
+        filtro.addEventListener("change", pagosRenderizar);
+    }
+
+    if (buscar) {
+        buscar.addEventListener("input", pagosRenderizar);
+    }
+
+    if (cliente) {
+        cliente.addEventListener("change", pagosActualizarMonto);
+    }
+
+    if (periodoModal) {
+        periodoModal.addEventListener("change", () => {
+            pagosLlenarSelectClientes();
+            pagosActualizarMonto();
+        });
+    }
+
+    if (cuerpo) {
+    cuerpo.addEventListener("click", async event => {
+
+        // ELIMINAR UN PAGO
+        const botonEliminar = event.target.closest(
+            "[data-pagos-eliminar]"
+        );
+
+        if (botonEliminar) {
+            const clienteId = botonEliminar.getAttribute(
+                "data-pagos-eliminar"
+            );
+
+            const periodoSeleccionado = pagosElemento(
+                "pagosPeriodo"
+            );
+
+            const mes = periodoSeleccionado
+                ? periodoSeleccionado.value
+                : pagosMesActual();
+
+            pagosConfirmarEliminacion(clienteId, mes);
+            return;
+        }
+
+        // REGISTRAR UN PAGO
+        const botonRegistrar = event.target.closest(
+            "[data-pagos-registrar]"
+        );
+
+        if (botonRegistrar) {
+            pagosAbrirModal(
+                botonRegistrar.getAttribute(
+                    "data-pagos-registrar"
+                )
+            );
+        }
+    });
+}
+
+    const modal = pagosElemento("modalRegistrarPago");
+
+    if (modal) {
+        modal.addEventListener("click", event => {
+            if (event.target === modal) {
+                pagosCerrarModal();
+            }
+        });
+    }
+
+    // Al abrir la sección Pagos, consulta los datos actualizados.
+    document.querySelectorAll('[data-seccion="pagos"]').forEach(boton => {
+        boton.addEventListener("click", () => {
+            setTimeout(() => {
+                pagosCargarRegistros();
+            }, 100);
+        });
+    });
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener(
+        "DOMContentLoaded",
+        pagosInicializarEventos,
+        { once: true }
+    );
+} else {
+    pagosInicializarEventos();
+}
+
+
+// =============================================
+// CONFIRMACIÓN PARA ELIMINAR PAGOS
+// =============================================
+
+let pagoPendienteEliminar = null;
+
+function pagosConfirmarEliminacion(clienteId, mes) {
+    const modal = document.getElementById(
+        "modalConfirmarEliminarPago"
+    );
+
+    if (!modal) {
+        console.error(
+            "No existe el modal modalConfirmarEliminarPago en el HTML."
+        );
+
+        mostrarNotificacion(
+            "Error",
+            "No se encontró la ventana de confirmación.",
+            "error"
+        );
+        return;
+    }
+
+    pagoPendienteEliminar = {
+        clienteId: String(clienteId),
+        mes: mes
+    };
+
+    // Mostrar el modal
+    modal.classList.add("abierto");
+    modal.style.display = "flex";
+}
+
+function pagosCerrarConfirmacion() {
+    const modal = document.getElementById(
+        "modalConfirmarEliminarPago"
+    );
+
+    if (modal) {
+        modal.classList.remove("abierto");
+        modal.style.display = "none";
+    }
+
+    pagoPendienteEliminar = null;
+}
+
+
+// =============================================
+// EVENTOS DEL MODAL PARA ELIMINAR PAGOS
+// =============================================
+
+function pagosConfigurarModalEliminar() {
+    const modal = document.getElementById(
+        "modalConfirmarEliminarPago"
+    );
+
+    const cancelar = document.getElementById(
+        "cancelarEliminarPago"
+    );
+
+    const aceptar = document.getElementById(
+        "aceptarEliminarPago"
+    );
+
+    if (!modal || !cancelar || !aceptar) {
+        console.error(
+            "No se encontró el modal de confirmación. Revisa el HTML."
+        );
+        return;
+    }
+
+    // Evitar registrar los eventos dos veces
+    if (modal.dataset.eventosConfigurados === "true") {
+        return;
+    }
+
+    modal.dataset.eventosConfigurados = "true";
+
+    // Cerrar al pulsar Cancelar
+    cancelar.addEventListener("click", () => {
+        pagosCerrarConfirmacion();
+    });
+
+    // Cerrar al pulsar fuera de la ventana
+    modal.addEventListener("click", event => {
+        if (event.target === modal) {
+            pagosCerrarConfirmacion();
+        }
+    });
+
+    // Confirmar la eliminación
+    aceptar.addEventListener("click", async () => {
+        if (!pagoPendienteEliminar) {
+            return;
+        }
+
+        const pago = { ...pagoPendienteEliminar };
+
+        aceptar.disabled = true;
+        aceptar.textContent = "Eliminando...";
+
+        try {
+            const eliminado = await pagosEliminarRegistro(
+                pago.clienteId,
+                pago.mes
+            );
+
+            if (eliminado) {
+                pagosCerrarConfirmacion();
+            }
+        } finally {
+            aceptar.disabled = false;
+            aceptar.textContent = "Sí, eliminar";
+        }
+    });
+}
+
+// Inicializar cuando el HTML esté disponible
+if (document.readyState === "loading") {
+    document.addEventListener(
+        "DOMContentLoaded",
+        pagosConfigurarModalEliminar
+    );
+} else {
+    pagosConfigurarModalEliminar();
+}
+
 
 activarEdicionPerfil();
 activarGuardadoPerfil();
